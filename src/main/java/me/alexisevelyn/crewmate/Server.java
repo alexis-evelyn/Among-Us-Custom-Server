@@ -1,5 +1,8 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.enums.Language;
+import me.alexisevelyn.crewmate.enums.Map;
+
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -145,9 +148,51 @@ public class Server extends Thread {
 			return new byte[0];
 
 		byte[] buffer = packet.getData();
-		int maxPlayers = buffer[8];
 
-		return this.getUnderConstructionMessage("Max Players: " + maxPlayers);
+		// Data
+		int maxPlayers = buffer[8];
+		int map = buffer[13];
+		int imposterCount = buffer[37];
+		int language = Language.convertToInt(buffer[9], buffer[10]);
+
+		String mapName;
+		if (map == Map.SKELD.getMap())
+			mapName = "The Skeld";
+		else if (map == Map.MIRA_HQ.getMap())
+			mapName = "Mira HQ";
+		else if (map == Map.POLUS.getMap())
+			mapName = "Polus";
+		else
+			mapName = "Unknown";
+
+		String languageName;
+		if (language == Language.ARABIC.getLanguage())
+			languageName = "Arabic";
+		else if (language == Language.ENGLISH.getLanguage())
+			languageName = "English";
+		else if (language == Language.FILIPINO.getLanguage())
+			languageName = "Filipino";
+		else if (language == Language.KOREAN.getLanguage())
+			languageName = "Korean";
+		else if (language == Language.OTHER.getLanguage())
+			languageName = "Other";
+		else if (language == Language.POLISH.getLanguage())
+			languageName = "Polish";
+		else if (language == Language.PORTUGUESE.getLanguage())
+			languageName = "Portuguese";
+		else if (language == Language.RUSSIAN.getLanguage())
+			languageName = "Russian";
+		else if (language == Language.SPANISH.getLanguage())
+			languageName = "Spanish";
+		else
+			languageName = "Unknown";
+
+		StringBuilder extraData = new StringBuilder("Max Players: " + maxPlayers);
+		extraData.append("\n").append("Map: ").append(mapName);
+		extraData.append("\n").append("Imposters: ").append(imposterCount);
+		extraData.append("\n").append("Language: ").append(languageName);
+
+		return this.closeWithMessage(extraData.toString());
 	}
 
 	private byte[] getFakeMastersList(DatagramPacket packet) {
@@ -181,6 +226,12 @@ public class Server extends Thread {
 		System.out.println("Masters List Bytes: " + Arrays.toString(reply));
 
 		return reply;
+	}
+
+	private byte[] closeWithMessage(String message) {
+		byte[] header = new byte[] {0x09, 0x01, 0x2e, 0x00, 0x00, 0x08, (byte) message.getBytes().length};
+
+		return this.getCombinedReply(header, message.getBytes());
 	}
 
 	private byte[] getUnderConstructionMessage(String extra) {
