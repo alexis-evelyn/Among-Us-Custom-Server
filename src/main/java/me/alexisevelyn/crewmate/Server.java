@@ -94,17 +94,41 @@ public class Server extends Thread {
 
 		byte[] buffer = packet.getData();
 		if (buffer.length > 9) {
-			byte[] name = new byte[packet.getLength() - 9];
-			System.arraycopy(buffer, 9, name, 0, packet.getLength() - 9);
+			byte[] nameBytes = new byte[packet.getLength() - 9];
+			System.arraycopy(buffer, 9, nameBytes, 0, packet.getLength() - 9);
+			String name = new String(nameBytes, StandardCharsets.UTF_8);
 
-			System.out.println("Name: " + new String(name, StandardCharsets.UTF_8)); // Can we assume it will always be UTF-8?
+			System.out.println("Name: " + name); // Can we assume it will always be UTF-8?
+
+			return this.getUnderConstructionMessage(name);
 		}
 
+		// TODO: Handle when name is not set!!!
 		return new byte[0];
 	}
 
 	private byte[] handlePing(DatagramPacket packet) {
 
 		return new byte[0];
+	}
+
+	private byte[] getUnderConstructionMessage(String name) {
+		// 0000   09 01 2e 00 00 08 2c 54 68 65 20 73 65 72 76 65   ......,The serve
+		// 0010   72 20 63 6c 6f 73 65 64 20 74 68 65 20 72 6f 6f   r closed the roo
+		// 0020   6d 20 64 75 65 20 74 6f 20 69 6e 61 63 74 69 76   m due to inactiv
+		// 0030   69 74 79                                          ity
+
+		byte[] message = ("This Server Is Under Construction, " + name + ". :P").getBytes();
+		byte[] header = new byte[] {0x09, 0x01, 0x2e, 0x00, 0x00, 0x08, (byte) message.length};
+
+		byte[] reply = new byte[header.length + message.length];
+
+		// Copy Header into Reply
+		System.arraycopy(header, 0, reply, 0, header.length);
+
+		// Copy Message into Reply
+		System.arraycopy(message, 0, reply, header.length, message.length);
+
+		return reply;
 	}
 }
