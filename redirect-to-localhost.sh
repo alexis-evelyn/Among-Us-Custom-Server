@@ -10,6 +10,7 @@ ifconfig lo0 alias 104.237.135.186
 ifconfig lo0 alias 198.58.115.57
 ifconfig lo0 alias 198.58.99.71
 ifconfig lo0 alias 50.116.1.42
+ifconfig lo0 alias 45.79.5.6
 
 # Asia
 ifconfig lo0 alias 172.104.96.99

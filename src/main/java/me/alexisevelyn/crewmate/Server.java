@@ -93,9 +93,15 @@ public class Server extends Thread {
 		// 0000   08 00 01 00 00 02 18 00                           ........
 
 		byte[] buffer = packet.getData();
-		if (buffer.length > 9) {
-			byte[] nameBytes = new byte[packet.getLength() - 9];
-			System.arraycopy(buffer, 9, nameBytes, 0, packet.getLength() - 9);
+
+		// Invalid Packet Received - Close Connection
+		if (buffer.length < 8)
+			return new byte[] {0x09};
+
+		// buffer[8] is the length of the name immediately after
+		if (buffer.length > 9 && buffer[8] != 0 && (packet.getLength() - 9) >= buffer[8]) {
+			byte[] nameBytes = new byte[buffer[8]];
+			System.arraycopy(buffer, 9, nameBytes, 0, buffer[8]);
 			String name = new String(nameBytes, StandardCharsets.UTF_8);
 
 			System.out.println("Name: " + name); // Can we assume it will always be UTF-8?
