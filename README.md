@@ -1,4 +1,4 @@
-# Among-Us-Custom-Server
+# CrewMate
 
 This is currently going to be the home of the proof of concept custom Among Us Server based on the work from @NickCis and me.
 

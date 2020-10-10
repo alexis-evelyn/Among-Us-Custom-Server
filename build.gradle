@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group 'me.alexisevelyn'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+test {
+    useJUnitPlatform()
+}
