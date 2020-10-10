@@ -57,6 +57,9 @@ public class Server extends Thread {
 			case 0x0c:
 				replyBuffer = handlePing(packet);
 				break;
+			case 0x01:
+				replyBuffer = handleGamePacket(packet);
+				break;
 			default:
 				return;
 		}
@@ -104,7 +107,9 @@ public class Server extends Thread {
 
 			System.out.println("Name: " + name);
 
-			return this.getUnderConstructionMessage(name); // this.getFakeMastersList(packet);
+			// Start Ping
+			return new byte[] {0x0a, 0x00, 0x01, (byte) 0xff};
+			// return this.getUnderConstructionMessage(name); // this.getFakeMastersList(packet);
 		}
 
 		// Invalid Packet Received - Close Connection
@@ -115,12 +120,26 @@ public class Server extends Thread {
 		byte[] buffer = packet.getData();
 
 		if (packet.getLength() == 3 && buffer[0] == 0x0c) {
-			System.out.println("Received 0x0c Ping: " + buffer[1] + buffer[2]);
+			System.out.println("Received 0x0c Ping: " + buffer[1] + " " + buffer[2]);
+			return new byte[] {0x0c, buffer[1], buffer[2]};
 		} else if (packet.getLength() == 4 && buffer[0] == 0x0a) {
-			System.out.println("Received 0x0a Ping: " + buffer[1] + buffer[2]);
+			System.out.println("Received 0x0a Ping: " + buffer[1] + " " + buffer[2]);
+			return new byte[] {0x0a, buffer[1], buffer[2], (byte) 0xff};
 		}
 
 		return new byte[0]; //this.getUnderConstructionMessage("player");
+	}
+
+	// TODO: Read Game Packet Data
+	private byte[] handleGamePacket(DatagramPacket packet) {
+		// 0000   01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00   ...+..*.........
+		// 0010   80 3f 00 00 40 3f 00 00 80 3f 00 00 f0 41 01 01   .?..@?...?...A..
+		// 0020   03 01 00 00 00 02 00 00 00 00 00 87 00 00 00 00   ................
+		// 0030   0f                                                .
+
+		// 0000   01 00 12 05 00 01 00 00 00 00 07                  ...........
+
+		return this.getUnderConstructionMessage("player");
 	}
 
 	private byte[] getFakeMastersList(DatagramPacket packet) {
