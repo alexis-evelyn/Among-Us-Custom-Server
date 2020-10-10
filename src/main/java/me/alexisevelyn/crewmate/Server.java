@@ -139,7 +139,15 @@ public class Server extends Thread {
 
 		// 0000   01 00 12 05 00 01 00 00 00 00 07                  ...........
 
-		return this.getUnderConstructionMessage("player");
+		// Validate Packet Size
+		// TODO: Figure Out Minimum Length
+		if (packet.getLength() != 49)
+			return new byte[0];
+
+		byte[] buffer = packet.getData();
+		int maxPlayers = buffer[8];
+
+		return this.getUnderConstructionMessage("Max Players: " + maxPlayers);
 	}
 
 	private byte[] getFakeMastersList(DatagramPacket packet) {
@@ -175,13 +183,18 @@ public class Server extends Thread {
 		return reply;
 	}
 
-	private byte[] getUnderConstructionMessage(String name) {
+	private byte[] getUnderConstructionMessage(String extra) {
 		// 0000   09 01 2e 00 00 08 2c 54 68 65 20 73 65 72 76 65   ......,The serve
 		// 0010   72 20 63 6c 6f 73 65 64 20 74 68 65 20 72 6f 6f   r closed the roo
 		// 0020   6d 20 64 75 65 20 74 6f 20 69 6e 61 63 74 69 76   m due to inactiv
 		// 0030   69 74 79                                          ity
 
-		byte[] message = ("This Server Is Under Construction, " + name + ". :P").getBytes();
+		StringBuilder messageBuilder = new StringBuilder("This Server Is Under Construction. :P");
+
+		if (extra.length() > 0)
+			messageBuilder.append("\n\n").append("Extra Info: ").append("\n").append(extra);
+
+		byte[] message = messageBuilder.toString().getBytes();
 		byte[] header = new byte[] {0x09, 0x01, 0x2e, 0x00, 0x00, 0x08, (byte) message.length};
 
 		return this.getCombinedReply(header, message);
