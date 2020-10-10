@@ -1,10 +1,7 @@
 package me.alexisevelyn.crewmate;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -64,6 +61,10 @@ public class Server extends Thread {
 				return;
 		}
 
+		// Don't Send Packet if No Data To Send
+		if (replyBuffer.length == 0)
+			return;
+
 		// Received Packet Port and Address
 		InetAddress address = packet.getAddress();
 		int port = packet.getPort();
@@ -89,33 +90,70 @@ public class Server extends Thread {
 	}
 
 	private byte[] handleHandshake(DatagramPacket packet) {
+		// 0000   08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73      ....F....Alexis
 		// 0000   08 00 01 00 46 d2 02 03 03 50 4f 4d               ....F....POM
 		// 0000   08 00 01 00 00 02 18 00                           ........
 
 		byte[] buffer = packet.getData();
 
-		// Invalid Packet Received - Close Connection
-		if (buffer.length < 8)
-			return new byte[] {0x09};
-
 		// buffer[8] is the length of the name immediately after
 		if (buffer.length > 9 && buffer[8] != 0 && (packet.getLength() - 9) >= buffer[8]) {
 			byte[] nameBytes = new byte[buffer[8]];
 			System.arraycopy(buffer, 9, nameBytes, 0, buffer[8]);
-			String name = new String(nameBytes, StandardCharsets.UTF_8);
+			String name = new String(nameBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
-			System.out.println("Name: " + name); // Can we assume it will always be UTF-8?
+			System.out.println("Name: " + name);
 
-			return this.getUnderConstructionMessage(name);
+			return this.getUnderConstructionMessage(name); // this.getFakeMastersList(packet);
 		}
 
-		// TODO: Handle when name is not set!!!
-		return new byte[0];
+		// Invalid Packet Received - Close Connection
+		return new byte[] {0x09};
 	}
 
 	private byte[] handlePing(DatagramPacket packet) {
+		byte[] buffer = packet.getData();
 
-		return new byte[0];
+		if (packet.getLength() == 3 && buffer[0] == 0x0c) {
+			System.out.println("Received 0x0c Ping: " + buffer[1] + buffer[2]);
+		} else if (packet.getLength() == 4 && buffer[0] == 0x0a) {
+			System.out.println("Received 0x0a Ping: " + buffer[1] + buffer[2]);
+		}
+
+		return new byte[0]; //this.getUnderConstructionMessage("player");
+	}
+
+	private byte[] getFakeMastersList(DatagramPacket packet) {
+		// Until I Understand More About the Masters List, This Is What I'm Returning
+		// TODO: Figure out what the unknown bytes are to make the client happy!!!
+		// https://github.com/alexis-evelyn/Among-Us-Protocol/wiki/Master-Servers-List
+
+		// TODO: Check if InetSocketAddress
+		InetSocketAddress queriedIP = (InetSocketAddress) packet.getSocketAddress();
+
+		String fakeMasterName = "Pseudo-Master-1";
+		int numberOfMasters = 1;
+
+		System.out.println("Queried IP: " + queriedIP.getAddress());
+		System.out.println("Encoded IP: " + Arrays.toString(queriedIP.getAddress().getAddress()));
+
+		// Represent Unknown Data
+		int unknown = 0;
+
+		byte[] endMessage = new byte[] {0x07, 0x56, (byte) unknown, (byte) unknown}; // Another Unknown if Not Last Master in List
+		byte[] ipMessage = this.getCombinedReply(fakeMasterName.getBytes(), queriedIP.getAddress().getAddress());
+
+		byte[] message = this.getCombinedReply(ipMessage, endMessage);
+
+		// 00 38 00 0e 01 02 18
+		// The + 4 from (message.length + 4) comes from starting at (byte) numberOfMasters
+		byte[] header = new byte[] {0x00, (byte) (message.length + 4), 0x00, 0x0e, (byte) numberOfMasters, (byte) unknown, 0x00, 0x00, (byte) fakeMasterName.getBytes().length};
+
+		byte[] reply = this.getCombinedReply(header, message);
+
+		System.out.println("Masters List Bytes: " + Arrays.toString(reply));
+
+		return reply;
 	}
 
 	private byte[] getUnderConstructionMessage(String name) {
@@ -127,6 +165,10 @@ public class Server extends Thread {
 		byte[] message = ("This Server Is Under Construction, " + name + ". :P").getBytes();
 		byte[] header = new byte[] {0x09, 0x01, 0x2e, 0x00, 0x00, 0x08, (byte) message.length};
 
+		return this.getCombinedReply(header, message);
+	}
+
+	private byte[] getCombinedReply(byte[] header, byte[] message) {
 		byte[] reply = new byte[header.length + message.length];
 
 		// Copy Header into Reply
