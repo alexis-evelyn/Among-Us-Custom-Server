@@ -111,7 +111,7 @@ public class GamePacketHandler {
 	private static Map[] parseMapsSearch(int mapNumber) {
 		// Surely there's some way to calculate this so I can dynamically add maps later.
 
-		/**
+		/*
 		 *             1 (Skeld)
 		 *             2 (Mira)
 		 *     1 + 2 = 3 (Skeld + Mira)
