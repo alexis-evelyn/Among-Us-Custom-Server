@@ -17,10 +17,10 @@ public class GamePacketHandler {
 			return StartGame.getClientGameCode(packet);
 		if (packet.getLength() == 49)
 			return StartGame.getNewGameSettings(packet);
-		if (packet.getLength() == -1)
-			return StartGame.get(packet);
 		if (packet.getLength() == 50)
 			return SearchGame.handleSearchPublicGame(packet);
+		if (packet.getLength() >= 173) // We don't grab the bytes here as the packet apparently gets cleared after being read.
+			return StartGame.getInitialGameSettings(packet);
 
 		return new byte[0];
 	}
