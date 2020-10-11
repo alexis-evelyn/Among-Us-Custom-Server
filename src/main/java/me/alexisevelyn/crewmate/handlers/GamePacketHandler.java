@@ -2,8 +2,7 @@ package me.alexisevelyn.crewmate.handlers;
 
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
-import me.alexisevelyn.crewmate.handlers.gamepacket.CreateGame;
-import me.alexisevelyn.crewmate.handlers.gamepacket.JoinGame;
+import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
 import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 
 import java.net.DatagramPacket;
@@ -15,9 +14,11 @@ public class GamePacketHandler {
 		// TODO: Figure Out Minimum Length
 		// TODO: Figure Out Proper Way To Identify Game Types
 		if (packet.getLength() == 11)
-			return JoinGame.handleJoinPrivateGame(packet);
+			return StartGame.getClientGameCode(packet);
 		if (packet.getLength() == 49)
-			return CreateGame.handleCreateGame(packet);
+			return StartGame.getNewGameSettings(packet);
+		if (packet.getLength() == -1)
+			return StartGame.get(packet);
 		if (packet.getLength() == 50)
 			return SearchGame.handleSearchPublicGame(packet);
 
