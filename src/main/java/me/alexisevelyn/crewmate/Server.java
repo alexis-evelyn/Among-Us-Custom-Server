@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
 import me.alexisevelyn.crewmate.handlers.PingHandler;
@@ -56,11 +57,12 @@ public class Server extends Thread {
 
 		byte[] replyBuffer;
 		switch (packet.getData()[0]) {
-			case 0x08:
+			// I don't know how to reference this particular enum in a switch statement
+			case 0x08: // SendOption.HELLO
 				replyBuffer = HandshakeHandler.handleHandshake(packet);
 				break;
-			case 0x0a:
-			case 0x0c:
+			case 0x0a: // SendOption.ACKNOWLEDGEMENT
+			case 0x0c: // SendOption.PING
 				replyBuffer = PingHandler.handlePing(packet);
 				break;
 			case 0x01:

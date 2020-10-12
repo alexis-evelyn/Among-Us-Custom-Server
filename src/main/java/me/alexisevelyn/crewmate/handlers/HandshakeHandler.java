@@ -1,6 +1,7 @@
 package me.alexisevelyn.crewmate.handlers;
 
 import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
@@ -24,12 +25,12 @@ public class HandshakeHandler {
 			System.out.println("Name: " + name);
 
 			// Start Ping
-			return new byte[] {0x0a, 0x00, 0x01, (byte) 0xff};
+			return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), 0x00, 0x01, (byte) 0xff};
 			// return this.getUnderConstructionMessage(name); // this.getFakeMastersList(packet);
 		}
 
 		// Invalid Packet Received - Close Connection
-		return new byte[] {0x09};
+		return new byte[] {SendOption.DISCONNECT.getSendOption()};
 	}
 
 	private static byte[] getFakeMastersList(DatagramPacket packet) {
