@@ -2,7 +2,7 @@ package me.alexisevelyn.crewmate;
 
 public class PacketHelper {
 	public static byte[] closeWithMessage(String message) {
-		byte[] header = new byte[] {0x09, 0x01, 0x2e, 0x00, 0x00, 0x08, (byte) message.getBytes().length};
+		byte[] header = new byte[] {0x09, 0x01, (byte) (message.getBytes().length + 1), 0x00, 0x00, 0x08, (byte) message.getBytes().length};
 
 		return getCombinedReply(header, message.getBytes());
 	}
