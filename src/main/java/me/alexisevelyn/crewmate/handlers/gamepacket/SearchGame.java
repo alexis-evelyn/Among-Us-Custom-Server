@@ -7,6 +7,7 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class SearchGame {
@@ -50,7 +51,7 @@ public class SearchGame {
 	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) {
 		// TODO: Figure out what these mean!!!
 
-		// Search Results
+		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u
 		// 0010   07 56 e6 71 31 80 08 73 75 73 68 69 69 69 69 03   .V.q1..sushiiii.
 		// 0020   b4 03 00 02 0a 14 00 00 c0 51 87 18 07 56 c5 94   .........Q...V..
@@ -69,12 +70,12 @@ public class SearchGame {
 		// 00f0   9e 08 07 56 a2 ec 2b 80 0a 41 6e 6e 65 20 46 72   ...V..+..Anne Fr
 		// 0100   61 6e 6b 02 46 00 02 0a                           ank.F...
 
-		// Search Results (One Result)
+		// Search Results (One Result) - 1b 00 = 27 In INT16 - Little Endian (BA) - 18 00 = 24 In INT16 - Little Endian (BA)
 		// 0000   01 00 15 1e 00 10 1b 00 00 18 00 00 c6 3a 7b 62   .............:{b
 		// 0010   07 56 1d d0 01 80 08 73 68 79 20 70 69 6e 6b 01   .V.....shy pink.
 		// 0020   61 01 01 04                                       a...
 
-		// Search Results (One Result)
+		// Search Results (One Result) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 0f 1c 00 10 19 00 00 16 00 00 ad ff ff d4   ................
 		// 0010   07 56 4d e2 35 80 06 6a 61 79 64 65 6e 01 06 01   .VM.5..jayden...
 		// 0020   01 0a                                             ..
@@ -98,41 +99,48 @@ public class SearchGame {
 		// 0010   07 56 f9 51 13 80 05 61 66 66 61 6e 02 9b 02 01   .V.Q...affan....
 		// 0020   02 08                                             ..
 
-		// Search Results (One Result) - Game Code For Result (BGQFYQ - 4d:49:39:80)
+		// Search Results (One Result) - Game Code For Result (BGQFYQ - 4d:49:39:80) - 20 1f = 7968 In INT16 - Little Endian (BA)
 		// Polus Only (0x02) - Arabic (0x20 0x00) - 2 Imposters - Name: "bunda eki" - 1 out of 7 max people
 		// 0000   01 00 20 1f 00 10 1c 00 00 19 00 00 2d 38 52 d6   .. .........-8R.
 		// 0010   07 56 4d 49 39 80 09 62 75 6e 64 61 20 65 6b 69   .VMI9..bunda eki
 		// 0020   01 31 02 02 07                                    .1...
 
-		// Search Results (One Result) - Game Code For Result (USCWTQ - f8:f4:2a:80)
+		// Search Results (One Result) - Game Code For Result (USCWTQ - f8:f4:2a:80) - 01 1c = 7169 In INT16 - Little Endian (BA)
 		// Mira-HQ Only (0x01) - Korean (0x04 0x00) - 1 Imposter - Name: "freddy" - 1 out of 4 max people
 		// 0000   01 00 01 1c 00 10 19 00 00 16 00 00 2d 21 22 14   ............-!".
 		// 0010   07 56 f8 f4 2a 80 06 66 72 65 64 64 79 01 20 01   .V..*..freddy. .
 		// 0020   01 04                                             ..
 
-		// TODO: Broken Packet From Here
-		// 0000   01 00 00 00 00 10 18 00 00 15 00 00 00 07 56 f9   ..............V.
-		// 0010   51 13 80 09 46 61 6b 65 20 47 61 6d 65 03 01 02   Q...Fake Game...
-		// 0020   08                                                .
+		if (maps.length == 0)
+			return new byte[0];
 
-		String name = "Fake Game";
-		byte unknown = 0x00;
-		int imposters = 3;
+		String name = "Fake Game - " + Language.getLanguageName(Language.getLanguage(language));
+		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;
+		int playerCount = 0;
+		int maxPlayerCount = 10;
+		int mapID = maps[0].getMap();
+		byte[] age = new byte[] {(byte) 0xa3, 0x02}; // No Idea What Format This Is In
 
-		byte[] gameCodeBytes = new byte[] {(byte) 0xf9, 0x51, 0x13, (byte) 0x80};
+		byte[] ipAddress = new byte[] {0x7f, 0x00, 0x00, 0x01}; // 127.0.0.1
+		byte[] port = new byte[] {0x07, 0x56}; // 22023
+		byte[] gameCodeBytes = new byte[] {(byte) 0xb5, (byte) 0xf0, (byte) 0x90, (byte) 0x8a}; // b5:f0:90:8a - ALEXIS
 
-		byte[] messagePartTwo = PacketHelper.getCombinedReply(new byte[] {(byte) name.getBytes().length}, name.getBytes());
-		byte[] messagePartThree = new byte[] {(byte) imposters, 0x01, 0x02, 0x08};
+		byte[] fakeGameOne = new byte[] {ipAddress[0], ipAddress[1], ipAddress[2], ipAddress[3], port[0], port[1], gameCodeBytes[0], gameCodeBytes[1], gameCodeBytes[2], gameCodeBytes[3]};
+		byte[] nameBytesWithLength = PacketHelper.getCombinedReply(new byte[] {(byte) name.getBytes().length}, name.getBytes());
 
-		byte[] combinedMessagePartOne = PacketHelper.getCombinedReply(messagePartTwo, messagePartThree);
-		byte[] combinedMessagePartTwo = PacketHelper.getCombinedReply(gameCodeBytes, combinedMessagePartOne);
+		byte[] fakeGameTwo = new byte[] {(byte) playerCount, age[0], age[1], (byte) mapID, (byte) imposterCount, (byte) maxPlayerCount};
+		byte[] fakeGameThree = PacketHelper.getCombinedReply(nameBytesWithLength, fakeGameTwo);
+		byte[] fakeGame = PacketHelper.getCombinedReply(fakeGameOne, fakeGameThree);
 
-		byte[] messagePartOne = new byte[] {(byte) (3 + combinedMessagePartTwo.length), unknown, unknown, unknown, 0x07, 0x56};
+		byte[] fakeGameLength = PacketHelper.convertShortToLE((short) fakeGame.length);
 
-		byte[] message = PacketHelper.getCombinedReply(messagePartOne, combinedMessagePartTwo);
-		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknown, unknown, 0x00, 0x10, (byte) (message.length), 0x00, 0x00};
+		byte[] message = new byte[] {fakeGameLength[0], fakeGameLength[1], SearchBytes.POTENTIAL_FLAG.getSearchByte()};
+		byte[] messageLength = PacketHelper.convertShortToLE((short) (message.length + fakeGame.length));
 
-		return PacketHelper.getCombinedReply(header, message);
+		byte[] unknownBytesOne = new byte[] {0x01, 0x0f}; // https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
+		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknownBytesOne[0], unknownBytesOne[1], SearchBytes.POTENTIAL_FLAG.getSearchByte(), SearchBytes.GAME_LIST_VERSION.getSearchByte(), messageLength[0], messageLength[1], SearchBytes.POTENTIAL_FLAG.getSearchByte()};
+
+		return PacketHelper.getCombinedReply(header, PacketHelper.getCombinedReply(message, fakeGame));
 	}
 
 	public static Map[] parseMapsSearch(int mapNumber) {
@@ -200,5 +208,20 @@ public class SearchGame {
 		// https://stackoverflow.com/a/5061692/6828099
 		// Apparently it's supposed to be marked as empty now
 		return maps.toArray(new Map[0]);
+	}
+
+	private enum SearchBytes {
+		GAME_LIST_VERSION((byte) 0x10), // V2
+		POTENTIAL_FLAG((byte) 0x00);
+
+		private final byte searchByte;
+
+		SearchBytes(byte searchByte) {
+			this.searchByte = searchByte;
+		}
+
+		public byte getSearchByte() {
+			return this.searchByte;
+		}
 	}
 }

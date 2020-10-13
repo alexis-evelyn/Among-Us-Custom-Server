@@ -4,7 +4,8 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
 public class PacketHelper {
 	public static byte[] closeWithMessage(String message) {
-		byte[] header = new byte[] {SendOption.DISCONNECT.getSendOption(), 0x01, (byte) (message.getBytes().length + 1), 0x00, 0x00, 0x08, (byte) message.getBytes().length};
+		byte[] messageLengthBytes = convertShortToLE((short) message.getBytes().length);
+		byte[] header = new byte[] {SendOption.DISCONNECT.getSendOption(), 0x01, messageLengthBytes[0], messageLengthBytes[1], 0x00, 0x08, (byte) message.getBytes().length};
 
 		return getCombinedReply(header, message.getBytes());
 	}
@@ -19,5 +20,9 @@ public class PacketHelper {
 		System.arraycopy(message, 0, reply, header.length, message.length);
 
 		return reply;
+	}
+
+	public static byte[] convertShortToLE(short value) {
+		return new byte[] {(byte)(value & 0xff), (byte)((value >> 8) & 0xff)};
 	}
 }

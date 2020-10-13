@@ -46,7 +46,7 @@ public class HandshakeHandler {
 
 		// Convert Port to Little Endian Bytes
 		short port = 22023; // TODO: Figure out how to extract port number from packet
-		byte[] encodedPort = new byte[] {(byte)(port & 0xff), (byte)((port >> 8) & 0xff)}; // This is supposed to be 0x07 0x56, but for some reason is 0x07 0x86 (for port 22023)
+		byte[] encodedPort = PacketHelper.convertShortToLE(port); // This is supposed to be 0x07 0x56, but for some reason is 0x07 0x86 (for port 22023)
 		encodedPort = new byte[] {0x07, 0x56};
 
 		String fakeMasterName = "Pseudo-Master-1";
@@ -60,7 +60,7 @@ public class HandshakeHandler {
 
 		// Convert Player Count to Little Endian Bytes
 		short playerCount = 257;
-		byte[] playerCountBytes = new byte[] {(byte)(playerCount & 0xff), (byte)((playerCount >> 8) & 0xff)};
+		byte[] playerCountBytes = PacketHelper.convertShortToLE(playerCount);
 
 		// System.out.println("Player Count: " + Arrays.toString(playerCountBytes));
 
@@ -76,7 +76,7 @@ public class HandshakeHandler {
 
 		byte[] messageLength = BigInteger.valueOf(Integer.reverseBytes(message.length + 5)).toByteArray();
 		byte[] masterBytesLength = BigInteger.valueOf(Integer.reverseBytes(fakeMasterName.getBytes().length + 5)).toByteArray();
-		byte[] header = new byte[] {SendOption.NONE.getSendOption(), messageLength[0], messageLength[1], masterBytes.FLAG.getMasterByte(), masterBytes.UNKNOWN.getMasterByte(), (byte) numberOfMasters, masterBytesLength[0], masterBytesLength[1], masterBytes.UNKNOWN_FLAG_TEMP.getMasterByte(), (byte) fakeMasterName.getBytes().length};
+		byte[] header = new byte[] {SendOption.NONE.getSendOption(), messageLength[0], messageLength[1], MasterBytes.FLAG.getMasterByte(), MasterBytes.UNKNOWN.getMasterByte(), (byte) numberOfMasters, masterBytesLength[0], masterBytesLength[1], MasterBytes.UNKNOWN_FLAG_TEMP.getMasterByte(), (byte) fakeMasterName.getBytes().length};
 
 		byte[] reply = PacketHelper.getCombinedReply(header, message);
 
@@ -85,14 +85,14 @@ public class HandshakeHandler {
 		return reply;
 	}
 
-	private enum masterBytes {
+	private enum MasterBytes {
 		FLAG((byte) 0x0e),
 		UNKNOWN((byte) 0x01),
 		UNKNOWN_FLAG_TEMP((byte) 0x00);
 
 		private final byte masterByte;
 
-		masterBytes(byte masterByte) {
+		MasterBytes(byte masterByte) {
 			this.masterByte = masterByte;
 		}
 
