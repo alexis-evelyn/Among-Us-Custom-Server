@@ -1,6 +1,5 @@
 package me.alexisevelyn.crewmate;
 
-import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
 import me.alexisevelyn.crewmate.handlers.PingHandler;
@@ -48,6 +47,7 @@ public class Server extends Thread {
 			}
 		}
 
+		System.out.println("Server Shutdown!!!");
 		socket.close();
 	}
 

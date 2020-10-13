@@ -8,7 +8,6 @@ import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
-import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 
 import java.net.DatagramPacket;
 import java.nio.charset.StandardCharsets;

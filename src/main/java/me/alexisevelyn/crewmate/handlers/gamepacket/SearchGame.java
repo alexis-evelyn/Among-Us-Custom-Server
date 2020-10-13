@@ -7,7 +7,6 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 
 import java.net.DatagramPacket;
-import java.util.Arrays;
 
 public class SearchGame {
 	public static byte[] handleSearchPublicGame(DatagramPacket packet) {
