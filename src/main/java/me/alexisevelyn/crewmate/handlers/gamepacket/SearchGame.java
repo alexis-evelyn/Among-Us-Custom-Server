@@ -7,6 +7,7 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 
 import java.net.DatagramPacket;
+import java.util.ArrayList;
 
 public class SearchGame {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
@@ -27,7 +28,7 @@ public class SearchGame {
 		int numberOfImposters = buffer[38];
 
 		// List of Maps Being Included In Search
-		Map[] maps = GamePacketHandler.parseMapsSearch(buffer[14]);
+		Map[] maps = parseMapsSearch(buffer[14]);
 		StringBuilder printableMapsList = new StringBuilder();
 
 		// Append Commas To List and Then Remove Last Comma
@@ -132,5 +133,72 @@ public class SearchGame {
 		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknown, unknown, 0x00, 0x10, (byte) (message.length), 0x00, 0x00};
 
 		return PacketHelper.getCombinedReply(header, message);
+	}
+
+	public static Map[] parseMapsSearch(int mapNumber) {
+		// From what I'm hearing, this is a bitfield. https://discordapp.com/channels/750301084202958899/761731747762667560/765242112031064074
+		// This function parses as a bitfield so if say 8 maps exist, then we don't have to have every possible map combination written in code.
+
+		/*
+		 * Math (Prior To Bitfield Knowledge)
+		 *
+		 *             1 (Skeld)
+		 *             2 (Mira)
+		 *     1 + 2 = 3 (Skeld + Mira)
+		 *             4 (Polus)
+		 *     1 + 4 = 5 (Skeld + Polus)
+		 *     2 + 4 = 6 (Mira + Polus)
+		 * 1 + 2 + 4 = 7 (All)
+		 */
+
+		/*
+		 * Bitfield
+		 *
+		 *     ABC
+		 * 1 = 001
+		 * 2 = 010
+		 * 3 = 011
+		 * 4 = 100
+		 * 5 = 101
+		 * 6 = 110
+		 * 7 = 111
+		 *
+		 * A = Polus
+		 * B = Mira-HQ
+		 * C = Skeld
+		 */
+
+		// What the full bytes would look like
+		// 00000001 = Skeld
+		// 00000010 = Mira-HQ
+		// 00000100 = Polus
+
+//		System.out.println("Skeld: " + (1 & mapNumber));
+//		System.out.println("Mira-HQ: " + (2 & mapNumber));
+//		System.out.println("Polus: " + (4 & mapNumber));
+
+		int skeldBit = 0b1;
+		int miraBit = 0b10;
+		int polusBit = 0b100;
+
+		ArrayList<Map> maps = new ArrayList<>();
+		if ((skeldBit & mapNumber) > 0) {
+			// Skeld
+			maps.add(Map.SKELD);
+		}
+
+		if ((miraBit & mapNumber) > 0) {
+			// Mira-HQ
+			maps.add(Map.MIRA_HQ);
+		}
+
+		if ((polusBit & mapNumber) > 0) {
+			// Polus
+			maps.add(Map.POLUS);
+		}
+
+		// https://stackoverflow.com/a/5061692/6828099
+		// Apparently it's supposed to be marked as empty now
+		return maps.toArray(new Map[0]);
 	}
 }

@@ -37,6 +37,7 @@ public class HandshakeHandler {
 		// Until I Understand More About the Masters List, This Is What I'm Returning
 		// TODO: Figure out what the unknown bytes are to make the client happy!!!
 		// https://github.com/alexis-evelyn/Among-Us-Protocol/wiki/Master-Servers-List
+		// https://gist.github.com/codyphobe/cce98bfc9221a00f7d1c8fede5e87f9c
 
 		// TODO: Check if InetSocketAddress
 		InetSocketAddress queriedIP = (InetSocketAddress) packet.getSocketAddress();
