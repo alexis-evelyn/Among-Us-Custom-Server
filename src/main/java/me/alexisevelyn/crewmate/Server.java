@@ -51,6 +51,8 @@ public class Server extends Thread {
 		socket.close();
 	}
 
+	// TODO: TODO TODO - https://discord.com/channels/757425025379729459/759066383090188308/765419168466993162
+	// Yeah, lengths for Hazel messages are always 2 bytes little-endian - codyphobe from Imposter Discord
 	private void parsePacketAndReply(DatagramPacket packet) throws IOException {
 		if (packet.getData().length < 1)
 			return;
