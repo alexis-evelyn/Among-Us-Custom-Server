@@ -13,6 +13,8 @@ import java.net.SocketException;
 import java.util.Arrays;
 
 public class Server extends Thread {
+	// https://www.scadacore.com/tools/programming-calculators/online-hex-converter/
+
 	private final DatagramSocket socket;
 	private boolean running = false;
 	private final byte[] buf = new byte[256];

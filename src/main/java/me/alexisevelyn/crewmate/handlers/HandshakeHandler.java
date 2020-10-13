@@ -3,6 +3,7 @@ package me.alexisevelyn.crewmate.handlers;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
+import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +28,7 @@ public class HandshakeHandler {
 			// Start Ping
 			return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), 0x00, 0x01, (byte) 0xff};
 			// return this.getUnderConstructionMessage(name); // this.getFakeMastersList(packet);
+			// return getFakeMastersList(packet);
 		}
 
 		// Invalid Packet Received - Close Connection
@@ -34,36 +36,68 @@ public class HandshakeHandler {
 	}
 
 	private static byte[] getFakeMastersList(DatagramPacket packet) {
-		// Until I Understand More About the Masters List, This Is What I'm Returning
-		// TODO: Figure out what the unknown bytes are to make the client happy!!!
+		// TODO: Figure out how to fix this!!!
+
 		// https://github.com/alexis-evelyn/Among-Us-Protocol/wiki/Master-Servers-List
 		// https://gist.github.com/codyphobe/cce98bfc9221a00f7d1c8fede5e87f9c
 
 		// TODO: Check if InetSocketAddress
 		InetSocketAddress queriedIP = (InetSocketAddress) packet.getSocketAddress();
 
+		// Convert Port to Little Endian Bytes
+		short port = 22023; // TODO: Figure out how to extract port number from packet
+		byte[] encodedPort = new byte[] {(byte)(port & 0xff), (byte)((port >> 8) & 0xff)}; // This is supposed to be 0x07 0x56, but for some reason is 0x07 0x86 (for port 22023)
+		encodedPort = new byte[] {0x07, 0x56};
+
 		String fakeMasterName = "Pseudo-Master-1";
 		int numberOfMasters = 1;
 
-		System.out.println("Queried IP: " + queriedIP.getAddress());
-		System.out.println("Encoded IP: " + Arrays.toString(queriedIP.getAddress().getAddress()));
+		// System.out.println("Queried IP: " + queriedIP.getAddress());
+		// System.out.println("Queried Port: " + port);
 
-		// Represent Unknown Data
-		int unknown = 0;
+		// System.out.println("Encoded IP: " + Arrays.toString(queriedIP.getAddress().getAddress()));
+		System.out.println("Encoded Port: " + Arrays.toString(encodedPort));
 
-		byte[] endMessage = new byte[] {0x07, 0x56, (byte) unknown, (byte) unknown}; // Another Unknown if Not Last Master in List
+		// Convert Player Count to Little Endian Bytes
+		short playerCount = 257;
+		byte[] playerCountBytes = new byte[] {(byte)(playerCount & 0xff), (byte)((playerCount >> 8) & 0xff)};
+
+		// System.out.println("Player Count: " + Arrays.toString(playerCountBytes));
+
+		byte[] endMessage = new byte[] {encodedPort[0], encodedPort[1], playerCountBytes[0], playerCountBytes[1]}; // Another Unknown if Not Last Master in List
 		byte[] ipMessage = PacketHelper.getCombinedReply(fakeMasterName.getBytes(), queriedIP.getAddress().getAddress());
 
 		byte[] message = PacketHelper.getCombinedReply(ipMessage, endMessage);
 
 		// 00 38 00 0e 01 02 18
 		// The + 4 from (message.length + 4) comes from starting at (byte) numberOfMasters
-		byte[] header = new byte[] {SendOption.NONE.getSendOption(), (byte) (message.length + 4), 0x00, 0x0e, (byte) numberOfMasters, (byte) unknown, 0x00, 0x00, (byte) fakeMasterName.getBytes().length};
+//		System.out.println("Message Length: " + Arrays.toString(BigInteger.valueOf(255 + 4).toByteArray()));
+//		System.out.println("Message Length Reversed: " + Arrays.toString(BigInteger.valueOf(Integer.reverseBytes(255 + 4)).toByteArray()));
+
+		byte[] messageLength = BigInteger.valueOf(Integer.reverseBytes(message.length + 5)).toByteArray();
+		byte[] masterBytesLength = BigInteger.valueOf(Integer.reverseBytes(fakeMasterName.getBytes().length + 5)).toByteArray();
+		byte[] header = new byte[] {SendOption.NONE.getSendOption(), messageLength[0], messageLength[1], masterBytes.FLAG.getMasterByte(), masterBytes.UNKNOWN.getMasterByte(), (byte) numberOfMasters, masterBytesLength[0], masterBytesLength[1], masterBytes.UNKNOWN_FLAG_TEMP.getMasterByte(), (byte) fakeMasterName.getBytes().length};
 
 		byte[] reply = PacketHelper.getCombinedReply(header, message);
 
-		System.out.println("Masters List Bytes: " + Arrays.toString(reply));
+		// System.out.println("Masters List Bytes: " + Arrays.toString(reply));
 
 		return reply;
+	}
+
+	private enum masterBytes {
+		FLAG((byte) 0x0e),
+		UNKNOWN((byte) 0x01),
+		UNKNOWN_FLAG_TEMP((byte) 0x00);
+
+		private final byte masterByte;
+
+		masterBytes(byte masterByte) {
+			this.masterByte = masterByte;
+		}
+
+		public byte getMasterByte() {
+			return this.masterByte;
+		}
 	}
 }
