@@ -27,15 +27,22 @@ public class SearchGame {
 
 		// List of Maps Being Included In Search
 		Map[] maps = GamePacketHandler.parseMapsSearch(buffer[14]);
+		StringBuilder printableMapsList = new StringBuilder();
+
+		// Append Commas To List and Then Remove Last Comma
+		for (Map map : maps) {
+			printableMapsList.append(Map.getMapName(map)).append(", ");
+		}
+		printableMapsList.delete(printableMapsList.length() - 2, printableMapsList.length() - 1);
 
 		// Language To Search By
-		int language = Language.convertToInt(buffer[10], buffer[11]);
+		Language language = Language.getLanguage(Language.convertToInt(buffer[10], buffer[11]));
 
 		System.out.println("Number of Imposters: " + ((numberOfImposters == 0) ? "Any" : numberOfImposters));
-		System.out.println("Maps: " + Arrays.toString(maps));
-		System.out.println("Language: " + GamePacketHandler.getLanguageName(language));
+		System.out.println("Maps: " + printableMapsList.toString());
+		System.out.println("Language: " + Language.getLanguageName(language));
 
-		return getFakeSearchBytes(numberOfImposters, maps, language);
+		return getFakeSearchBytes(numberOfImposters, maps, language.getLanguage());
 	}
 
 	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) {

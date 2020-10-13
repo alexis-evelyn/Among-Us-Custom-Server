@@ -3,6 +3,7 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 import me.alexisevelyn.crewmate.GameCodeHelper;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.Language;
+import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
@@ -27,10 +28,10 @@ public class StartGame {
 		int maxPlayers = buffer[8];
 		int map = buffer[13];
 		int imposterCount = buffer[37];
-		int language = Language.convertToInt(buffer[9], buffer[10]);
+		Language language = Language.getLanguage(Language.convertToInt(buffer[9], buffer[10]));
 
-		String mapName = GamePacketHandler.getMapName(map);
-		String languageName = GamePacketHandler.getLanguageName(language);
+		String mapName = Map.getMapName(Map.getMap(map));
+		String languageName = Language.getLanguageName(language);
 
 		String extraData = "Max Players: " + maxPlayers + "\n" +
 				"Map: " + mapName + "\n" +

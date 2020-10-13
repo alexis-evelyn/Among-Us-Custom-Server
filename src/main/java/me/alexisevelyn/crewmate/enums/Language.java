@@ -1,5 +1,7 @@
 package me.alexisevelyn.crewmate.enums;
 
+import java.util.HashMap;
+
 public enum Language {
 	ENGLISH(convertToInt(0x00, 0x01)),
 	OTHER(convertToInt(0x01, 0x00)),
@@ -22,7 +24,44 @@ public enum Language {
 		this.language = language;
 	}
 
+	private static final java.util.Map<Integer, Language> languageSearch = new HashMap<>();
+
 	public int getLanguage() {
 		return this.language;
+	}
+
+	public static Language getLanguage(int languageInteger) {
+		return languageSearch.get(languageInteger);
+	}
+
+	public static String getLanguageName(Language language) {
+		switch (language) {
+			case ARABIC:
+				return "Arabic";
+			case ENGLISH:
+				return "English";
+			case FILIPINO:
+				return "Filipino";
+			case KOREAN:
+				return "Korean";
+			case OTHER:
+				return "Other";
+			case POLISH:
+				return "Polish";
+			case PORTUGUESE:
+				return "Portuguese";
+			case RUSSIAN:
+				return "Russian";
+			case SPANISH:
+				return "Spanish";
+			default:
+				return "Unknown";
+		}
+	}
+
+	static {
+		for (Language languageKey : Language.values()) {
+			languageSearch.put(languageKey.language, languageKey);
+		}
 	}
 }
