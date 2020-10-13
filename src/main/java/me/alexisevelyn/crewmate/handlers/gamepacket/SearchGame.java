@@ -3,6 +3,7 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
+import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 
 import java.net.DatagramPacket;
@@ -120,7 +121,7 @@ public class SearchGame {
 		byte[] messagePartOne = new byte[] {(byte) (3 + combinedMessagePartTwo.length), unknown, unknown, unknown, 0x07, 0x56};
 
 		byte[] message = PacketHelper.getCombinedReply(messagePartOne, combinedMessagePartTwo);
-		byte[] header = new byte[] {0x01, 0x00, unknown, unknown, 0x00, 0x10, (byte) (message.length), 0x00, 0x00};
+		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknown, unknown, 0x00, 0x10, (byte) (message.length), 0x00, 0x00};
 
 		return PacketHelper.getCombinedReply(header, message);
 	}

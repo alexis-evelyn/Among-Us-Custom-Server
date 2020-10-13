@@ -57,7 +57,7 @@ public class HandshakeHandler {
 
 		// 00 38 00 0e 01 02 18
 		// The + 4 from (message.length + 4) comes from starting at (byte) numberOfMasters
-		byte[] header = new byte[] {0x00, (byte) (message.length + 4), 0x00, 0x0e, (byte) numberOfMasters, (byte) unknown, 0x00, 0x00, (byte) fakeMasterName.getBytes().length};
+		byte[] header = new byte[] {SendOption.NONE.getSendOption(), (byte) (message.length + 4), 0x00, 0x0e, (byte) numberOfMasters, (byte) unknown, 0x00, 0x00, (byte) fakeMasterName.getBytes().length};
 
 		byte[] reply = PacketHelper.getCombinedReply(header, message);
 

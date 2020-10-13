@@ -65,9 +65,10 @@ public class Server extends Thread {
 			case 0x0c: // SendOption.PING
 				replyBuffer = PingHandler.handlePing(packet);
 				break;
-			case 0x01:
+			case 0x01: // SendOption.RELIABLE
 				replyBuffer = GamePacketHandler.handleGamePacket(packet);
 				break;
+			case 0x00: // SendOption.NONE (Not Handled Yet)
 			default:
 				return;
 		}

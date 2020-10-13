@@ -4,6 +4,7 @@ import me.alexisevelyn.crewmate.GameCodeHelper;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.TerminalColors;
+import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
@@ -52,7 +53,7 @@ public class StartGame {
 		// Game Code - SIXLXQ (45:9a:17:80) - Red - Goggles - Private - 1/10 Players
 		// S->C - 0000   01 00 01 04 00 00 45 9a 17 80                     ......E...
 
-		byte[] header = new byte[] {0x01, 0x00, 0x01, 0x04, 0x00, 0x00};
+		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x01, 0x04, 0x00, 0x00};
 		byte[] message = new byte[] {0x3b, (byte) 0xbe, 0x25, (byte) 0x8c}; // Game Code - ABCDEF (3b:be:25:8c)
 
 		// The client will respond with a packet that triggers handleJoinPrivateGame(DatagramPacket);
@@ -107,7 +108,7 @@ public class StartGame {
 
 		byte unknown = 0x00;
 
-		byte[] header = new byte[] {0x01, 0x00, 0x02, 0x0d, 0x00, 0x07};
+		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x02, 0x0d, 0x00, 0x07};
 		byte[] headerWithGameCode = PacketHelper.getCombinedReply(header, gameCodeBytes);
 
 		byte[] messagePartOne = new byte[] {unknown, unknown, unknown, 0x00, unknown, unknown, unknown, 0x00, 0x00, 0x06, 0x00, 0x0a};
@@ -185,7 +186,7 @@ public class StartGame {
 		byte[] buffer = packet.getData();
 
 		// Must Equal 01 00 03 (Join Game Via Code) or 01 00 04 (Create Game)
-		if (!(buffer[0] == 0x01 && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
+		if (!(buffer[0] == SendOption.RELIABLE.getSendOption() && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
 			return new byte[0];
 
 		byte unknown = buffer[3]; // 180 for Alexis and 172 for Hi - +8

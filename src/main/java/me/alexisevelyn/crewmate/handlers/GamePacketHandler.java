@@ -6,6 +6,7 @@ import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
 import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 
 import java.net.DatagramPacket;
+import java.util.ArrayList;
 
 public class GamePacketHandler {
 	// TODO: Read Game Packet Data
@@ -27,8 +28,12 @@ public class GamePacketHandler {
 
 	public static Map[] parseMapsSearch(int mapNumber) {
 		// Surely there's some way to calculate this so I can dynamically add maps later.
+		// From what I'm hearing, this is a bitfield. https://discordapp.com/channels/750301084202958899/761731747762667560/765242112031064074
+		// This function parses as a bitfield so if say 8 maps exist, then we don't have to have every possible map combination written in code.
 
 		/*
+		 * Math (Prior To Bitfield Knowledge)
+		 *
 		 *             1 (Skeld)
 		 *             2 (Mira)
 		 *     1 + 2 = 3 (Skeld + Mira)
@@ -38,32 +43,55 @@ public class GamePacketHandler {
 		 * 1 + 2 + 4 = 7 (All)
 		 */
 
-		Map[] maps;
-		switch (mapNumber) {
-			case 1:
-				maps = new Map[] {Map.SKELD};
-				break;
-			case 2:
-				maps = new Map[] {Map.MIRA_HQ};
-				break;
-			case 3:
-				maps = new Map[] {Map.SKELD, Map.MIRA_HQ};
-				break;
-			case 4:
-				maps = new Map[] {Map.POLUS};
-				break;
-			case 5:
-				maps = new Map[] {Map.SKELD, Map.POLUS};
-				break;
-			case 6:
-				maps = new Map[] {Map.MIRA_HQ, Map.POLUS};
-				break;
-			case 7:
-			default:
-				maps = new Map[] {Map.SKELD, Map.MIRA_HQ, Map.POLUS};
+		/*
+		 * Bitfield
+		 *
+		 *     ABC
+		 * 1 = 001
+		 * 2 = 010
+		 * 3 = 011
+		 * 4 = 100
+		 * 5 = 101
+		 * 6 = 110
+		 * 7 = 111
+		 *
+		 * A = Polus
+		 * B = Mira-HQ
+		 * C = Skeld
+		 */
+
+		// What the full bytes would look like
+		// 00000001 = Skeld
+		// 00000010 = Mira-HQ
+		// 00000100 = Polus
+
+//		System.out.println("Skeld: " + (1 & mapNumber));
+//		System.out.println("Mira-HQ: " + (2 & mapNumber));
+//		System.out.println("Polus: " + (4 & mapNumber));
+
+		int skeldBit = 0b1;
+		int miraBit = 0b10;
+		int polusBit = 0b100;
+
+		ArrayList<Map> maps = new ArrayList<>();
+		if ((skeldBit & mapNumber) > 0) {
+			// Skeld
+			maps.add(Map.SKELD);
 		}
 
-		return maps;
+		if ((miraBit & mapNumber) > 0) {
+			// Mira-HQ
+			maps.add(Map.MIRA_HQ);
+		}
+
+		if ((polusBit & mapNumber) > 0) {
+			// Polus
+			maps.add(Map.POLUS);
+		}
+
+		// https://stackoverflow.com/a/5061692/6828099
+		// Apparently it's supposed to be marked as empty now
+		return maps.toArray(new Map[0]);
 	}
 
 	public static String getMapName(int map) {
@@ -74,7 +102,7 @@ public class GamePacketHandler {
 		else if (map == Map.POLUS.getMap())
 			return  "Polus";
 
-		return  "Unknown";
+		return "Unknown";
 	}
 
 	public static String getLanguageName(int language) {
