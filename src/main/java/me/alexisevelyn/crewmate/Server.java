@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
 import me.alexisevelyn.crewmate.handlers.PingHandler;
@@ -52,25 +53,31 @@ public class Server extends Thread {
 	}
 
 	// TODO: TODO TODO - https://discord.com/channels/757425025379729459/759066383090188308/765419168466993162
-	// Yeah, lengths for Hazel messages are always 2 bytes little-endian - codyphobe from Imposter Discord
+	// "Yeah, lengths for Hazel messages are always 2 bytes little-endian" - codyphobe from Imposter Discord
 	private void parsePacketAndReply(DatagramPacket packet) throws IOException {
 		if (packet.getData().length < 1)
 			return;
 
+		SendOption sendOption = SendOption.getSendOption(packet.getData()[0]);
+
+		// Throw Out Any Unknown Packets
+		if (sendOption == null)
+			return;
+
 		byte[] replyBuffer;
-		switch (packet.getData()[0]) {
-			// I don't know how to reference this particular enum in a switch statement
-			case 0x08: // SendOption.HELLO
+		switch (sendOption) {
+			case HELLO: // Initial Connection (Handshake)
 				replyBuffer = HandshakeHandler.handleHandshake(packet);
 				break;
-			case 0x0a: // SendOption.ACKNOWLEDGEMENT
-			case 0x0c: // SendOption.PING
+			case ACKNOWLEDGEMENT: // Reply To Ping
+			case PING: // Ping
 				replyBuffer = PingHandler.handlePing(packet);
 				break;
-			case 0x01: // SendOption.RELIABLE
+			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
 				replyBuffer = GamePacketHandler.handleGamePacket(packet);
 				break;
-			case 0x00: // SendOption.NONE (Not Handled Yet)
+			case NONE: // Generic Unreliable Packet - Not Handled Yet
+			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
 			default:
 				return;
 		}

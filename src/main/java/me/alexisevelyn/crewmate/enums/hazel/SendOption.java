@@ -1,5 +1,7 @@
 package me.alexisevelyn.crewmate.enums.hazel;
 
+import java.util.HashMap;
+
 public enum SendOption {
 	// Names From: https://github.com/willardf/Hazel-Networking/blob/master/Hazel/SendOption.cs
 	// As Well As: https://github.com/willardf/Hazel-Networking/blob/master/Hazel/Udp/SendOptionInternal.cs
@@ -18,8 +20,19 @@ public enum SendOption {
 		this.sendOption = sendOption;
 	}
 
+	private static final java.util.Map<Byte, SendOption> sendOptionHashMap = new HashMap<>();
+
+	public static SendOption getSendOption(byte sendOptionValue) {
+		return sendOptionHashMap.get(sendOptionValue);
+	}
 
 	public byte getSendOption() {
 		return this.sendOption;
+	}
+
+	static {
+		for (SendOption sendOptionKey : SendOption.values()) {
+			sendOptionHashMap.put(sendOptionKey.sendOption, sendOptionKey);
+		}
 	}
 }
