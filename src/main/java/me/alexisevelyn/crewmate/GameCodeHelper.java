@@ -5,6 +5,7 @@ import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 
 public class GameCodeHelper {
 	// https://www.geeksforgeeks.org/bitwise-operators-in-java/
+	// https://gist.github.com/alexis-evelyn/f541d27811b62fd987c93cf79ed049a7
 	public static String parseGameCode(byte[] gameCodeBytes) throws InvalidBytesException, InvalidGameCodeException {
 		if (gameCodeBytes == null)
 			throw new InvalidBytesException("Check to make sure your assigned your game code variable before passing it to me!!!");

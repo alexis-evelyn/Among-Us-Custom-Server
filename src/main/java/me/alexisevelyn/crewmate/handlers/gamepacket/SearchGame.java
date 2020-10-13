@@ -9,6 +9,8 @@ import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import java.net.DatagramPacket;
 
 public class SearchGame {
+	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
+
 	public static byte[] handleSearchPublicGame(DatagramPacket packet) {
 		// Request Search
 		// 0000   01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 01 00   ...,...*........
