@@ -6,6 +6,10 @@ You can find out more from [this issue][nickcis-issue], [my Discord][discord], a
 
 Some dumps of what I wrote to some friends about this will be pasted below to help explain what my goals are before I write this properly.
 
+# Note
+
+To connect to this server, you can either use the scripts [redirect-to-localhost.sh][redirect-file] and [remove-redirect-to-localhost.sh][remove-redirect-file] (to redirect the connection and remove the redirect respectively), or you can change your region file according to [this site][regionFileGenerator]. Eventually a region file generator will be implemented into this server to give to clients. If you are connecting to [localhost:22023][localhost], you can use this [region file][regionFile] I generated for that purpose.
+
 ### Me:
 
 I'm working on a custom Among Us server which will allow for custom styled games. Especially minigames like what you may have seen some youtubers do (but at least the minigame will be enforceable by code so it can be played in public groups).
@@ -40,3 +44,8 @@ So, for the detecting the modded client, I'll see what packet headers are unused
 [nickcis-issue]: https://github.com/NickCis/among-us-proxy/issues/4
 [discord]: https://discord.com/invite/DFUaVMx
 [wiki]: https://github.com/alexis-evelyn/Among-Us-Protocol/wiki
+[regionFileGenerator]: https://aeonlucid.com/Impostor/
+[localhost]: udp://127.0.0.1:22023/
+[redirect-file]: redirect-to-localhost.sh
+[remove-redirect-file]: remove-redirect-to-localhost.sh
+[regionFile]: regionInfo.dat
