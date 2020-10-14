@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate.handlers.gamepacket;
 
+import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
@@ -41,9 +42,9 @@ public class SearchGame {
 		// Language To Search By
 		Language language = Language.getLanguage(Language.convertToInt(buffer[10], buffer[11]));
 
-		System.out.println("Number of Imposters: " + ((numberOfImposters == 0) ? "Any" : numberOfImposters));
-		System.out.println("Maps: " + printableMapsList.toString());
-		System.out.println("Language: " + Language.getLanguageName(language));
+		LogHelper.printLine("Number of Imposters: " + ((numberOfImposters == 0) ? "Any" : numberOfImposters));
+		LogHelper.printLine("Maps: " + printableMapsList.toString());
+		LogHelper.printLine("Language: " + Language.getLanguageName(language));
 
 		return getFakeSearchBytes(numberOfImposters, maps, language.getLanguage());
 	}
@@ -181,9 +182,9 @@ public class SearchGame {
 		// 00000010 = Mira-HQ
 		// 00000100 = Polus
 
-//		System.out.println("Skeld: " + (1 & mapNumber));
-//		System.out.println("Mira-HQ: " + (2 & mapNumber));
-//		System.out.println("Polus: " + (4 & mapNumber));
+//		LogHelper.printLine("Skeld: " + (1 & mapNumber));
+//		LogHelper.printLine("Mira-HQ: " + (2 & mapNumber));
+//		LogHelper.printLine("Polus: " + (4 & mapNumber));
 
 		int skeldBit = 0b1;
 		int miraBit = 0b10;

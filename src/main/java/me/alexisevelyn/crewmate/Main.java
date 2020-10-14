@@ -1,14 +1,12 @@
 package me.alexisevelyn.crewmate;
 
-import me.alexisevelyn.crewmate.terminal.CommandHandler;
-
 import java.net.SocketException;
 
 public class Main {
 	// TODO: Add a region file generator - Same Format As https://gist.github.com/codyphobe/cce98bfc9221a00f7d1c8fede5e87f9c
 
 	public static Server server;
-	public static CommandHandler terminal;
+	public static Terminal terminal;
 
 	public static void main(String[] args) {
 		// Start Server
@@ -19,7 +17,7 @@ public class Main {
 	}
 
 	public static void startServer() {
-		System.out.println("Starting Server!!!");
+		LogHelper.printLine("Starting Server!!!");
 
 		try {
 			server = new Server();
@@ -30,7 +28,7 @@ public class Main {
 	}
 
 	public static void startTerminal() {
-		terminal = new CommandHandler();
+		terminal = new Terminal();
 		terminal.start();
 	}
 
@@ -38,7 +36,7 @@ public class Main {
 		return server;
 	}
 
-	public static CommandHandler getTerminal() {
+	public static Terminal getTerminal() {
 		return terminal;
 	}
 }

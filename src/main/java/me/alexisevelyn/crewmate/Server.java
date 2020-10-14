@@ -29,6 +29,9 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
+		// For Cleaning Up When Shutdown
+		// this.setupShutdownHook(); // TODO: Fix hanging before enabling this
+
 		running = true;
 		boolean justStarted = false;
 
@@ -38,7 +41,7 @@ public class Server extends Thread {
 			if (!justStarted) {
 				justStarted = true;
 
-				System.out.println("Started Server!!!");
+				LogHelper.printLine("Started Server!!!");
 			}
 
 			try {
@@ -125,13 +128,13 @@ public class Server extends Thread {
 		}
 	}
 
-	public void shutdown() {
+	private void shutdown() {
 		this.running = false;
 
-		System.out.println("Server Shutdown!!!");
+		LogHelper.printLine("Server Shutdown!!!");
 
 		// For some reason, this doesn't close the existing connection and doesn't allow the rest of the code to run.
-		this.socket.disconnect();
+		// this.socket.disconnect();
 
 		// This never runs.
 		this.socket.close();
@@ -139,5 +142,9 @@ public class Server extends Thread {
 
 	public boolean isRunning() {
 		return this.running;
+	}
+
+	private void setupShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> Main.getServer().exit()));
 	}
 }

@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate.handlers;
 
+import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
@@ -23,7 +24,7 @@ public class HandshakeHandler {
 			System.arraycopy(buffer, 9, nameBytes, 0, buffer[8]);
 			String name = new String(nameBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
-			System.out.println("Name: " + name);
+			LogHelper.printLine("Name: " + name);
 
 			// Start Ping
 			return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), 0x00, 0x01, (byte) 0xff};
@@ -52,17 +53,17 @@ public class HandshakeHandler {
 		String fakeMasterName = "Pseudo-Master-1";
 		int numberOfMasters = 1;
 
-		// System.out.println("Queried IP: " + queriedIP.getAddress());
-		// System.out.println("Queried Port: " + port);
+		// LogHelper.printLine("Queried IP: " + queriedIP.getAddress());
+		// LogHelper.printLine("Queried Port: " + port);
 
-		// System.out.println("Encoded IP: " + Arrays.toString(queriedIP.getAddress().getAddress()));
-		System.out.println("Encoded Port: " + Arrays.toString(encodedPort));
+		// LogHelper.printLine("Encoded IP: " + Arrays.toString(queriedIP.getAddress().getAddress()));
+		LogHelper.printLine("Encoded Port: " + Arrays.toString(encodedPort));
 
 		// Convert Player Count to Little Endian Bytes
 		short playerCount = 257;
 		byte[] playerCountBytes = PacketHelper.convertShortToLE(playerCount);
 
-		// System.out.println("Player Count: " + Arrays.toString(playerCountBytes));
+		// LogHelper.printLine("Player Count: " + Arrays.toString(playerCountBytes));
 
 		byte[] endMessage = new byte[] {encodedPort[0], encodedPort[1], playerCountBytes[0], playerCountBytes[1]}; // Another Unknown if Not Last Master in List
 		byte[] ipMessage = PacketHelper.getCombinedReply(fakeMasterName.getBytes(), queriedIP.getAddress().getAddress());
@@ -71,8 +72,8 @@ public class HandshakeHandler {
 
 		// 00 38 00 0e 01 02 18
 		// The + 4 from (message.length + 4) comes from starting at (byte) numberOfMasters
-//		System.out.println("Message Length: " + Arrays.toString(BigInteger.valueOf(255 + 4).toByteArray()));
-//		System.out.println("Message Length Reversed: " + Arrays.toString(BigInteger.valueOf(Integer.reverseBytes(255 + 4)).toByteArray()));
+//		LogHelper.printLine("Message Length: " + Arrays.toString(BigInteger.valueOf(255 + 4).toByteArray()));
+//		LogHelper.printLine("Message Length Reversed: " + Arrays.toString(BigInteger.valueOf(Integer.reverseBytes(255 + 4)).toByteArray()));
 
 		byte[] messageLength = BigInteger.valueOf(Integer.reverseBytes(message.length + 5)).toByteArray();
 		byte[] masterBytesLength = BigInteger.valueOf(Integer.reverseBytes(fakeMasterName.getBytes().length + 5)).toByteArray();
@@ -80,7 +81,7 @@ public class HandshakeHandler {
 
 		byte[] reply = PacketHelper.getCombinedReply(header, message);
 
-		// System.out.println("Masters List Bytes: " + Arrays.toString(reply));
+		// LogHelper.printLine("Masters List Bytes: " + Arrays.toString(reply));
 
 		return reply;
 	}

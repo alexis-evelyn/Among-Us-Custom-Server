@@ -1,6 +1,7 @@
 package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.GameCodeHelper;
+import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
@@ -37,7 +38,7 @@ public class StartGame {
 				"Imposters: " + imposterCount + "\n" +
 				"Language: " + languageName;
 
-		System.out.println(extraData);
+		LogHelper.printLine(extraData);
 
 		return getRandomGameCode();
 	}
@@ -85,7 +86,7 @@ public class StartGame {
 		try {
 			gameCode = GameCodeHelper.parseGameCode(gameCodeBytes);
 		} catch (InvalidBytesException e) {
-			System.out.println("Game Code Exception: " + e.getMessage());
+			LogHelper.printLine("Game Code Exception: " + e.getMessage());
 			e.printStackTrace();
 
 			return PacketHelper.closeWithMessage("Server side error with reading game code!!!");
@@ -93,8 +94,8 @@ public class StartGame {
 			return PacketHelper.closeWithMessage(e.getMessage());
 		}
 
-		// System.out.println("Game Code (Byte Form): " + Arrays.toString(gameCodeBytes));
-		System.out.println("Game Code (Integer Form): " + gameCode);
+		// LogHelper.printLine("Game Code (Byte Form): " + Arrays.toString(gameCodeBytes));
+		LogHelper.printLine("Game Code (Integer Form): " + gameCode);
 
 		// Game Code - NPGWQQ (cd:98:00:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 cd 98 00 80 07                  ...........
@@ -205,15 +206,15 @@ public class StartGame {
 		byte[] nameBytesTwo = new byte[nameLength];
 		System.arraycopy(buffer, 168 + nameLength, nameBytesTwo, 0, nameLengthTwo);
 
-		System.out.println(TerminalColors.ANSI_TEXT_RED);
-		System.out.println("Unknown: " + unknown);
-		System.out.println("Unknown 2: " + unknownTwo);
-		System.out.println("Unknown 3: " + unknownThree);
-		System.out.println("Unknown 4: " + unknownFour);
+		LogHelper.printLine(TerminalColors.ANSI_TEXT_RED);
+		LogHelper.printLine("Unknown: " + unknown);
+		LogHelper.printLine("Unknown 2: " + unknownTwo);
+		LogHelper.printLine("Unknown 3: " + unknownThree);
+		LogHelper.printLine("Unknown 4: " + unknownFour);
 
-		System.out.println("Name: " + new String(nameBytes, StandardCharsets.UTF_8));
-		System.out.println("Name 2: " + new String(nameBytesTwo, StandardCharsets.UTF_8));
-		System.out.println(TerminalColors.ANSI_RESET);
+		LogHelper.printLine("Name: " + new String(nameBytes, StandardCharsets.UTF_8));
+		LogHelper.printLine("Name 2: " + new String(nameBytesTwo, StandardCharsets.UTF_8));
+		LogHelper.printLine(TerminalColors.ANSI_RESET);
 
 		return new byte[0];
 	}
