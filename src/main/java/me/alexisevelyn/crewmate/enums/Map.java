@@ -1,6 +1,9 @@
 package me.alexisevelyn.crewmate.enums;
 
+import me.alexisevelyn.crewmate.Main;
+
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
 public enum Map {
 	SKELD(0),
@@ -24,15 +27,16 @@ public enum Map {
 	}
 
 	public static String getMapName(Map map) {
+		ResourceBundle translation = Main.getTranslationBundle();
 		switch (map) {
 			case SKELD:
-				return "The Skeld";
+				return translation.getString("skeld");
 			case MIRA_HQ:
-				return "Mira HQ";
+				return translation.getString("mira_hq");
 			case POLUS:
-				return "Polus";
+				return translation.getString("polus");
 			default:
-				return "Unknown";
+				return translation.getString("unknown");
 		}
 	}
 

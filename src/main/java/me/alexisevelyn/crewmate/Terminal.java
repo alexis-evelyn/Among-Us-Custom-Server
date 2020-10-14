@@ -1,41 +1,51 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.handlers.CommandHandler;
+
 import java.util.Scanner;
 
 public class Terminal extends Thread {
+	// This prefix will be changeable via commands in the future
+	private String prefix = "# ";
 	private boolean running = false;
 	Scanner input;
 
 	@Override
 	public void run() {
 		// For Cleaning Up When Shutdown
-		// this.setupShutdownHook(); // TODO: Fix hanging before enabling this
+		// this.setupShutdownHook(); // This currently blocks
 
 		input = new Scanner(System.in);
 		running = true;
 
 		String command;
-		while (running) {
-			LogHelper.print("# ");
+		while (this.isRunning()) {
+			try {
+				// This is useless as it doesn't stop Input Scanner
+				if (this.isInterrupted())
+					throw new InterruptedException();
 
-			// To Keep From Blocking
-			if (!input.hasNextLine())
-				continue;
+				LogHelper.print(this.prefix);
 
-			// Ensures Loop Runs Every Line
-			command = input.nextLine();
+				// To Keep From Blocking
+				if (!input.hasNextLine())
+					continue;
 
-			if (command.toLowerCase().equals("exit") && Main.getServer() != null && Main.getServer().isRunning()) {
-				LogHelper.printLine("Shutting Down Server!!!");
+				// Ensures Loop Runs Every Line
+				command = input.nextLine();
 
-				// Interrupt Seems To Do Nothing
-				// Main.getServer().interrupt();
+				// Exit Thread If Server Not Running
+				if (Main.getServer() == null || !Main.getServer().isRunning()) {
+					this.exit();
+					return;
+				}
 
-				// Shutdown Server
-				// TODO: Figure out how to unblock thread for closing
-				// Main.getServer().exit();
+				CommandHandler.handleCommand(command, this);
+			} catch (InterruptedException e) {
+				// This is due to recommendations to rethrow the interrupt after catching it
+				// https://stackoverflow.com/a/1087504/6828099
+				Thread.currentThread().interrupt();
 
-				// Shutdown Command Handler
 				this.exit();
 			}
 		}
@@ -45,9 +55,8 @@ public class Terminal extends Thread {
 
 	// Isn't this supposed to be overridable from Thread?
 	public void exit() {
-		if (this.running) {
+		if (this.running)
 			this.shutdown();
-		}
 	}
 
 	private void shutdown() {

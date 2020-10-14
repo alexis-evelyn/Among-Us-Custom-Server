@@ -1,6 +1,7 @@
 package me.alexisevelyn.crewmate.handlers;
 
 import me.alexisevelyn.crewmate.LogHelper;
+import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
@@ -24,7 +25,7 @@ public class HandshakeHandler {
 			System.arraycopy(buffer, 9, nameBytes, 0, buffer[8]);
 			String name = new String(nameBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
-			LogHelper.printLine("Name: " + name);
+			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("name_logged"), name));
 
 			// Start Ping
 			return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), 0x00, 0x01, (byte) 0xff};
@@ -57,7 +58,7 @@ public class HandshakeHandler {
 		// LogHelper.printLine("Queried Port: " + port);
 
 		// LogHelper.printLine("Encoded IP: " + Arrays.toString(queriedIP.getAddress().getAddress()));
-		LogHelper.printLine("Encoded Port: " + Arrays.toString(encodedPort));
+		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("encoded_port_logged"), Arrays.toString(encodedPort)));
 
 		// Convert Player Count to Little Endian Bytes
 		short playerCount = 257;

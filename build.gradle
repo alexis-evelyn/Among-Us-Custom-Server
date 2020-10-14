@@ -13,6 +13,14 @@ dependencies {
 
 }
 
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'me.alexisevelyn.crewmate.Main'
+        )
+    }
+}
+
 test {
     useJUnitPlatform()
 }

@@ -14,4 +14,12 @@ public class LogHelper {
 	public static void print(Object line) {
 		System.out.print(line);
 	}
+
+	public static void printLineErr(Object line) {
+		System.err.println(line);
+	}
+
+	public static void printErr(Object line) {
+		System.err.print(line);
+	}
 }

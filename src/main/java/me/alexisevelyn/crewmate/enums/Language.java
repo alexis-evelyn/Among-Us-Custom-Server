@@ -1,6 +1,9 @@
 package me.alexisevelyn.crewmate.enums;
 
+import me.alexisevelyn.crewmate.Main;
+
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
 public enum Language {
 	ENGLISH(convertToInt(0x00, 0x01)),
@@ -35,27 +38,28 @@ public enum Language {
 	}
 
 	public static String getLanguageName(Language language) {
+		ResourceBundle translation = Main.getTranslationBundle();
 		switch (language) {
 			case ARABIC:
-				return "Arabic";
+				return translation.getString("arabic");
 			case ENGLISH:
-				return "English";
+				return translation.getString("english");
 			case FILIPINO:
-				return "Filipino";
+				return translation.getString("filipino");
 			case KOREAN:
-				return "Korean";
+				return translation.getString("korean");
 			case OTHER:
-				return "Other";
+				return translation.getString("other");
 			case POLISH:
-				return "Polish";
+				return translation.getString("polish");
 			case PORTUGUESE:
-				return "Portuguese";
+				return translation.getString("portuguese");
 			case RUSSIAN:
-				return "Russian";
+				return translation.getString("russian");
 			case SPANISH:
-				return "Spanish";
+				return translation.getString("spanish");
 			default:
-				return "Unknown";
+				return translation.getString("unknown");
 		}
 	}
 

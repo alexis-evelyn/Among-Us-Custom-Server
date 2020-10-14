@@ -1,7 +1,5 @@
 package me.alexisevelyn.crewmate.handlers;
 
-import me.alexisevelyn.crewmate.LogHelper;
-import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
 import java.net.DatagramPacket;

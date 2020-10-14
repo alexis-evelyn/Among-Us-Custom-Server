@@ -30,21 +30,29 @@ public class Server extends Thread {
 	@Override
 	public void run() {
 		// For Cleaning Up When Shutdown
-		// this.setupShutdownHook(); // TODO: Fix hanging before enabling this
+		this.setupShutdownHook();
 
 		running = true;
 		boolean justStarted = false;
 
-		while (running) {
+		while (this.isRunning()) {
 			DatagramPacket packet = new DatagramPacket(this.buf, this.buf.length);
 
 			if (!justStarted) {
 				justStarted = true;
 
-				LogHelper.printLine("Started Server!!!");
+				LogHelper.printLine(Main.getTranslationBundle().getString("server_started"));
 			}
 
 			try {
+				// This is useless as it doesn't stop the packet receiver
+				if (this.isInterrupted())
+					throw new InterruptedException();
+
+				// Can't Receive Packets if Socket Is Closed
+				if (this.socket.isClosed())
+					this.exit();
+
 				// Receive Packet From Client
 				this.socket.receive(packet);
 
@@ -54,10 +62,20 @@ public class Server extends Thread {
 				// Clear Buffer
 				this.clearBuffer();
 			} catch (IOException e) {
-				running = false;
+				// This is the only way I know how to get rid of the exception output thrown when closing via normal means
+				if (this.socket.isClosed())
+					return;
 
-				System.err.println("IOException: " + e.getMessage());
+				LogHelper.printLineErr("IOException: " + e.getMessage());
 				e.printStackTrace();
+
+				this.exit();
+			} catch (InterruptedException e) {
+				// This is due to recommendations to rethrow the interrupt after catching it
+				// https://stackoverflow.com/a/1087504/6828099
+				Thread.currentThread().interrupt();
+
+				this.exit();
 			}
 		}
 	}
@@ -123,18 +141,14 @@ public class Server extends Thread {
 
 	// Isn't this supposed to be overridable from Thread?
 	public void exit() {
-		if (this.running) {
+		if (this.running)
 			this.shutdown();
-		}
 	}
 
 	private void shutdown() {
 		this.running = false;
 
-		LogHelper.printLine("Server Shutdown!!!");
-
-		// For some reason, this doesn't close the existing connection and doesn't allow the rest of the code to run.
-		// this.socket.disconnect();
+		LogHelper.printLine(Main.getTranslationBundle().getString("server_shutdown"));
 
 		// This never runs.
 		this.socket.close();

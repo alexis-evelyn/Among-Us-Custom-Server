@@ -8,17 +8,17 @@ public class GameCodeHelper {
 	// https://gist.github.com/alexis-evelyn/f541d27811b62fd987c93cf79ed049a7
 	public static String parseGameCode(byte[] gameCodeBytes) throws InvalidBytesException, InvalidGameCodeException {
 		if (gameCodeBytes == null)
-			throw new InvalidBytesException("Check to make sure your assigned your game code variable before passing it to me!!!");
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_null_exception"));
 
 		if (gameCodeBytes.length != 4)
-			throw new InvalidBytesException("Game Code Bytes Needs To Be 4 Bytes Long!!!");
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_invalid_length_exception"));
 
 		// https://stackoverflow.com/a/7619315
 		// Don't Reverse Bytes Like `Integer.reverseBytes(gameCodeInteger);`. It's already reversed apparently.
 		int gameCodeInteger = gameCodeBytes[0] << 24 | (gameCodeBytes[1] & 0xFF) << 16 | (gameCodeBytes[2] & 0xFF) << 8 | (gameCodeBytes[3] & 0xFF);
 
 		if (gameCodeInteger == 0)
-			throw new InvalidGameCodeException("Invalid Game Code!!!");
+			throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 
 		// TODO: Figure Out How To Continue Reversing Bytes To Game Code
 

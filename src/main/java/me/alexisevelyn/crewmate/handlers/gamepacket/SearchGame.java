@@ -1,15 +1,15 @@
 package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.LogHelper;
+import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
-import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 
 import java.net.DatagramPacket;
-import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 public class SearchGame {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
@@ -33,18 +33,20 @@ public class SearchGame {
 		Map[] maps = parseMapsSearch(buffer[14]);
 		StringBuilder printableMapsList = new StringBuilder();
 
-		// Append Commas To List and Then Remove Last Comma
+		// Append Delimiters (Usually Comma + Space) To List and Then Remove Last Delimiter
+		String delimiter = Main.getTranslationBundle().getString("list_delimiter_logged");
 		for (Map map : maps) {
-			printableMapsList.append(Map.getMapName(map)).append(", ");
+			printableMapsList.append(Map.getMapName(map)).append(delimiter);
 		}
-		printableMapsList.delete(printableMapsList.length() - 2, printableMapsList.length() - 1);
+		printableMapsList.delete(printableMapsList.length() - delimiter.length(), printableMapsList.length());
 
 		// Language To Search By
 		Language language = Language.getLanguage(Language.convertToInt(buffer[10], buffer[11]));
 
-		LogHelper.printLine("Number of Imposters: " + ((numberOfImposters == 0) ? "Any" : numberOfImposters));
-		LogHelper.printLine("Maps: " + printableMapsList.toString());
-		LogHelper.printLine("Language: " + Language.getLanguageName(language));
+		ResourceBundle translation = Main.getTranslationBundle();
+		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
+		LogHelper.printLine(String.format(translation.getString("maps_logged"), printableMapsList.toString()));
+		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getLanguageName(language)));
 
 		return getFakeSearchBytes(numberOfImposters, maps, language.getLanguage());
 	}
@@ -115,6 +117,7 @@ public class SearchGame {
 		if (maps.length == 0)
 			return new byte[0];
 
+		// Temporary String - Not Translating
 		String name = "Fake Game - " + Language.getLanguageName(Language.getLanguage(language));
 		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;
 		int playerCount = 0;

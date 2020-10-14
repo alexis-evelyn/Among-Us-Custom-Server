@@ -2,16 +2,17 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.GameCodeHelper;
 import me.alexisevelyn.crewmate.LogHelper;
+import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
-import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 
 import java.net.DatagramPacket;
 import java.nio.charset.StandardCharsets;
+import java.util.ResourceBundle;
 
 public class StartGame {
 	public static byte[] getNewGameSettings(DatagramPacket packet) {
@@ -33,10 +34,11 @@ public class StartGame {
 		String mapName = Map.getMapName(Map.getMap(map));
 		String languageName = Language.getLanguageName(language);
 
-		String extraData = "Max Players: " + maxPlayers + "\n" +
-				"Map: " + mapName + "\n" +
-				"Imposters: " + imposterCount + "\n" +
-				"Language: " + languageName;
+		ResourceBundle translation = Main.getTranslationBundle();
+		String extraData = String.format(translation.getString("max_player_logged"), maxPlayers) + "\n" +
+				String.format(translation.getString("map_logged"), mapName) + "\n" +
+				String.format(translation.getString("imposter_count_logged"), imposterCount) + "\n" +
+				String.format(translation.getString("language_logged"), languageName);
 
 		LogHelper.printLine(extraData);
 
@@ -86,16 +88,16 @@ public class StartGame {
 		try {
 			gameCode = GameCodeHelper.parseGameCode(gameCodeBytes);
 		} catch (InvalidBytesException e) {
-			LogHelper.printLine("Game Code Exception: " + e.getMessage());
+			LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("gamecode_exception"), e.getMessage()));
 			e.printStackTrace();
 
-			return PacketHelper.closeWithMessage("Server side error with reading game code!!!");
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("gamecode_server_side_error_exception"));
 		} catch (InvalidGameCodeException e) {
 			return PacketHelper.closeWithMessage(e.getMessage());
 		}
 
 		// LogHelper.printLine("Game Code (Byte Form): " + Arrays.toString(gameCodeBytes));
-		LogHelper.printLine("Game Code (Integer Form): " + gameCode);
+		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("gamecode_integer_form_logged"), gameCode));
 
 		// Game Code - NPGWQQ (cd:98:00:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 cd 98 00 80 07                  ...........
@@ -206,15 +208,14 @@ public class StartGame {
 		byte[] nameBytesTwo = new byte[nameLength];
 		System.arraycopy(buffer, 168 + nameLength, nameBytesTwo, 0, nameLengthTwo);
 
-		LogHelper.printLine(TerminalColors.ANSI_TEXT_RED);
-		LogHelper.printLine("Unknown: " + unknown);
-		LogHelper.printLine("Unknown 2: " + unknownTwo);
-		LogHelper.printLine("Unknown 3: " + unknownThree);
-		LogHelper.printLine("Unknown 4: " + unknownFour);
+		// Temporary Logging, So No Translations
+		LogHelper.printLineErr("Unknown: " + unknown);
+		LogHelper.printLineErr("Unknown 2: " + unknownTwo);
+		LogHelper.printLineErr("Unknown 3: " + unknownThree);
+		LogHelper.printLineErr("Unknown 4: " + unknownFour);
 
-		LogHelper.printLine("Name: " + new String(nameBytes, StandardCharsets.UTF_8));
-		LogHelper.printLine("Name 2: " + new String(nameBytesTwo, StandardCharsets.UTF_8));
-		LogHelper.printLine(TerminalColors.ANSI_RESET);
+		LogHelper.printLineErr("Name: " + new String(nameBytes, StandardCharsets.UTF_8));
+		LogHelper.printLineErr("Name 2: " + new String(nameBytesTwo, StandardCharsets.UTF_8));
 
 		return new byte[0];
 	}
