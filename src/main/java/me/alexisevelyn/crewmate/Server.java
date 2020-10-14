@@ -24,18 +24,26 @@ public class Server extends Thread {
 	}
 
 	public Server(int port) throws SocketException {
-		socket = new DatagramSocket(port);
+		this.socket = new DatagramSocket(port);
 	}
 
+	@Override
 	public void run() {
 		running = true;
+		boolean justStarted = false;
 
 		while (running) {
-			DatagramPacket packet = new DatagramPacket(buf, buf.length);
+			DatagramPacket packet = new DatagramPacket(this.buf, this.buf.length);
+
+			if (!justStarted) {
+				justStarted = true;
+
+				System.out.println("Started Server!!!");
+			}
 
 			try {
 				// Receive Packet From Client
-				socket.receive(packet);
+				this.socket.receive(packet);
 
 				// Parse Packet
 				this.parsePacketAndReply(packet);
@@ -49,9 +57,6 @@ public class Server extends Thread {
 				e.printStackTrace();
 			}
 		}
-
-		System.out.println("Server Shutdown!!!");
-		socket.close();
 	}
 
 	// TODO: TODO TODO - https://discord.com/channels/757425025379729459/759066383090188308/765419168466993162
@@ -96,7 +101,7 @@ public class Server extends Thread {
 		packet = this.createSendPacket(replyBuffer, replyBuffer.length, address, port);
 
 		// Send Reply Back
-		socket.send(packet);
+		this.socket.send(packet);
 	}
 
 	private DatagramPacket createSendPacket(byte[] buffer, int length, InetAddress address, int port) {
@@ -108,7 +113,31 @@ public class Server extends Thread {
 		return new DatagramPacket(sendBuffer, sendBuffer.length, address, port);
 	}
 
+	// To prevent leaking data
 	private void clearBuffer() {
 		Arrays.fill(this.buf, (byte) 0x0);
+	}
+
+	// Isn't this supposed to be overridable from Thread?
+	public void exit() {
+		if (this.running) {
+			this.shutdown();
+		}
+	}
+
+	public void shutdown() {
+		this.running = false;
+
+		System.out.println("Server Shutdown!!!");
+
+		// For some reason, this doesn't close the existing connection and doesn't allow the rest of the code to run.
+		this.socket.disconnect();
+
+		// This never runs.
+		this.socket.close();
+	}
+
+	public boolean isRunning() {
+		return this.running;
 	}
 }
