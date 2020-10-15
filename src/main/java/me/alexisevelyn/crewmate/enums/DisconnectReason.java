@@ -22,7 +22,6 @@ public enum DisconnectReason {
 	FORCE_NO_REASON((byte) 0x10),
 	BAD_CONNECTION((byte) 0x11),
 	GAME_NOT_FOUND_TWO((byte) 0x12), // Wdym there's two Game not Found Bytes? https://wiki.weewoo.net/wiki/Protocol#9_-_Disconnect
-	SERVER_CLOSED((byte) 0x13), // Server Closed and Room Closed
 	ROOM_CLOSED((byte) 0x13),
 	SERVER_OVERLOADED((byte) 0x14);
 
@@ -73,8 +72,6 @@ public enum DisconnectReason {
 				return translation.getString("bad_connection");
 			case GAME_NOT_FOUND_TWO:
 				return translation.getString("game_not_found_two");
-			case SERVER_CLOSED:
-				return translation.getString("server_closed");
 			case ROOM_CLOSED:
 				return translation.getString("room_closed");
 			case SERVER_OVERLOADED:

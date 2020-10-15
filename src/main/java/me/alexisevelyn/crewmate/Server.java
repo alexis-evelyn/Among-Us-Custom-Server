@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;

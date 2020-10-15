@@ -5,10 +5,30 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
 public class PacketHelper {
 	public static byte[] closeWithMessage(String message) {
-		byte[] messageLengthBytes = convertShortToLE((short) message.getBytes().length);
-		byte[] header = new byte[] {SendOption.DISCONNECT.getSendOption(), DisconnectReason.GAME_FULL.getReason(), messageLengthBytes[0], messageLengthBytes[1], 0x00, 0x08, (byte) message.getBytes().length};
+		return closeConnection(message, DisconnectReason.CUSTOM);
+	}
 
-		return getCombinedReply(header, message.getBytes());
+	public static byte[] closeConnection(DisconnectReason disconnectReason) {
+		return closeConnection(null, disconnectReason);
+	}
+
+	public static byte[] closeConnection(String message, DisconnectReason disconnectReason) {
+		byte[] header;
+
+		// Custom Disconnect Message
+		boolean customMessage = disconnectReason.equals(DisconnectReason.CUSTOM) || disconnectReason.equals(DisconnectReason.LEGACY_CUSTOM);
+		if (message != null && (customMessage)) {
+			byte[] messageLengthBytes = convertShortToLE((short) message.getBytes().length);
+			header = new byte[]{SendOption.DISCONNECT.getSendOption(), 0x01, messageLengthBytes[0], messageLengthBytes[1], 0x00, disconnectReason.getReason(), (byte) message.getBytes().length};
+
+			return getCombinedReply(header, message.getBytes());
+		} else if (customMessage) {
+			// Failure To Provide Non-Null Message For Custom Message Reason
+			return new byte[]{SendOption.DISCONNECT.getSendOption(), 0x01, 0x00, 0x00, 0x00, DisconnectReason.NONE.getReason()};
+		}
+
+		// Predefined Disconnect Message
+		return new byte[]{SendOption.DISCONNECT.getSendOption(), 0x01, 0x00, 0x00, 0x00, disconnectReason.getReason()};
 	}
 
 	public static byte[] getCombinedReply(byte[] header, byte[] message) {
