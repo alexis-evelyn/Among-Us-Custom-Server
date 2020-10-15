@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate.handlers;
 
+import me.alexisevelyn.crewmate.handlers.gamepacket.Lobby;
 import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
 
@@ -15,6 +16,8 @@ public class GamePacketHandler {
 		// TODO: Figure Out Proper Way To Identify Game Types
 		if (packet.getLength() == 11)
 			return StartGame.getClientGameCode(packet);
+		if (packet.getLength() == 12)
+			return Lobby.handleSettings(packet);
 		if (packet.getLength() == 49)
 			return StartGame.getNewGameSettings(packet);
 		if (packet.getLength() == 50)
