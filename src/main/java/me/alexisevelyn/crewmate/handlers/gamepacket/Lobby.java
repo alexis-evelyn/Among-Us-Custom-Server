@@ -17,6 +17,8 @@ public class Lobby {
 
 		String visibility = (buffer[11] == 1) ? Main.getTranslationBundle().getString("public_game") : Main.getTranslationBundle().getString("private_game");
 
+		// Used For Debugging
+		LogHelper.printPacketBytes(buffer, packet.getLength());
 		LogHelper.printLine(visibility);
 
 		return new byte[0];
