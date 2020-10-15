@@ -1,6 +1,7 @@
 package me.alexisevelyn.crewmate.enums;
 
 // https://en.wikipedia.org/wiki/ANSI_escape_code
+// https://unix.stackexchange.com/a/23789/181269
 public enum TerminalColors {
 	// Special
 	ANSI_RESET("\u001B[0m"),
