@@ -52,8 +52,6 @@ public class SearchGame {
 	}
 
 	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) {
-		// TODO: Figure out what these mean!!!
-
 		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u
 		// 0010   07 56 e6 71 31 80 08 73 75 73 68 69 69 69 69 03   .V.q1..sushiiii.
@@ -118,33 +116,45 @@ public class SearchGame {
 			return new byte[0];
 
 		// Temporary String - Not Translating
+		// Visible Game Information
 		String name = "Fake Game - " + Language.getLanguageName(Language.getLanguage(language));
 		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;
-		int playerCount = 0;
+		int playerCount = 69;
 		int maxPlayerCount = 10;
 		int mapID = maps[0].getMap();
+
+		// Age of Game - TODO: Figure out what this means!!!
 		byte[] age = new byte[] {(byte) 0xa3, 0x02}; // No Idea What Format This Is In
 
+		// IP Address and Port
 		byte[] ipAddress = new byte[] {0x7f, 0x00, 0x00, 0x01}; // 127.0.0.1
 		byte[] port = new byte[] {0x07, 0x56}; // 22023
+
+		// Game Code
 		byte[] gameCodeBytes = new byte[] {(byte) 0xb5, (byte) 0xf0, (byte) 0x90, (byte) 0x8a}; // b5:f0:90:8a - ALEXIS
 
-		byte[] fakeGameOne = new byte[] {ipAddress[0], ipAddress[1], ipAddress[2], ipAddress[3], port[0], port[1], gameCodeBytes[0], gameCodeBytes[1], gameCodeBytes[2], gameCodeBytes[3]};
-		byte[] nameBytesWithLength = PacketHelper.getCombinedReply(new byte[] {(byte) name.getBytes().length}, name.getBytes());
+		// Lengths
+		int gameBytesLength = 17 + name.getBytes().length; // The 17 comes from the non-variable length portions of the Game Info Bytes.
+		byte[] fakeGameLength = PacketHelper.convertShortToLE((short) gameBytesLength);
+		byte[] messageLength = PacketHelper.convertShortToLE((short) (3 + gameBytesLength)); // The 3 comes from the fact that the message is non-variable in size.
 
-		byte[] fakeGameTwo = new byte[] {(byte) playerCount, age[0], age[1], (byte) mapID, (byte) imposterCount, (byte) maxPlayerCount};
-		byte[] fakeGameThree = PacketHelper.getCombinedReply(nameBytesWithLength, fakeGameTwo);
-		byte[] fakeGame = PacketHelper.getCombinedReply(fakeGameOne, fakeGameThree);
+		// Header - TODO: Figure out what unknownBytes means!!!
+		byte[] unknownBytes = new byte[] {0x01, 0x0f}; // https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
+		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknownBytes[0], unknownBytes[1], SearchBytes.POTENTIAL_FLAG.getSearchByte(), SearchBytes.GAME_LIST_VERSION.getSearchByte(), messageLength[0], messageLength[1], SearchBytes.POTENTIAL_FLAG.getSearchByte()};
 
-		byte[] fakeGameLength = PacketHelper.convertShortToLE((short) fakeGame.length);
-
-		byte[] message = new byte[] {fakeGameLength[0], fakeGameLength[1], SearchBytes.POTENTIAL_FLAG.getSearchByte()};
-		byte[] messageLength = PacketHelper.convertShortToLE((short) (message.length + fakeGame.length));
-
-		byte[] unknownBytesOne = new byte[] {0x01, 0x0f}; // https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
-		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknownBytesOne[0], unknownBytesOne[1], SearchBytes.POTENTIAL_FLAG.getSearchByte(), SearchBytes.GAME_LIST_VERSION.getSearchByte(), messageLength[0], messageLength[1], SearchBytes.POTENTIAL_FLAG.getSearchByte()};
-
-		return PacketHelper.getCombinedReply(header, PacketHelper.getCombinedReply(message, fakeGame));
+		return PacketHelper.mergeBytes(header,
+				fakeGameLength,
+				new byte[] {SearchBytes.POTENTIAL_FLAG.getSearchByte()},
+				ipAddress,
+				port,
+				gameCodeBytes,
+				new byte[] {(byte) name.getBytes().length},
+				name.getBytes(),
+				new byte[] {(byte) playerCount},
+				age,
+				new byte[] {(byte) mapID},
+				new byte[] {(byte) imposterCount},
+				new byte[] {(byte) maxPlayerCount});
 	}
 
 	public static Map[] parseMapsSearch(int mapNumber) {

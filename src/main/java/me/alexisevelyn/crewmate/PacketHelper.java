@@ -23,7 +23,7 @@ public class PacketHelper {
 			byte[] messageLengthBytes = convertShortToLE((short) message.getBytes().length);
 			header = new byte[]{SendOption.DISCONNECT.getSendOption(), 0x01, messageLengthBytes[0], messageLengthBytes[1], 0x00, disconnectReason.getReason(), (byte) message.getBytes().length};
 
-			return getCombinedReply(header, message.getBytes());
+			return mergeBytes(header, message.getBytes());
 		} else if (customMessage) {
 			// Failure To Provide Non-Null Message For Custom Message Reason
 			return new byte[]{SendOption.DISCONNECT.getSendOption(), 0x01, 0x00, 0x00, 0x00, DisconnectReason.NONE.getReason()};
@@ -33,31 +33,20 @@ public class PacketHelper {
 		return new byte[]{SendOption.DISCONNECT.getSendOption(), 0x01, 0x00, 0x00, 0x00, disconnectReason.getReason()};
 	}
 
-	/**
-	 * Replaced With {@link #mergeBytes(byte[]...)}!!!
-	 *
-	 * @param header header byte array
-	 * @param message message byte array
-	 * @return combined byte array
-	 */
-	@Deprecated
-	public static byte[] getCombinedReply(byte[] header, byte[] message) {
-		byte[] reply = new byte[header.length + message.length];
-
-		// Copy Header into Reply
-		System.arraycopy(header, 0, reply, 0, header.length);
-
-		// Copy Message into Reply
-		System.arraycopy(message, 0, reply, header.length, message.length);
-
-		return reply;
-	}
-
 	public static byte[] mergeBytes(byte[] ...bytes) {
 		// TODO: Make this a standard function for creating packets
+
+		// Don't Bother Merging If Nothing To Merge
+		if (bytes == null)
+			return new byte[0];
+
 		ArrayList<Byte> byteList = new ArrayList<>();
 
 		for (byte[] byteArray : bytes) {
+			// You'd think people would know better than to not pass in null values, but just in case, skip this byte[]
+			if (byteArray == null)
+				continue;
+
 			for (byte bite : byteArray) {
 				byteList.add(bite);
 			}

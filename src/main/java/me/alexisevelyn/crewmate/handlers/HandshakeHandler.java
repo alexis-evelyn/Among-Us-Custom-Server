@@ -67,9 +67,8 @@ public class HandshakeHandler {
 		// LogHelper.printLine("Player Count: " + Arrays.toString(playerCountBytes));
 
 		byte[] endMessage = new byte[] {encodedPort[0], encodedPort[1], playerCountBytes[0], playerCountBytes[1]}; // Another Unknown if Not Last Master in List
-		byte[] ipMessage = PacketHelper.getCombinedReply(fakeMasterName.getBytes(), queriedIP.getAddress().getAddress());
 
-		byte[] message = PacketHelper.getCombinedReply(ipMessage, endMessage);
+		byte[] message = PacketHelper.mergeBytes(fakeMasterName.getBytes(), queriedIP.getAddress().getAddress(), endMessage);
 
 		// 00 38 00 0e 01 02 18
 		// The + 4 from (message.length + 4) comes from starting at (byte) numberOfMasters
@@ -80,11 +79,7 @@ public class HandshakeHandler {
 		byte[] masterBytesLength = BigInteger.valueOf(Integer.reverseBytes(fakeMasterName.getBytes().length + 5)).toByteArray();
 		byte[] header = new byte[] {SendOption.NONE.getSendOption(), messageLength[0], messageLength[1], MasterBytes.FLAG.getMasterByte(), MasterBytes.UNKNOWN.getMasterByte(), (byte) numberOfMasters, masterBytesLength[0], masterBytesLength[1], MasterBytes.UNKNOWN_FLAG_TEMP.getMasterByte(), (byte) fakeMasterName.getBytes().length};
 
-		byte[] reply = PacketHelper.getCombinedReply(header, message);
-
-		// LogHelper.printLine("Masters List Bytes: " + Arrays.toString(reply));
-
-		return reply;
+		return PacketHelper.mergeBytes(header, message);
 	}
 
 	private enum MasterBytes {

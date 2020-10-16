@@ -60,7 +60,7 @@ public class StartGame {
 		byte[] message = new byte[] {0x3b, (byte) 0xbe, 0x25, (byte) 0x8c}; // Game Code - ABCDEF (3b:be:25:8c)
 
 		// The client will respond with a packet that triggers handleJoinPrivateGame(DatagramPacket);
-		return PacketHelper.getCombinedReply(header, message);
+		return PacketHelper.mergeBytes(header, message);
 	}
 
 	// This gets called when the client either tries to join a game or create a game.
@@ -112,16 +112,12 @@ public class StartGame {
 		byte unknown = 0x00;
 
 		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x02, 0x0d, 0x00, 0x07};
-		byte[] headerWithGameCode = PacketHelper.getCombinedReply(header, gameCodeBytes);
 
 		byte[] messagePartOne = new byte[] {unknown, unknown, unknown, 0x00, unknown, unknown, unknown, 0x00, 0x00, 0x06, 0x00, 0x0a};
 		byte[] messagePartTwo = new byte[] {0x01, 0x00};
 
-		byte[] messagePartThree = PacketHelper.getCombinedReply(gameCodeBytes, messagePartTwo);
-		byte[] message = PacketHelper.getCombinedReply(messagePartOne, messagePartThree);
-
 		// This is enough to get to the lobby
-		return PacketHelper.getCombinedReply(headerWithGameCode, message);
+		return PacketHelper.mergeBytes(header, gameCodeBytes, messagePartOne, gameCodeBytes, messagePartTwo);
 	}
 
 	public static byte[] getInitialGameSettings(DatagramPacket packet) {
