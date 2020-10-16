@@ -83,10 +83,12 @@ public class RegionFileGenerator implements Command {
 		// IP Address Byte Form
 		byte[] ipAddressByteForm = ipAddress.getAddress();
 
-		// Port
-		// TODO: Convert Integer port to bytes Int-16 LE
-		byte[] portBytes = {0x07, 0x56}; // Port 22023
-		System.out.println("Port Bytes: " + Arrays.toString(PacketHelper.convertShortToLE((short) port)));
+		// Port - Converts Integer port to bytes INT16 - Little Endian (BA)
+		byte[] portBytes = PacketHelper.convertShortToLE((short) port);
+
+//		LogHelper.print("Port Bytes: ");
+//		LogHelper.printPacketBytes(portBytes, portBytes.length);
+//		LogHelper.printLine();
 
 		// Footer
 		byte[] footerBytes = {0x00, 0x00, 0x00, 0x00};
