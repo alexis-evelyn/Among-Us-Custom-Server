@@ -3,6 +3,8 @@ package me.alexisevelyn.crewmate;
 import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
+import java.util.ArrayList;
+
 public class PacketHelper {
 	public static byte[] closeWithMessage(String message) {
 		return closeConnection(message, DisconnectReason.CUSTOM);
@@ -31,6 +33,14 @@ public class PacketHelper {
 		return new byte[]{SendOption.DISCONNECT.getSendOption(), 0x01, 0x00, 0x00, 0x00, disconnectReason.getReason()};
 	}
 
+	/**
+	 * Replaced With {@link #mergeBytes(byte[]...)}!!!
+	 *
+	 * @param header header byte array
+	 * @param message message byte array
+	 * @return combined byte array
+	 */
+	@Deprecated
 	public static byte[] getCombinedReply(byte[] header, byte[] message) {
 		byte[] reply = new byte[header.length + message.length];
 
@@ -41,6 +51,26 @@ public class PacketHelper {
 		System.arraycopy(message, 0, reply, header.length, message.length);
 
 		return reply;
+	}
+
+	public static byte[] mergeBytes(byte[] ...bytes) {
+		// TODO: Make this a standard function for creating packets
+		ArrayList<Byte> byteList = new ArrayList<>();
+
+		for (byte[] byteArray : bytes) {
+			for (byte bite : byteArray) {
+				byteList.add(bite);
+			}
+		}
+
+		Byte[] mergedBytes = byteList.toArray(new Byte[0]);
+		byte[] mergedBytesPrimitive = new byte[mergedBytes.length];
+
+		for (int i = 0; i < mergedBytesPrimitive.length; i++) {
+			mergedBytesPrimitive[i] = mergedBytes[i]; // Apparently Unboxing Is Automatic
+		}
+
+		return mergedBytesPrimitive;
 	}
 
 	public static byte[] convertShortToLE(short value) {
