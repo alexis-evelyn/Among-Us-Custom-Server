@@ -5,8 +5,18 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Terminal;
 
 public class Exit implements Command {
-	public static void execute(String command, Terminal terminal) {
+	public void execute(String command, Terminal terminal) {
 		exit(terminal);
+	}
+
+	@Override
+	public String getCommand() {
+		return Main.getTranslationBundle().getString("exit_command");
+	}
+
+	@Override
+	public String getHelp() {
+		return Main.getTranslationBundle().getString("exit_command_help");
 	}
 
 	private static void exit(Terminal terminal) {

@@ -12,7 +12,7 @@ public class LogHelper {
 	private static String CLEAR_LINE_UP_TO_CURSOR = "\\033[1K";
 	private static String CLEAR_WHOLE_LINE = "\\033[2K";
 
-	private static boolean wasTerminalThread = false;
+	private static boolean isTerminalThread = false;
 	private static boolean showTimestamp = true;
 	private static boolean twentyFourHour = true;
 	private static boolean simpleDateTime = true;
@@ -22,36 +22,36 @@ public class LogHelper {
 	}
 
 	public static void printLine(Object line) {
-		if (showTimestamp)
+		setCurrentThread();
+
+		if (showTimestamp && !isTerminalThread)
 			System.out.println(createLogTimestamp(ZonedDateTime.now(), twentyFourHour, simpleDateTime) + line);
 		else
 			System.out.println(line);
-
-		setCurrentThread();
 	}
 
 	public static void print(Object line) {
-		System.out.print(line);
-
 		setCurrentThread();
+
+		System.out.print(line);
 	}
 
 	public static void printFormatted(String line, Object... args) {
-		System.out.format(line, args);
-
 		setCurrentThread();
+
+		System.out.format(line, args);
 	}
 
 	public static void printLineErr(Object line) {
-		System.err.println(line);
-
 		setCurrentThread();
+
+		System.err.println(line);
 	}
 
 	public static void printErr(Object line) {
-		System.err.print(line);
-
 		setCurrentThread();
+
+		System.err.print(line);
 	}
 
 	public static void printPacketBytes(byte[] bytes, int length) {
@@ -59,8 +59,8 @@ public class LogHelper {
 		if (bytes.length < length)
 			return;
 
-		printPacketBytesHorizontal(bytes, length);
 		setCurrentThread();
+		printPacketBytesHorizontal(bytes, length);
 	}
 
 	private static void printPacketBytesHorizontal(byte[] bytes, int length) {
@@ -123,13 +123,13 @@ public class LogHelper {
 	}
 
 	private static boolean wasLastThreadTerminalThread() {
-		return wasTerminalThread;
+		return isTerminalThread;
 	}
 
 	private static void setCurrentThread() {
 		// This should help with tracking lines in terminal and whether or not to overwrite them.
 
-		wasTerminalThread = Thread.currentThread().equals(Main.getTerminal());
+		isTerminalThread = Thread.currentThread().equals(Main.getTerminal());
 	}
 
 	private static void setShowTimestamp(boolean shouldShowTimestamp) {

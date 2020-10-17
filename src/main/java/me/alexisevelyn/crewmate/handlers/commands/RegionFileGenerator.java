@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class RegionFileGenerator implements Command {
-	public static void execute(String command, Terminal terminal) {
+	public void execute(String command, Terminal terminal) {
 		String ipAddressRaw = "127.0.0.1";
 		int port = 22023;
 
@@ -48,6 +48,18 @@ public class RegionFileGenerator implements Command {
 			// LogHelper.printLineErr(Arrays.toString(e.getStackTrace()));
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String getCommand() {
+		return Main.getTranslationBundle().getString("region_file_generator_command");
+	}
+
+	@Override
+	public String getHelp() {
+		String helpString = Main.getTranslationBundle().getString("region_file_generator_command_help");
+
+		return String.format(helpString, System.getProperty("user.dir"));
 	}
 
 	private static byte[] createRegionFileBytes(InetAddress ipAddress, int port, String displayName, String masterServerName) {
@@ -116,10 +128,12 @@ public class RegionFileGenerator implements Command {
 			throw new IOException("Failed to create new file!!!");
 
 		try (FileOutputStream fileOutputStream = new FileOutputStream(outFile)) {
-		  fileOutputStream.write(bytes);
+			fileOutputStream.write(bytes);
 
-		  fileOutputStream.flush();
-		  // fileOutputStream.close(); // Apparently this is redundant
+			fileOutputStream.flush();
+			// fileOutputStream.close(); // Apparently this is redundant
+
+			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("region_file_generator_command_success_create_file"), outFile.getAbsolutePath()));
 		}
 	}
 }
