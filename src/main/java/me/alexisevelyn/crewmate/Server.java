@@ -21,11 +21,12 @@ public class Server extends Thread {
 	private final byte[] buf = new byte[256];
 
 	public Server() throws SocketException {
-		this(22023);
+		// null means bind to any address
+		this(22023, null);
 	}
 
-	public Server(int port) throws SocketException {
-		this.socket = new DatagramSocket(port);
+	public Server(int port, InetAddress bindAddress) throws SocketException {
+		this.socket = new DatagramSocket(port, bindAddress);
 	}
 
 	@Override

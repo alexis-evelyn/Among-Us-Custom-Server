@@ -22,24 +22,40 @@ public class Main {
 		main = Thread.currentThread();
 
 		// Start Server
-		startServer();
+		startServer(args);
 
 		// Start Terminal For Local Commands
-		startTerminal();
+		startTerminal(args);
 	}
 
-	public static void startServer() {
+	public static void startServer(String[] args) {
 		LogHelper.printLine(getTranslationBundle().getString("server_starting"));
 
+		// TODO: Create an Argument Parsing Function
+		// TODO: Figure out why client "ignores" different port number from 22023
+		int portNumber = -1;
 		try {
-			server = new Server();
+			if (args.length > 0) {
+				portNumber = Integer.parseInt(args[0]);
+			}
+		} catch (NumberFormatException ignored) {
+			// Do Nothing!!!
+			// ignored.printStackTrace();
+		}
+
+		try {
+			if (portNumber != -1)
+				server = new Server(portNumber, null);
+			else
+				server = new Server();
+
 			server.start();
 		} catch (SocketException e) {
 			LogHelper.printLineErr(getTranslationBundle().getString("failed_socket_bind"));
 		}
 	}
 
-	public static void startTerminal() {
+	public static void startTerminal(String[] args) {
 		terminal = new Terminal();
 		terminal.start();
 	}
