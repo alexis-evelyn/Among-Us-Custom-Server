@@ -8,6 +8,8 @@ import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
 import java.net.DatagramPacket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -112,6 +114,11 @@ public class SearchGame {
 		// 0010   07 56 f8 f4 2a 80 06 66 72 65 64 64 79 01 20 01   .V..*..freddy. .
 		// 0020   01 04                                             ..
 
+		// No Results - Displays Text At Bottom Showing Total Games Per Map (All 0 Games)
+		// This 0x01 turns on the list ----V
+		// 0000   01 00 01 12 00 10 0c 00 01 00 00 00 00 00 00 00   ................
+		// 0010   00 00 00 00 00 00 00 00                           ........
+
 		if (maps.length == 0)
 			return new byte[0];
 
@@ -119,9 +126,22 @@ public class SearchGame {
 		// Visible Game Information
 		String name = "Fake Game - " + Language.getLanguageName(Language.getLanguage(language));
 		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;
-		int playerCount = 69;
+		int playerCount = 3;
 		int maxPlayerCount = 10;
 		int mapID = maps[0].getMap();
+
+		// Total Number of Games
+		// TODO: Figure out how to get game list to display when showing total games!!!
+		boolean showTotalGames = false;
+		int skeldCount = 1;
+		int miraCount = 2;
+		int polusCount = 3;
+
+		byte[] totalSkeldCount = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(skeldCount).array();
+		byte[] totalMiraCount = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(miraCount).array();
+		byte[] totalPolusCount = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(polusCount).array();
+
+		byte[] totalGames = showTotalGames ? PacketHelper.mergeBytes(totalSkeldCount, totalMiraCount, totalPolusCount) : new byte[0];
 
 		// Age of Game - TODO: Figure out what this means!!!
 		byte[] age = new byte[] {(byte) 0xa3, 0x02}; // No Idea What Format This Is In
@@ -136,13 +156,22 @@ public class SearchGame {
 		// Lengths
 		int gameBytesLength = 17 + name.getBytes().length; // The 17 comes from the non-variable length portions of the Game Info Bytes.
 		byte[] fakeGameLength = PacketHelper.convertShortToLE((short) gameBytesLength);
-		byte[] messageLength = PacketHelper.convertShortToLE((short) (3 + gameBytesLength)); // The 3 comes from the fact that the message is non-variable in size.
+		byte[] messageLength = PacketHelper.convertShortToLE((short) (3 + totalGames.length + gameBytesLength)); // The 3 comes from the fact that the message is non-variable in size.
 
 		// Header - TODO: Figure out what unknownBytes means!!!
 		byte[] unknownBytes = new byte[] {0x01, 0x0f}; // https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
-		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknownBytes[0], unknownBytes[1], SearchBytes.POTENTIAL_FLAG.getSearchByte(), SearchBytes.GAME_LIST_VERSION.getSearchByte(), messageLength[0], messageLength[1], SearchBytes.POTENTIAL_FLAG.getSearchByte()};
+		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknownBytes[0], unknownBytes[1], SearchBytes.POTENTIAL_FLAG.getSearchByte(), SearchBytes.GAME_LIST_VERSION.getSearchByte(), messageLength[0], messageLength[1],
+				showTotalGames ? SearchBytes.SHOW_TOTAL_GAMES.getSearchByte() : SearchBytes.HIDE_TOTAL_GAMES.getSearchByte()};
+
+		// Outputs Blank List, But Shows Text At Bottom As Skeld - 1, Mira - 2, Polus - 3
+//		return new byte[] {0x01, 0x00, 0x01, 0x12, 0x00, 0x10, 0x0C, 0x00, 0x01,
+//				0x01, 0x00, 0x00, 0x00, // Skeld
+//				0x02, 0x00, 0x00, 0x00, // Mira
+//				0x03, 0x00, 0x00, 0x00, // Polus
+//				0x00, 0x00, 0x00};
 
 		return PacketHelper.mergeBytes(header,
+				totalGames,
 				fakeGameLength,
 				new byte[] {SearchBytes.POTENTIAL_FLAG.getSearchByte()},
 				ipAddress,
@@ -226,7 +255,9 @@ public class SearchGame {
 
 	private enum SearchBytes {
 		GAME_LIST_VERSION((byte) 0x10), // V2
-		POTENTIAL_FLAG((byte) 0x00);
+		POTENTIAL_FLAG((byte) 0x00),
+		SHOW_TOTAL_GAMES((byte) 0x01),
+		HIDE_TOTAL_GAMES((byte) 0x00);
 
 		private final byte searchByte;
 
