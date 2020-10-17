@@ -1,6 +1,6 @@
 package me.alexisevelyn.crewmate;
 
-import me.alexisevelyn.crewmate.enums.DisconnectReason;
+import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
@@ -43,6 +43,13 @@ public class Server extends Thread {
 				justStarted = true;
 
 				LogHelper.printLine(Main.getTranslationBundle().getString("server_started"));
+
+				// For Title
+				LogHelper.print(
+						TerminalColors.getTitle(
+								String.format(Main.getTranslationBundle().getString("server_listening_title"), this.socket.getLocalAddress().getHostAddress(), this.socket.getLocalPort())
+						)
+				);
 			}
 
 			try {

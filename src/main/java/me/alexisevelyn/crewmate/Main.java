@@ -1,5 +1,7 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.enums.TerminalColors;
+
 import java.net.SocketException;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -9,12 +11,16 @@ public class Main {
 
 	private static Server server;
 	private static Terminal terminal;
+	private static Thread main;
 
 	// This will be changeable via commands later
 	private static Locale currentLocale = Locale.getDefault();
 	private static ResourceBundle translations = ResourceBundle.getBundle("translations/Main", currentLocale);
 
 	public static void main(String[] args) {
+		// Store Main Thread
+		main = Thread.currentThread();
+
 		// Start Server
 		startServer();
 
@@ -43,6 +49,10 @@ public class Main {
 	}
 
 	public static Terminal getTerminal() {
+		return terminal;
+	}
+
+	public static Terminal getMain() {
 		return terminal;
 	}
 

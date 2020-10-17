@@ -1,10 +1,15 @@
 package me.alexisevelyn.crewmate.enums;
 
+import java.awt.*;
+
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 // https://unix.stackexchange.com/a/23789/181269
+// https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
 public enum TerminalColors {
 	// Special
 	ANSI_RESET("\u001B[0m"),
+	SET_TITLE_BEGINNING("\033]0;"),
+	SET_TITLE_END("\007"),
 
 	// Foreground
 	ANSI_TEXT_BLACK("\u001B[30m"),
@@ -35,5 +40,17 @@ public enum TerminalColors {
 	@Override
 	public String toString() {
 		return this.formattingCode;
+	}
+
+	public static String getTitle(String title) {
+		return SET_TITLE_BEGINNING + title + SET_TITLE_END;
+	}
+
+	public static String get256ColorForeground(int color) {
+		return "\u001B[38m;5;" + color;
+	}
+
+	public static String get256ColorBackground(int color) {
+		return "\u001B[48m;5;" + color;
 	}
 }

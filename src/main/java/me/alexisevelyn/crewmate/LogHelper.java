@@ -7,28 +7,40 @@ public class LogHelper {
 	private static String CLEAR_LINE_UP_TO_CURSOR = "\\033[1K";
 	private static String CLEAR_WHOLE_LINE = "\\033[2K";
 
+	private static boolean wasTerminalThread = false;
+
 	public static void printLine() {
 		System.out.println();
 	}
 
 	public static void printLine(Object line) {
 		System.out.println(line);
+
+		setCurrentThread();
 	}
 
 	public static void print(Object line) {
 		System.out.print(line);
+
+		setCurrentThread();
 	}
 
 	public static void printFormatted(String line, Object... args) {
 		System.out.format(line, args);
+
+		setCurrentThread();
 	}
 
 	public static void printLineErr(Object line) {
 		System.err.println(line);
+
+		setCurrentThread();
 	}
 
 	public static void printErr(Object line) {
 		System.err.print(line);
+
+		setCurrentThread();
 	}
 
 	public static void printPacketBytes(byte[] bytes, int length) {
@@ -37,6 +49,7 @@ public class LogHelper {
 			return;
 
 		printPacketBytesHorizontal(bytes, length);
+		setCurrentThread();
 	}
 
 	private static void printPacketBytesHorizontal(byte[] bytes, int length) {
@@ -96,5 +109,11 @@ public class LogHelper {
 			printFormatted(leftAlignFormat, i, hexValue);
 		}
 		printFormatted("+-----------------+------+%n");
+	}
+
+	private static void setCurrentThread() {
+		// This should help with tracking lines in terminal and whether or not to overwrite them.
+
+		wasTerminalThread = Thread.currentThread().equals(Main.getTerminal());
 	}
 }
