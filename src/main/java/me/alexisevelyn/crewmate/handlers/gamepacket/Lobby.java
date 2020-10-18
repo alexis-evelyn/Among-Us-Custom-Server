@@ -2,7 +2,7 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.enums.RPC;
+import me.alexisevelyn.crewmate.enums.*;
 
 import java.net.DatagramPacket;
 import java.util.ResourceBundle;
@@ -42,16 +42,16 @@ public class Lobby {
 		RPC rpcType = RPC.getRPC(typeByte);
 		switch (rpcType) {
 			case SET_COLOR:
-				printByteMeaning("color_packet", "N/A");
+				printByteMeaning("color_packet", PlayerColor.getColorName(PlayerColor.getColor(cosmeticByte)));
 				break;
 			case SET_HAT:
-				printByteMeaning("hat_packet", "N/A");
+				printByteMeaning("hat_packet", Hat.getHatName(Hat.getHat(cosmeticByte)));
 				break;
 			case SET_PET:
-				printByteMeaning("pet_packet", "N/A");
+				printByteMeaning("pet_packet", Pet.getPetName(Pet.getPet(cosmeticByte)));
 				break;
 			case SET_SKIN:
-				printByteMeaning("skin_packet", "N/A");
+				printByteMeaning("skin_packet", Skin.getSkinName(Skin.getSkin(cosmeticByte)));
 				break;
 		}
 
