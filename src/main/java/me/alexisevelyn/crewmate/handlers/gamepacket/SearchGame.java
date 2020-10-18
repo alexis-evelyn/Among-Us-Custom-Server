@@ -8,6 +8,8 @@ import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
 import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -50,10 +52,17 @@ public class SearchGame {
 		LogHelper.printLine(String.format(translation.getString("maps_logged"), printableMapsList.toString()));
 		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getLanguageName(language)));
 
-		return getFakeSearchBytes(numberOfImposters, maps, language.getLanguage());
+		try {
+			return getFakeSearchBytes(numberOfImposters, maps, language.getLanguage());
+		} catch (UnknownHostException exception) {
+			LogHelper.printLineErr(Main.getTranslationBundle().getString("search_unknown_host"));
+			exception.printStackTrace();
+
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_unknown_host"));
+		}
 	}
 
-	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) {
+	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) throws UnknownHostException {
 		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u
 		// 0010   07 56 e6 71 31 80 08 73 75 73 68 69 69 69 69 03   .V.q1..sushiiii.
@@ -122,6 +131,10 @@ public class SearchGame {
 		if (maps.length == 0)
 			return new byte[0];
 
+		// Game Address and Port
+		InetAddress ipAddress = InetAddress.getByName("127.0.0.1");
+		int port = Main.getServer().getPort();
+
 		// Temporary String - Not Translating
 		// Visible Game Information
 		String name = "Fake Game - " + Language.getLanguageName(Language.getLanguage(language));
@@ -137,6 +150,7 @@ public class SearchGame {
 		int miraCount = 2;
 		int polusCount = 3;
 
+		// https://stackoverflow.com/a/10380460/6828099
 		byte[] totalSkeldCount = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(skeldCount).array();
 		byte[] totalMiraCount = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(miraCount).array();
 		byte[] totalPolusCount = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(polusCount).array();
@@ -147,8 +161,8 @@ public class SearchGame {
 		byte[] age = new byte[] {(byte) 0xa3, 0x02}; // No Idea What Format This Is In
 
 		// IP Address and Port
-		byte[] ipAddress = new byte[] {0x7f, 0x00, 0x00, 0x01}; // 127.0.0.1
-		byte[] port = new byte[] {0x07, 0x56}; // 22023
+		byte[] ipAddressBytes = ipAddress.getAddress();
+		byte[] portBytes = PacketHelper.convertShortToLE((short) port);
 
 		// Game Code
 		byte[] gameCodeBytes = new byte[] {(byte) 0xb5, (byte) 0xf0, (byte) 0x90, (byte) 0x8a}; // b5:f0:90:8a - ALEXIS
@@ -174,8 +188,8 @@ public class SearchGame {
 				totalGames,
 				fakeGameLength,
 				new byte[] {SearchBytes.POTENTIAL_FLAG.getSearchByte()},
-				ipAddress,
-				port,
+				ipAddressBytes,
+				portBytes,
 				gameCodeBytes,
 				new byte[] {(byte) name.getBytes().length},
 				name.getBytes(),

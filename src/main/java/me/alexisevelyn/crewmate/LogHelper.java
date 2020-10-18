@@ -2,6 +2,9 @@ package me.alexisevelyn.crewmate;
 
 // NOTE: This file is supposed to help with ensuring the terminal is always at the bottom and never left in place when the server logs information.
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -13,9 +16,11 @@ public class LogHelper {
 	private static String CLEAR_WHOLE_LINE = "\\033[2K";
 
 	private static boolean isTerminalThread = false;
-	private static boolean showTimestamp = true;
+	private static boolean showTimestamp = false;
 	private static boolean twentyFourHour = true;
 	private static boolean simpleDateTime = true;
+
+	// private static final Logger logger = LoggerFactory.getLogger(ServerLogger.class);
 
 	public static void printLine() {
 		System.out.println();
@@ -26,8 +31,11 @@ public class LogHelper {
 
 		if (showTimestamp && !isTerminalThread)
 			System.out.println(createLogTimestamp(ZonedDateTime.now(), twentyFourHour, simpleDateTime) + line);
-		else
+		else {
 			System.out.println(line);
+			// https://www.baeldung.com/logback
+			// logger.info("Example log from {}", ServerLogger.class.getSimpleName());
+		}
 	}
 
 	public static void print(Object line) {
@@ -202,7 +210,7 @@ public class LogHelper {
 		return formatNamed(untranslatedDateTime, parameters);
 	}
 
-	private static String formatNamed(String format, Map<String, Object> values) {
+	public static String formatNamed(String format, Map<String, Object> values) {
 		// https://stackoverflow.com/a/27815924/6828099
 		StringBuilder formatter = new StringBuilder(format);
 		List<Object> valueList = new ArrayList<>();

@@ -1,3 +1,3 @@
-./gradlew jar
+./gradlew shadowJar
 cd build/libs
 java -jar CrewMate-*.jar "$@"

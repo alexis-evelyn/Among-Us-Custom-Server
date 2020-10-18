@@ -8,24 +8,49 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+// Client: v2020.9.9a = vvvvvvvv (Current Release At Time of Writing) - Android
+// Client: v2020.10.8i = 50518400 (Current Beta At Time of Writing) - Steam
 
 public class HandshakeHandler {
+	private static char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+
 	public static byte[] handleHandshake(DatagramPacket packet) {
 		// 0000   08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73      ....F....Alexis
 		// 0000   08 00 01 00 46 d2 02 03 03 50 4f 4d               ....F....POM
 		// 0000   08 00 01 00 00 02 18 00                           ........
+		// 0000   08 00 01 00 80 d9 02 03 06 41 6c 65 78 69 73      .........Alexis (Steam Beta - v2020.10.8i)
+		// 0000   08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73      ....F....Alexis (Android Release - v2020.9.9a)
 
 		byte[] buffer = packet.getData();
 
 		// buffer[8] is the length of the name immediately after
 		if (buffer.length > 9 && buffer[8] != 0 && (packet.getLength() - 9) >= buffer[8]) {
+			// Hazel Version
+			int hazelVersion = buffer[1];
+
+			// Client Version
+			byte[] clientVersionBytes = new byte[4]; // Int-32
+			System.arraycopy(buffer, 4, clientVersionBytes, 0, 4);
+
+			// Client Version Info
+			int clientVersionRaw = ByteBuffer.wrap(clientVersionBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+
+			// Player Display Name
 			byte[] nameBytes = new byte[buffer[8]];
 			System.arraycopy(buffer, 9, nameBytes, 0, buffer[8]);
 			String name = new String(nameBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
+			// Debug Logging
 			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("name_logged"), name));
+			logVersionInfo(clientVersionRaw);
 
 			// Start Ping
 			return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), 0x00, 0x01, (byte) 0xff};
@@ -48,8 +73,7 @@ public class HandshakeHandler {
 
 		// Convert Port to Little Endian Bytes
 		short port = 22023; // TODO: Figure out how to extract port number from packet
-		byte[] encodedPort = PacketHelper.convertShortToLE(port); // This is supposed to be 0x07 0x56, but for some reason is 0x07 0x86 (for port 22023)
-		encodedPort = new byte[] {0x07, 0x56};
+		byte[] encodedPort = PacketHelper.convertShortToLE(port);
 
 		String fakeMasterName = "Pseudo-Master-1";
 		int numberOfMasters = 1;
@@ -80,6 +104,58 @@ public class HandshakeHandler {
 		byte[] header = new byte[] {SendOption.NONE.getSendOption(), messageLength[0], messageLength[1], MasterBytes.FLAG.getMasterByte(), MasterBytes.UNKNOWN.getMasterByte(), (byte) numberOfMasters, masterBytesLength[0], masterBytesLength[1], MasterBytes.UNKNOWN_FLAG_TEMP.getMasterByte(), (byte) fakeMasterName.getBytes().length};
 
 		return PacketHelper.mergeBytes(header, message);
+	}
+
+	private static void logVersionInfo(long raw) {
+		/* Client Version Reversal
+		 *
+		 * year = floor(version / 25000)
+		 * version %= 25000
+		 * month = floor(version / 1800)
+		 * version %= 1800
+		 * day = floor(version / 50)
+		 * revision = version % 50
+		 */
+
+		// https://gist.github.com/codyphobe/c95a30eba17d613852aa251976382ad7
+		// version = (year * 25000) + (month * 1800) + (day * 50) + revision
+		// 50516551 = (2020 * 25000) + (9 * 1800) + (7 * 50) + 1
+
+		// Temp Var
+		// raw = 50516551L; // Version: 50516551 - 09/07/2020 Revision: 1
+		long clientVersion = raw;
+
+		// Year
+		long year = (long) Math.floor(clientVersion / 25000.0);
+
+		// Month
+		clientVersion %= 25000;
+		long month = (long) Math.floor(clientVersion / 1800.0);
+
+		// Day
+		clientVersion %= 1800;
+		long day = (long) Math.floor(clientVersion / 50.0);
+
+		// Revision Number
+		long revision = clientVersion % 50;
+
+		// Attempts to Grab Letter - If Fail, Then Use Number Instead
+		String revisionLetter = (revision >= 0 && revision < letters.length) ? String.valueOf(letters[(int) revision]) : String.valueOf(revision);
+
+		ResourceBundle translation = Main.getTranslationBundle();
+		Map<String, Object> parameters = new HashMap<>();
+
+		// Date
+		parameters.put("month", String.format("%02d", month));
+		parameters.put("day", String.format("%02d", day));
+		parameters.put("year", String.format("%02d", year));
+
+		// Other
+		parameters.put("revision", revisionLetter);
+		parameters.put("raw", raw);
+
+		String logLine = LogHelper.formatNamed(translation.getString("client_version_logged"), parameters);
+		LogHelper.printLine(logLine);
 	}
 
 	private enum MasterBytes {

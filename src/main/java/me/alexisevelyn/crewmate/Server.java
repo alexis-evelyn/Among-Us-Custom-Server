@@ -20,6 +20,9 @@ public class Server extends Thread {
 	private boolean running = false;
 	private final byte[] buf = new byte[256];
 
+	private final InetAddress boundIP;
+	private final int port;
+
 	public Server() throws SocketException {
 		// null means bind to any address
 		this(22023, null);
@@ -27,6 +30,9 @@ public class Server extends Thread {
 
 	public Server(int port, InetAddress bindAddress) throws SocketException {
 		this.socket = new DatagramSocket(port, bindAddress);
+
+		this.port = this.socket.getLocalPort();
+		this.boundIP = this.socket.getLocalAddress();
 	}
 
 	@Override
@@ -48,7 +54,7 @@ public class Server extends Thread {
 				// For Title
 				LogHelper.print(
 						TerminalColors.getTitle(
-								String.format(Main.getTranslationBundle().getString("server_listening_title"), this.socket.getLocalAddress().getHostAddress(), this.socket.getLocalPort())
+								String.format(Main.getTranslationBundle().getString("server_listening_title"), this.boundIP.getHostAddress(), this.port)
 						)
 				);
 			}
@@ -169,5 +175,13 @@ public class Server extends Thread {
 
 	private void setupShutdownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> Main.getServer().exit()));
+	}
+
+	public InetAddress getBoundIP() {
+		return this.boundIP;
+	}
+
+	public int getPort() {
+		return this.port;
 	}
 }

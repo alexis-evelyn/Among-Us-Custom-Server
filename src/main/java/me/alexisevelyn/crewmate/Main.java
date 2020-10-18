@@ -1,7 +1,5 @@
 package me.alexisevelyn.crewmate;
 
-import me.alexisevelyn.crewmate.enums.TerminalColors;
-
 import java.net.SocketException;
 import java.util.Locale;
 import java.util.ResourceBundle;
