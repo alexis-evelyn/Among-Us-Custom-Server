@@ -66,8 +66,8 @@ public class Main {
 		return terminal;
 	}
 
-	public static Terminal getMain() {
-		return terminal;
+	public static Thread getMain() {
+		return main;
 	}
 
 	public static ResourceBundle getTranslationBundle() {
@@ -76,5 +76,13 @@ public class Main {
 
 	public static Locale getCurrentLocale() {
 		return currentLocale;
+	}
+
+	public static void setCurrentLocale(Locale locale) {
+		currentLocale = locale;
+	}
+
+	public static void setTranslationBundle(ResourceBundle translationBundle) {
+		translations = translationBundle;
 	}
 }

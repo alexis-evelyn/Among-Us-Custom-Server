@@ -2,8 +2,10 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
+import me.alexisevelyn.crewmate.enums.RPC;
 
 import java.net.DatagramPacket;
+import java.util.ResourceBundle;
 
 public class Lobby {
 	public static byte[] handleSettings(DatagramPacket packet) {
@@ -22,5 +24,43 @@ public class Lobby {
 		LogHelper.printLine(visibility);
 
 		return new byte[0];
+	}
+
+	public static byte[] handleCosmetics(DatagramPacket packet) {
+		if (packet.getLength() != 16)
+			return new byte[0];
+
+		int length = packet.getLength();
+		byte[] buffer = packet.getData();
+
+//		LogHelper.printLine(Main.getTranslationBundle().getString("cosmetic_packet"));
+//		LogHelper.printPacketBytes(buffer, length);
+
+		byte typeByte = buffer[14]; // Type of Cosmetic Set
+		byte cosmeticByte = buffer[15]; // Cosmetic ID
+
+		RPC rpcType = RPC.getRPC(typeByte);
+		switch (rpcType) {
+			case SET_COLOR:
+				printByteMeaning("color_packet", "N/A");
+				break;
+			case SET_HAT:
+				printByteMeaning("hat_packet", "N/A");
+				break;
+			case SET_PET:
+				printByteMeaning("pet_packet", "N/A");
+				break;
+			case SET_SKIN:
+				printByteMeaning("skin_packet", "N/A");
+				break;
+		}
+
+		return new byte[0];
+	}
+
+	private static void printByteMeaning(String translationKey, String byteMeaning) {
+		ResourceBundle translation = Main.getTranslationBundle();
+
+		LogHelper.printLine(String.format(translation.getString(translationKey), byteMeaning));
 	}
 }

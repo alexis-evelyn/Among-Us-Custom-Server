@@ -71,7 +71,13 @@ public class LogHelper {
 		printPacketBytesHorizontal(bytes, length);
 	}
 
-	private static void printPacketBytesHorizontal(byte[] bytes, int length) {
+	public static void printPacketBytesHorizontal(byte[] bytes, int length) {
+		// https://stackoverflow.com/a/15215434/6828099
+		if (bytes.length < length)
+			return;
+
+		setCurrentThread();
+
 		String positionHeader = Main.getTranslationBundle().getString("positions_header");
 		String bytesHeader = Main.getTranslationBundle().getString("bytes_header");
 
@@ -115,19 +121,25 @@ public class LogHelper {
 	}
 
 	@SuppressWarnings("unused")
-	private static void printPacketBytesVertical(byte[] bytes, int length) {
-		String leftAlignFormat = "| %-15s | %-4s |%n";
+	public static void printPacketBytesVertical(byte[] bytes, int length) {
+		// https://stackoverflow.com/a/15215434/6828099
+		if (bytes.length < length)
+			return;
 
-		printFormatted("+-----------------+------+%n");
-		printFormatted("| Position        | Byte |%n");
-		printFormatted("+-----------------+------+%n");
+		setCurrentThread();
+
+		String leftAlignFormat = "| %-15s | %-5s |%n";
+
+		printFormatted("+-----------------+-------+%n");
+		printFormatted(leftAlignFormat, Main.getTranslationBundle().getString("positions_header"), Main.getTranslationBundle().getString("bytes_header"));
+		printFormatted("+-----------------+-------+%n");
 		for (int i = 0; i < length; i++) {
 			// https://www.thetopsites.net/article/50509537.shtml
 			String hexValue = String.format("%02X", (0xFF & bytes[i]));
 
 			printFormatted(leftAlignFormat, i, hexValue);
 		}
-		printFormatted("+-----------------+------+%n");
+		printFormatted("+-----------------+-------+%n");
 	}
 
 	private static boolean wasLastThreadTerminalThread() {

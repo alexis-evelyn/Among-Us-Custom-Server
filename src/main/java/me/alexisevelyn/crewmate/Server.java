@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate;
 
 import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
+import me.alexisevelyn.crewmate.handlers.FragmentPacketHandler;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
 import me.alexisevelyn.crewmate.handlers.PingHandler;
@@ -117,10 +118,14 @@ public class Server extends Thread {
 				replyBuffer = PingHandler.handlePing(packet);
 				break;
 			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
-				replyBuffer = GamePacketHandler.handleGamePacket(packet);
+				replyBuffer = GamePacketHandler.handleReliablePacket(packet);
 				break;
-			case NONE: // Generic Unreliable Packet - Not Handled Yet
+			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
+				replyBuffer = GamePacketHandler.handleUnreliablePacket(packet);
+				break;
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
+				replyBuffer = FragmentPacketHandler.handleFragmentPacket(packet);
+				break;
 			default:
 				return;
 		}

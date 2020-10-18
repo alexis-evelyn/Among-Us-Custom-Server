@@ -36,6 +36,12 @@ public class GameCodeHelper {
 		// Game Codes Can Be 4 or 6 Capital Letters Long
 		// Technically the client allows numbers in the game code, but it results in an integer 0.
 
+		// 4 Digit Room Codes are just The ASCII Bytes
+		if (gameCode.length() == 4)
+			return gameCode.getBytes();
+		else if (gameCode.length() == 6)
+			return new byte[0];
+
 		return new byte[0];
 	}
 
