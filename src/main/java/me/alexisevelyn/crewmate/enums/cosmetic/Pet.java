@@ -1,4 +1,4 @@
-package me.alexisevelyn.crewmate.enums;
+package me.alexisevelyn.crewmate.enums.cosmetic;
 
 import me.alexisevelyn.crewmate.Main;
 
@@ -39,27 +39,27 @@ public enum Pet {
 		ResourceBundle translation = Main.getTranslationBundle();
 		switch (pet) {
 			case NONE:
-				return Main.getTranslationBundle().getString("pet_none");
+				return translation.getString("pet_none");
 			case ALIEN:
-				return Main.getTranslationBundle().getString("pet_alien");
+				return translation.getString("pet_alien");
 			case CREWMATE:
-				return Main.getTranslationBundle().getString("pet_crewmate");
+				return translation.getString("pet_crewmate");
 			case DOG:
-				return Main.getTranslationBundle().getString("pet_dog");
+				return translation.getString("pet_dog");
 			case STICKMIN:
-				return Main.getTranslationBundle().getString("pet_stickmin");
+				return translation.getString("pet_stickmin");
 			case HAMSTER:
-				return Main.getTranslationBundle().getString("pet_hamster");
+				return translation.getString("pet_hamster");
 			case ROBOT:
-				return Main.getTranslationBundle().getString("pet_robot");
+				return translation.getString("pet_robot");
 			case UFO:
-				return Main.getTranslationBundle().getString("pet_ufo");
+				return translation.getString("pet_ufo");
 			case ELLIE:
-				return Main.getTranslationBundle().getString("pet_ellie");
+				return translation.getString("pet_ellie");
 			case SQUIG:
-				return Main.getTranslationBundle().getString("pet_squig");
+				return translation.getString("pet_squig");
 			case BEDCRAB:
-				return Main.getTranslationBundle().getString("pet_bedcrab");
+				return translation.getString("pet_bedcrab");
 			default:
 				return translation.getString("unknown");
 		}

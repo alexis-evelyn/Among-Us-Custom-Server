@@ -3,6 +3,9 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.enums.*;
+import me.alexisevelyn.crewmate.enums.cosmetic.Hat;
+import me.alexisevelyn.crewmate.enums.cosmetic.Pet;
+import me.alexisevelyn.crewmate.enums.cosmetic.Skin;
 
 import java.net.DatagramPacket;
 import java.util.ResourceBundle;

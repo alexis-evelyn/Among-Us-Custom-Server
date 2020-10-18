@@ -1,7 +1,5 @@
 package me.alexisevelyn.crewmate.enums;
 
-import java.awt.*;
-
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 // https://unix.stackexchange.com/a/23789/181269
 // https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors

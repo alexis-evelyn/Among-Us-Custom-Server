@@ -1,4 +1,4 @@
-package me.alexisevelyn.crewmate.enums;
+package me.alexisevelyn.crewmate.enums.cosmetic;
 
 import me.alexisevelyn.crewmate.Main;
 
@@ -43,37 +43,37 @@ public enum Skin {
 		ResourceBundle translation = Main.getTranslationBundle();
 		switch (skin) {
 			case NONE:
-				return Main.getTranslationBundle().getString("skin_none");
+				return translation.getString("skin_none");
 			case ASTRONAUT:
-				return Main.getTranslationBundle().getString("skin_astronaut");
+				return translation.getString("skin_astronaut");
 			case CAPTAIN:
-				return Main.getTranslationBundle().getString("skin_captain");
+				return translation.getString("skin_captain");
 			case MECHANIC:
-				return Main.getTranslationBundle().getString("skin_mechanic");
+				return translation.getString("skin_mechanic");
 			case MILITARY:
-				return Main.getTranslationBundle().getString("skin_military");
+				return translation.getString("skin_military");
 			case POLICE:
-				return Main.getTranslationBundle().getString("skin_police");
+				return translation.getString("skin_police");
 			case SCIENTIST:
-				return Main.getTranslationBundle().getString("skin_scientist");
+				return translation.getString("skin_scientist");
 			case SUIT_BLACK:
-				return Main.getTranslationBundle().getString("skin_suit_black");
+				return translation.getString("skin_suit_black");
 			case SUIT_WHITE:
-				return Main.getTranslationBundle().getString("skin_suit_white");
+				return translation.getString("skin_suit_white");
 			case THE_WALL:
-				return Main.getTranslationBundle().getString("skin_the_wall");
+				return translation.getString("skin_the_wall");
 			case HAZMAT:
-				return Main.getTranslationBundle().getString("skin_hazmat");
+				return translation.getString("skin_hazmat");
 			case SECURITY:
-				return Main.getTranslationBundle().getString("skin_security");
+				return translation.getString("skin_security");
 			case TARMAC:
-				return Main.getTranslationBundle().getString("skin_tarmac");
+				return translation.getString("skin_tarmac");
 			case MINER:
-				return Main.getTranslationBundle().getString("skin_miner");
+				return translation.getString("skin_miner");
 			case WINTER:
-				return Main.getTranslationBundle().getString("skin_winter");
+				return translation.getString("skin_winter");
 			case ARCHAEOLOGIST:
-				return Main.getTranslationBundle().getString("skin_archaeologist");
+				return translation.getString("skin_archaeologist");
 			default:
 				return translation.getString("unknown");
 		}
