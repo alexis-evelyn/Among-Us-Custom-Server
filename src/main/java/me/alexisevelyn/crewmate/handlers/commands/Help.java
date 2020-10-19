@@ -3,6 +3,7 @@ package me.alexisevelyn.crewmate.handlers.commands;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Terminal;
+import me.alexisevelyn.crewmate.handlers.CommandHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -11,10 +12,15 @@ import java.util.ResourceBundle;
 public class Help implements Command {
 	private final ArrayList<Class <? extends Command>> commands = new ArrayList<>();
 
+	/**
+	 * See {@link CommandHandler#handleCommand)
+	 */
 	public Help() {
 		commands.add(Exit.class);
 		commands.add(RegionFileGenerator.class);
 		commands.add(Help.class);
+		commands.add(Bug.class);
+		commands.add(TestLua.class);
 
 		// TODO: Sort List and Pull From Registry
 	}
