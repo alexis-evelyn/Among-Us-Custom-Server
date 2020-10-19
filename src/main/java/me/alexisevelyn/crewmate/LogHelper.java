@@ -142,6 +142,10 @@ public class LogHelper {
 		printFormatted("+-----------------+-------+%n");
 	}
 
+	public static String convertByteToHexString(byte bite) {
+		return String.format("0x%02X", (0xFF & bite));
+	}
+
 	private static boolean wasLastThreadTerminalThread() {
 		return isTerminalThread;
 	}

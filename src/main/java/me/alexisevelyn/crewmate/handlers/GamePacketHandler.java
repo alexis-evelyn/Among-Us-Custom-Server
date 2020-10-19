@@ -10,6 +10,8 @@ import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
 
 import java.net.DatagramPacket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -33,6 +35,10 @@ public class GamePacketHandler {
 			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_invalid_size"));
 
 		ReliablePacketType type = ReliablePacketType.getReliablePacketType(buffer[5]);
+
+		// Sanitization Check
+		if (type == null)
+			return new byte[0];
 
 		switch (type) {
 			case PRE_HOST_SETTINGS: // 0x00
@@ -70,8 +76,36 @@ public class GamePacketHandler {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
-		if (length >= 15) {
+		// TODO: Create a Game Data Enum and Put 0x02 As The RPC Game Data Type
+		if (length >= 15 && buffer[12] == 0x02) {
 			RPC type = RPC.getRPC(buffer[14]);
+
+			// Sanitization Check
+			if (type == null) {
+				LogHelper.printLine(String.format(Main.getTranslationBundle().getString("unknown_rpc_flag"), LogHelper.convertByteToHexString(buffer[14])));
+				// LogHelper.printPacketBytes(buffer, length);
+
+				// Setup For Extract RPC Header
+				byte[] rpcBytes = new byte[15];
+				byte[] rpcSpecifiedSizeBytes = new byte[2];
+
+				// Extract RPC Header
+				System.arraycopy(buffer, 0, rpcBytes, 0, 15);
+				System.arraycopy(rpcBytes, 3, rpcSpecifiedSizeBytes, 0, 2);
+
+				// Size Math
+				int rpcSpecifiedLength = ByteBuffer.wrap(rpcSpecifiedSizeBytes).order(ByteOrder.LITTLE_ENDIAN).getShort();
+				int packetLength = length - 6;
+
+				// Print Size Math
+				LogHelper.printLine(String.format(Main.getTranslationBundle().getString("rpc_length_vs_packet_length"), rpcSpecifiedLength, packetLength));
+
+				// Print RPC Header
+				LogHelper.printPacketBytes(rpcBytes, 15);
+
+				return new byte[0];
+			}
+
 			switch (type) {
 				case SEND_CHAT:
 					return handleChat(packet);

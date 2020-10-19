@@ -43,6 +43,11 @@ public class Lobby {
 		byte cosmeticByte = buffer[15]; // Cosmetic ID
 
 		RPC rpcType = RPC.getRPC(typeByte);
+
+		// Sanitization Check
+		if (rpcType == null)
+			return new byte[0];
+
 		switch (rpcType) {
 			case SET_COLOR:
 				printByteMeaning("color_packet", PlayerColor.getColorName(PlayerColor.getColor(cosmeticByte)));

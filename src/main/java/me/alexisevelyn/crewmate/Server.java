@@ -108,6 +108,7 @@ public class Server extends Thread {
 		SendOption sendOption = SendOption.getSendOption(packet.getData()[0]);
 
 		// Throw Out Any Unknown Packets
+		// Sanitization Check
 		if (sendOption == null)
 			return;
 
