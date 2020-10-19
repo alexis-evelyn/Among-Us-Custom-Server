@@ -11,7 +11,7 @@ import java.net.DatagramPacket;
 import java.util.ResourceBundle;
 
 public class Lobby {
-	public static byte[] handleSettings(DatagramPacket packet) {
+	public static byte[] handleGameVisibility(DatagramPacket packet) {
 		// 0000   01 00 59 06 00 0a 3b be 25 8c 01 00               ..Y...;.%... - Private Game
 		// 0000   01 00 42 06 00 0a 3b be 25 8c 01 01               ..B...;.%... - Public Game
 

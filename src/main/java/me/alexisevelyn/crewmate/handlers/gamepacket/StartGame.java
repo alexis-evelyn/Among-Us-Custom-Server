@@ -78,8 +78,10 @@ public class StartGame {
 		if (packet.getLength() != 11)
 			return new byte[0];
 
+		// 00 03 05 00 01?
 		byte[] buffer = packet.getData();
 		byte[] gameCodeBytes = new byte[4];
+		Map[] maps = SearchGame.parseMapsSearch(buffer[10]); // Client Owned Maps
 
 		// Extract Game Code Bytes From Buffer
 		System.arraycopy(buffer, 6, gameCodeBytes, 0, 4);
@@ -97,15 +99,18 @@ public class StartGame {
 		}
 
 		// LogHelper.printLine("Game Code (Byte Form): " + Arrays.toString(gameCodeBytes));
-		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("gamecode_integer_form_logged"), gameCode));
+		// LogHelper.printLine(String.format(Main.getTranslationBundle().getString("gamecode_integer_form_logged"), gameCode));
+		// LogHelper.printLine(String.format(Main.getTranslationBundle().getString("owned_maps"), SearchGame.getPrintableMapsList(maps)));
 
 		// Game Code - NPGWQQ (cd:98:00:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 cd 98 00 80 07                  ...........
+		//
 		// S->C - 0000   01 00 02 0d 00 07 cd 98 00 80 f5 e9 1e 00 f5 e9   ................
 		// S->C - 0010   1e 00 00 06 00 0a cd 98 00 80 01 00               ............
 
 		// Game Code - TVJUXQ (0c:0e:1b:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 0c 0e 1b 80 07                  ...........
+		//
 		// S->C - 0000   01 00 02 0d 00 07 0c 0e 1b 80 94 04 02 00 94 04   ................
 		// S->C - 0010   02 00 00 06 00 0a 0c 0e 1b 80 01 00               ............
 

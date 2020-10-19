@@ -33,23 +33,15 @@ public class SearchGame {
 		// 0 Means Any
 		int numberOfImposters = buffer[38];
 
-		// List of Maps Being Included In Search
+		// List of Maps Searched For
 		Map[] maps = parseMapsSearch(buffer[14]);
-		StringBuilder printableMapsList = new StringBuilder();
-
-		// Append Delimiters (Usually Comma + Space) To List and Then Remove Last Delimiter
-		String delimiter = Main.getTranslationBundle().getString("list_delimiter_logged");
-		for (Map map : maps) {
-			printableMapsList.append(Map.getMapName(map)).append(delimiter);
-		}
-		printableMapsList.delete(printableMapsList.length() - delimiter.length(), printableMapsList.length());
 
 		// Language To Search By
 		Language language = Language.getLanguage(Language.convertToInt(buffer[10], buffer[11]));
 
 		ResourceBundle translation = Main.getTranslationBundle();
 		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
-		LogHelper.printLine(String.format(translation.getString("maps_logged"), printableMapsList.toString()));
+		LogHelper.printLine(String.format(translation.getString("maps_logged"), getPrintableMapsList(maps)));
 		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getLanguageName(language)));
 
 		try {
@@ -60,6 +52,20 @@ public class SearchGame {
 
 			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_unknown_host"));
 		}
+	}
+
+	public static String getPrintableMapsList(Map[] maps) {
+		// List of Maps Being Included In Search
+		StringBuilder printableMapsList = new StringBuilder();
+
+		// Append Delimiters (Usually Comma + Space) To List and Then Remove Last Delimiter
+		String delimiter = Main.getTranslationBundle().getString("list_delimiter_logged");
+		for (Map map : maps) {
+			printableMapsList.append(Map.getMapName(map)).append(delimiter);
+		}
+		printableMapsList.delete(printableMapsList.length() - delimiter.length(), printableMapsList.length());
+
+		return printableMapsList.toString();
 	}
 
 	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) throws UnknownHostException {
