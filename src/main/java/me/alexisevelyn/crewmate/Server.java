@@ -13,6 +13,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 public class Server extends Thread {
 	// https://www.scadacore.com/tools/programming-calculators/online-hex-converter/
@@ -38,6 +39,8 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
+		ResourceBundle translation = Main.getTranslationBundle();
+		
 		// For Cleaning Up When Shutdown
 		this.setupShutdownHook();
 
@@ -50,12 +53,12 @@ public class Server extends Thread {
 			if (!justStarted) {
 				justStarted = true;
 
-				LogHelper.printLine(Main.getTranslationBundle().getString("server_started"));
+				LogHelper.printLine(translation.getString("server_started"));
 
 				// For Title
 				LogHelper.print(
 						TerminalColors.getTitle(
-								String.format(Main.getTranslationBundle().getString("server_listening_title"), this.boundIP.getHostAddress(), this.port)
+								String.format(translation.getString("server_listening_title"), this.boundIP.getHostAddress(), this.port)
 						)
 				);
 			}

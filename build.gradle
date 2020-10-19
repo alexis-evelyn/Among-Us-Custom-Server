@@ -39,6 +39,14 @@ jar {
     }
 }
 
+// This is so build time properties like the server version are saved in the jar
+// https://stackoverflow.com/a/54006518/6828099
+processResources {
+    filesMatching('compileTime.properties') {
+        expand([build_version: version])
+    }
+}
+
 test {
     useJUnitPlatform()
 }

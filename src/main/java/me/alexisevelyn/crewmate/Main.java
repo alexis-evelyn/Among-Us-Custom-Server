@@ -1,7 +1,9 @@
 package me.alexisevelyn.crewmate;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class Main {
@@ -15,6 +17,9 @@ public class Main {
 	private static Locale currentLocale = Locale.getDefault();
 	private static ResourceBundle translations = ResourceBundle.getBundle("translations/Main", currentLocale);
 
+	// Compile Time Properties
+	private static final Properties compileTimeProperties = new Properties();
+
 	public static void main(String[] args) {
 		// Store Main Thread
 		main = Thread.currentThread();
@@ -27,6 +32,20 @@ public class Main {
 	}
 
 	public static void startServer(String[] args) {
+		// Read Compile Time Properties
+		String versionString;
+		try {
+			compileTimeProperties.load(Main.class.getResourceAsStream("/compileTime.properties"));
+			versionString = compileTimeProperties.getProperty("version");
+		} catch (IOException exception) {
+			versionString = getTranslationBundle().getString("unknown");
+		}
+
+		// Print Version Info
+		String printableVersionString = String.format(getTranslationBundle().getString("server_version"), getTranslationBundle().getString("server_name"), versionString);
+		LogHelper.printLine(printableVersionString);
+
+		// Print Server Starting Message
 		LogHelper.printLine(getTranslationBundle().getString("server_starting"));
 
 		// TODO: Create an Argument Parsing Function
