@@ -21,6 +21,7 @@ public class Help implements Command {
 		commands.add(Help.class);
 		commands.add(Bug.class);
 		commands.add(TestLua.class);
+		commands.add(GameCode.class);
 
 		// TODO: Sort List and Pull From Registry
 	}

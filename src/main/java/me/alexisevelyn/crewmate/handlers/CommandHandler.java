@@ -19,29 +19,36 @@ public class CommandHandler {
 		if (command == null || terminal == null)
 			return;
 
+		String checkCommand = command.trim().toLowerCase().split("\\s+")[0];
+
 		// Exit Command
-		if (command.toLowerCase().equals(Main.getTranslationBundle().getString("exit_command"))) {
+		if (checkCommand.equals(Main.getTranslationBundle().getString("exit_command"))) {
 			new Exit().execute(command, terminal);
 		}
 
 		// Region File Generator Command
-		if (command.toLowerCase().equals(Main.getTranslationBundle().getString("region_file_generator_command"))) {
+		if (checkCommand.equals(Main.getTranslationBundle().getString("region_file_generator_command"))) {
 			new RegionFileGenerator().execute(command, terminal);
 		}
 
 		// Help Command
-		if (command.toLowerCase().equals(Main.getTranslationBundle().getString("help_command"))) {
+		if (checkCommand.equals(Main.getTranslationBundle().getString("help_command"))) {
 			new Help().execute(command, terminal);
 		}
 
 		// Bug Command
-		if (command.toLowerCase().equals(Main.getTranslationBundle().getString("bug_command"))) {
+		if (checkCommand.equals(Main.getTranslationBundle().getString("bug_command"))) {
 			new Bug().execute(command, terminal);
 		}
 
 		// Test Lua Command
-		if (command.toLowerCase().equals(Main.getTranslationBundle().getString("test_lua_command"))) {
+		if (checkCommand.equals(Main.getTranslationBundle().getString("test_lua_command"))) {
 			new TestLua().execute(command, terminal);
+		}
+
+		// Game Code To Bytes Or String
+		if (checkCommand.equals(Main.getTranslationBundle().getString("gamecode_command"))) {
+			new GameCode().execute(command, terminal);
 		}
 	}
 }
