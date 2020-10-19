@@ -133,7 +133,10 @@ public class GamePacketHandler {
 			System.arraycopy(buffer, 0x10, chatMessageBytes, 0, buffer[15]);
 			String chatMessage = new String(chatMessageBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
-			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("received_chat"), "N/A", chatMessage));
+			// Unconfirmed if Player ID
+			int playerID = buffer[13];
+
+			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("received_chat"), playerID, chatMessage));
 		}
 
 		return new byte[0];

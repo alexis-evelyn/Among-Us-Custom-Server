@@ -41,6 +41,28 @@ public enum ReliablePacketType {
 	public static String getReliablePacketTypeName(ReliablePacketType reliablePacketType) {
 		ResourceBundle translation = Main.getTranslationBundle();
 		switch (reliablePacketType) {
+			case PRE_HOST_SETTINGS:
+				return translation.getString("reliable_packet_pre_host_settings");
+			case JOIN_GAME:
+				return translation.getString("reliable_packet_join_game");
+			case START_GAME:
+				return translation.getString("reliable_packet_start_game");
+			case REMOVE_GAME:
+				return translation.getString("reliable_packet_remove_game");
+			case REMOVE_PLAYER:
+				return translation.getString("reliable_packet_remove_player");
+			case GAME_DATA:
+				return translation.getString("reliable_packet_game_data");
+			case GAME_DATA_TO:
+				return translation.getString("reliable_packet_game_data_to");
+			case JOINED_GAME:
+				return translation.getString("reliable_packet_joined_game");
+			case ALTER_GAME:
+				return translation.getString("reliable_packet_alter_game");
+			case REDIRECT_GAME:
+				return translation.getString("reliable_packet_redirect_game");
+			case SEARCH_PUBLIC_GAME:
+				return translation.getString("reliable_packet_search_public_game");
 			default:
 				return translation.getString("unknown");
 		}

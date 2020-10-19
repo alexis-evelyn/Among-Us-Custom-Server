@@ -1,6 +1,10 @@
 package me.alexisevelyn.crewmate.enums.hazel;
 
+import me.alexisevelyn.crewmate.Main;
+import me.alexisevelyn.crewmate.enums.ReliablePacketType;
+
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
 public enum SendOption {
 	// Names From: https://github.com/willardf/Hazel-Networking/blob/master/Hazel/SendOption.cs
@@ -24,6 +28,28 @@ public enum SendOption {
 
 	public static SendOption getSendOption(byte sendOptionValue) {
 		return sendOptionHashMap.get(sendOptionValue);
+	}
+
+	public static String getSendOptionName(SendOption sendOptionType) {
+		ResourceBundle translation = Main.getTranslationBundle();
+		switch (sendOptionType) {
+			case NONE:
+				return translation.getString("send_option_none");
+			case RELIABLE:
+				return translation.getString("send_option_reliable");
+			case HELLO:
+				return translation.getString("send_option_hello");
+			case DISCONNECT:
+				return translation.getString("send_option_disconnect");
+			case ACKNOWLEDGEMENT:
+				return translation.getString("send_option_acknowledgment");
+			case FRAGMENT:
+				return translation.getString("send_option_fragment");
+			case PING:
+				return translation.getString("send_option_ping");
+			default:
+				return translation.getString("unknown");
+		}
 	}
 
 	public byte getSendOption() {
