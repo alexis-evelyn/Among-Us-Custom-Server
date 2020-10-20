@@ -311,3 +311,5 @@ beds
 google
 form
 fame
+remote
+near
