@@ -272,3 +272,15 @@ eyes
 ears
 legs
 arms
+pack
+burn
+wild
+pane
+pain
+tree
+stumps
+bucket
+plug
+bags
+caps
+escape
