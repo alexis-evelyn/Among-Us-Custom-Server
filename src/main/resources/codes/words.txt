@@ -290,3 +290,11 @@ deltas
 mirage
 shoved
 coke
+cowboy
+girl
+boys
+cows
+crow
+sheeps
+life
+xmas
