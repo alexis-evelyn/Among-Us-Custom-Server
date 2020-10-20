@@ -360,3 +360,6 @@ screen
 guns
 hose
 pipe
+soda
+delete
+erases
