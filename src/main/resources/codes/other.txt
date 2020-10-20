@@ -5,3 +5,6 @@ todo
 thot
 github
 moar
+monday
+friday
+saturn
