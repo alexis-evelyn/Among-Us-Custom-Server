@@ -381,3 +381,5 @@ rocked
 news
 wheels
 barrow
+metals
+medals
