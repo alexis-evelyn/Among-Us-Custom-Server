@@ -93,6 +93,8 @@ public class StartGame {
 			file.seek(position);
 
 			// Skip to End of Line
+			// TODO: Fix so it can grab the first word on the list and
+			//  so it doesn't NPE for reading the line on the last word of the list
 			file.readLine();
 
 			// Get Word

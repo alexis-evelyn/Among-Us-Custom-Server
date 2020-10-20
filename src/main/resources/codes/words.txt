@@ -502,7 +502,6 @@ sticky
 bricks
 tank
 slab
-Alan
 handle
 helium
 jugs
@@ -511,3 +510,5 @@ pogs
 them
 then
 could
+shadow
+legend
