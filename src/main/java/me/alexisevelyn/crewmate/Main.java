@@ -67,6 +67,9 @@ public class Main {
 				server = new Server();
 
 			server.start();
+
+			// TODO: Remove after testing.
+			new TestEventListener(server);
 		} catch (SocketException e) {
 			LogHelper.printLineErr(getTranslationBundle().getString("failed_socket_bind"));
 		}

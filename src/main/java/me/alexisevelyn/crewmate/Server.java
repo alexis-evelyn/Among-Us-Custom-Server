@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate;
 
 import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
+import me.alexisevelyn.crewmate.events.bus.EventBus;
 import me.alexisevelyn.crewmate.handlers.FragmentPacketHandler;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
@@ -25,9 +26,15 @@ public class Server extends Thread {
 	private final InetAddress boundIP;
 	private final int port;
 
+	private final EventBus eventBus = new EventBus();
+
 	public Server() throws SocketException {
 		// null means bind to any address
 		this(22023, null);
+	}
+
+	public EventBus getEventBus() {
+		return eventBus;
 	}
 
 	public Server(int port, InetAddress bindAddress) throws SocketException {
@@ -122,7 +129,7 @@ public class Server extends Thread {
 				replyBuffer = PingHandler.handlePing(packet);
 				break;
 			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
-				replyBuffer = GamePacketHandler.handleReliablePacket(packet);
+				replyBuffer = GamePacketHandler.handleReliablePacket(packet, this);
 				break;
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
 				replyBuffer = GamePacketHandler.handleUnreliablePacket(packet);

@@ -3,9 +3,11 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
+import me.alexisevelyn.crewmate.events.impl.GameSearchEvent;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -18,7 +20,7 @@ import java.util.ResourceBundle;
 public class SearchGame {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
 
-	public static byte[] handleSearchPublicGame(DatagramPacket packet) {
+	public static byte[] handleSearchPublicGame(DatagramPacket packet, Server server) {
 		// Request Search
 		// 0000   01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 01 00   ...,...*........
 		// 0010   00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01   ..?...?...?..pA.
@@ -44,14 +46,10 @@ public class SearchGame {
 		LogHelper.printLine(String.format(translation.getString("maps_logged"), getPrintableMapsList(maps)));
 		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getLanguageName(language)));
 
-		try {
-			return getFakeSearchBytes(numberOfImposters, maps, language.getLanguage());
-		} catch (UnknownHostException exception) {
-			LogHelper.printLineErr(Main.getTranslationBundle().getString("search_unknown_host"));
-			exception.printStackTrace();
+		GameSearchEvent event = new GameSearchEvent(language, maps, numberOfImposters);
+		event.call(server);
 
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_unknown_host"));
-		}
+		return event.getGames();
 	}
 
 	public static String getPrintableMapsList(Map[] maps) {
@@ -68,7 +66,7 @@ public class SearchGame {
 		return printableMapsList.toString();
 	}
 
-	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) throws UnknownHostException {
+	public static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) throws UnknownHostException {
 		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u
 		// 0010   07 56 e6 71 31 80 08 73 75 73 68 69 69 69 69 03   .V.q1..sushiiii.

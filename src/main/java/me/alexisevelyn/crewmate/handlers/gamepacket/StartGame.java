@@ -1,12 +1,12 @@
 package me.alexisevelyn.crewmate.handlers.gamepacket;
 
-import me.alexisevelyn.crewmate.GameCodeHelper;
-import me.alexisevelyn.crewmate.LogHelper;
-import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.*;
+import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
+import me.alexisevelyn.crewmate.events.impl.HostGameEvent;
+import me.alexisevelyn.crewmate.events.impl.PlayerJoinEvent;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 
@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class StartGame {
-	public static byte[] getNewGameSettings(DatagramPacket packet) {
+	public static byte[] getNewGameSettings(DatagramPacket packet, Server server) {
 		// 0000   01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00   ...+..*.........
 		// 0010   80 3f 00 00 40 3f 00 00 80 3f 00 00 f0 41 01 01   .?..@?...?...A..
 		// 0020   03 01 00 00 00 02 00 00 00 00 00 87 00 00 00 00   ................
@@ -45,6 +45,15 @@ public class StartGame {
 
 		LogHelper.printLine(extraData);
 
+		try {
+			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap(map), language);
+			event.call(server);
+			byte[] newCode = GameCodeHelper.generateGameCodeBytes(event.getGameCode());
+			if (newCode.length != 0) return useCustomCode(newCode);
+		} catch (InvalidBytesException | InvalidGameCodeException e) {
+			e.printStackTrace();
+		}
+
 		return getRandomGameCode();
 	}
 
@@ -64,6 +73,11 @@ public class StartGame {
 
 		// The client will respond with a packet that triggers handleJoinPrivateGame(DatagramPacket);
 		return PacketHelper.mergeBytes(header, message);
+	}
+
+	private static byte[] useCustomCode(byte[] code) {
+		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x01, 0x04, 0x00, 0x00};
+		return PacketHelper.mergeBytes(header, code);
 	}
 
 	@Deprecated
@@ -108,7 +122,7 @@ public class StartGame {
 
 	// This gets called when the client either tries to join a game or create a game.
 	// For C->S
-	public static byte[] getClientGameCode(DatagramPacket packet) {
+	public static byte[] getClientGameCode(DatagramPacket packet, Server server) {
 		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 89 5a 2a 80 07                  .......Z*..
 
@@ -165,6 +179,12 @@ public class StartGame {
 
 		byte[] messagePartOne = new byte[] {unknown, unknown, unknown, 0x00, unknown, unknown, unknown, 0x00, 0x00, 0x06, 0x00, 0x0a};
 		byte[] messagePartTwo = new byte[] {0x01, 0x00};
+
+		PlayerJoinEvent event = new PlayerJoinEvent(gameCode, packet.getAddress(), packet.getPort());
+		event.call(server);
+		if (event.isCancelled()) {
+			return PacketHelper.closeConnection(event.getReason(), DisconnectReason.CUSTOM);
+		}
 
 		// This is enough to get to the lobby
 		return PacketHelper.mergeBytes(header, gameCodeBytes, messagePartOne, gameCodeBytes, messagePartTwo);

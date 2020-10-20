@@ -3,8 +3,12 @@ package me.alexisevelyn.crewmate.handlers;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.Server;
+import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.RPC;
 import me.alexisevelyn.crewmate.enums.ReliablePacketType;
+import me.alexisevelyn.crewmate.events.impl.PlayerChatEvent;
+import me.alexisevelyn.crewmate.events.impl.PlayerPreJoinEvent;
 import me.alexisevelyn.crewmate.handlers.gamepacket.Lobby;
 import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
@@ -13,7 +17,6 @@ import java.net.DatagramPacket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class GamePacketHandler {
 	// TODO: Read Game Packet Data
@@ -26,7 +29,7 @@ public class GamePacketHandler {
 	// PL = Packet Length (Starts After PT)
 	// PT = Packet Type (What We Check In This File)
 
-	public static byte[] handleReliablePacket(DatagramPacket packet) {
+	public static byte[] handleReliablePacket(DatagramPacket packet, Server server) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -42,15 +45,15 @@ public class GamePacketHandler {
 
 		switch (type) {
 			case PRE_HOST_SETTINGS: // 0x00
-				return StartGame.getNewGameSettings(packet); // 49 Bytes Total
+				return StartGame.getNewGameSettings(packet, server); // 49 Bytes Total
 			case JOIN_GAME: // 0x01
-				return StartGame.getClientGameCode(packet); // 11 Bytes Total
+				return handlePreJoinGame(packet, server); // 11 Bytes Total
 			case GAME_DATA: // 0x05
-				return parseGameData(packet);
+				return parseGameData(packet, server);
 			case ALTER_GAME: // 0x0a
-				return Lobby.handleGameVisibility(packet); // 12 Bytes Total
+				return Lobby.handleGameVisibility(packet, server); // 12 Bytes Total
 			case SEARCH_PUBLIC_GAME: // 0x10
-				return SearchGame.handleSearchPublicGame(packet); // 50 Bytes Total
+				return SearchGame.handleSearchPublicGame(packet, server); // 50 Bytes Total
 			case START_GAME: // 0x02
 			case REMOVE_GAME: // 0x03
 			case REMOVE_PLAYER: // 0x04
@@ -59,6 +62,16 @@ public class GamePacketHandler {
 			case REDIRECT_GAME: // 0x0d
 			default:
 				return new byte[0];
+		}
+	}
+
+	private static byte[] handlePreJoinGame(DatagramPacket packet, Server server) {
+		PlayerPreJoinEvent event = new PlayerPreJoinEvent(packet.getAddress(), packet.getPort());
+		event.call(server);
+		if (!event.isCancelled()) {
+			return StartGame.getClientGameCode(packet, server);
+		} else {
+			return PacketHelper.closeConnection(event.getReason(), DisconnectReason.CUSTOM);
 		}
 	}
 
@@ -72,7 +85,7 @@ public class GamePacketHandler {
 		return new byte[0];
 	}
 
-	private static byte[] parseGameData(DatagramPacket packet) {
+	private static byte[] parseGameData(DatagramPacket packet, Server server) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -108,12 +121,12 @@ public class GamePacketHandler {
 
 			switch (type) {
 				case SEND_CHAT:
-					return handleChat(packet);
+					return handleChat(packet, server);
 				case SET_COLOR:
 				case SET_HAT:
 				case SET_SKIN:
 				case SET_PET:
-					return Lobby.handleCosmetics(packet); // 16 Bytes Total
+					return Lobby.handleCosmetics(packet, server); // 16 Bytes Total
 				case SYNC_SETTINGS: // Double Check
 					return StartGame.getInitialGameSettings(packet); // At Least 173 Bytes?
 				default:
@@ -124,7 +137,7 @@ public class GamePacketHandler {
 		return new byte[0];
 	}
 
-	private static byte[] handleChat(DatagramPacket packet) {
+	private static byte[] handleChat(DatagramPacket packet, Server server) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -171,6 +184,8 @@ public class GamePacketHandler {
 			int playerID = buffer[13];
 
 			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("received_chat"), playerID, chatMessage));
+
+			new PlayerChatEvent(playerID, chatMessage).call(server);
 		}
 
 		return new byte[0];
