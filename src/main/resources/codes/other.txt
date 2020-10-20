@@ -10,3 +10,4 @@ friday
 saturn
 lego
 dorm
+europe
