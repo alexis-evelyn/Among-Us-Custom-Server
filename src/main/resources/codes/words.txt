@@ -364,3 +364,10 @@ soda
 delete
 erases
 plants
+soon
+apples
+orange
+lock
+unlock
+return
+shifts
