@@ -266,3 +266,9 @@ dead
 live
 wire
 public
+chat
+face
+eyes
+ears
+legs
+arms
