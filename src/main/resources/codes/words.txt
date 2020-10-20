@@ -383,3 +383,10 @@ wheels
 barrow
 metals
 medals
+salad
+toss
+spot
+find
+bird
+finger
+mirror
