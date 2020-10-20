@@ -195,3 +195,8 @@ silver
 sage
 host
 client
+five
+thongs
+laptop
+things
+commits
