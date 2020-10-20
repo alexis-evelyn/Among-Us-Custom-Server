@@ -261,3 +261,8 @@ blades
 knives
 save
 lose
+body
+dead
+live
+wire
+public
