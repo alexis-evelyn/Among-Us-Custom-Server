@@ -199,4 +199,4 @@ five
 thongs
 laptop
 things
-commits
+commit
