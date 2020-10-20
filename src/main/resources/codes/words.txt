@@ -390,3 +390,6 @@ find
 bird
 finger
 mirror
+need
+leap
+lion
