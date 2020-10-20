@@ -34,6 +34,7 @@ public class GameCode implements Command {
 			this.convertBytesToString(arguments, terminal);
 	}
 
+	// Convert Game Code String to Bytes
 	private void convertStringToBytes(String[] arguments, Terminal terminal) {
 		byte[] gameCodeBytes = GameCodeHelper.generateGameCodeBytes(arguments[2]);
 
@@ -48,6 +49,7 @@ public class GameCode implements Command {
 		LogHelper.printPacketBytes(gameCodeBytes, gameCodeBytes.length);
 	}
 
+	// Convert Game Code Bytes to String
 	private void convertBytesToString(String[] arguments, Terminal terminal) {
 		// b5:f0:90:8a
 		// 01:34:67:9-
@@ -87,11 +89,9 @@ public class GameCode implements Command {
 		byte[] gameCodeBytes = new byte[] {first, second, third, fourth};
 
 		try {
-			// TODO: DEBUG - Add ability to convert bytes to gamecode
-			LogHelper.printPacketBytes(gameCodeBytes, gameCodeBytes.length);
-
 			String gameCodeString = GameCodeHelper.parseGameCode(gameCodeBytes);
-			LogHelper.printLine(gameCodeString);
+
+			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("gamecode_string"), gameCodeString));
 		} catch (InvalidGameCodeException | InvalidBytesException exception) {
 			LogHelper.printLineErr(exception.getMessage());
 		}

@@ -6,16 +6,21 @@ import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GameCodeHelper {
 	// https://discord.com/channels/757425025379729459/759066383090188308/765437094582943774
-	private static final char[] gameCodeLetters = "QWXRTYLPESDFGHUJKZOCBINMA".toCharArray();
+	// The source above was missing the V between the C and B.
+	private static final char[] gameCodeLetters = "QWXRTYLPESDFGHUJKZOCVBINMA".toCharArray();
 
 	// https://wiki.weewoo.net/wiki/Game_Codes#Version_2
 	private static final byte[] v2Map = new byte[] {0x19, 0x15, 0x13, 0x0a, 0x08, 0x0b, 0x0c, 0x0d, 0x16, 0x0f, 0x10, 0x06, 0x18, 0x17, 0x12, 0x07, 0x00, 0x03, 0x09, 0x04, 0x0e, 0x14, 0x01, 0x02, 0x05, 0x11};
 
 	// https://www.geeksforgeeks.org/bitwise-operators-in-java/
 	// https://gist.github.com/alexis-evelyn/f541d27811b62fd987c93cf79ed049a7
+	// Convert Bytes to GameCode String
 	public static String parseGameCode(byte[] gameCodeBytes) throws InvalidBytesException, InvalidGameCodeException {
 		if (gameCodeBytes == null)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_null_exception"));
@@ -23,24 +28,48 @@ public class GameCodeHelper {
 		if (gameCodeBytes.length != 4)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_invalid_length_exception"));
 
-		// https://stackoverflow.com/a/7619315
-		// Don't Reverse Bytes Like `Integer.reverseBytes(gameCodeInteger);`. It's already reversed apparently.
-		int gameCodeInteger = gameCodeBytes[0] << 24 | (gameCodeBytes[1] & 0xFF) << 16 | (gameCodeBytes[2] & 0xFF) << 8 | (gameCodeBytes[3] & 0xFF);
-		// int gameCodeInteger = ByteBuffer.wrap(gameCodeBytes).order(ByteOrder.LITTLE_ENDIAN).getInt(); // TODO: Confirm LE
+		// Save Bytes as V1 Game Code and Then Verify
+		String gameCodeString = new String(gameCodeBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
+		// Check if V1 Style Game Code
+		if (gameCodeString.matches("[A-Z]+"))
+			return gameCodeString;
+
+		// This point onward is most likely V2 Game Code
+
+		// https://stackoverflow.com/a/7619315
+		int gameCodeInteger = ByteBuffer.wrap(gameCodeBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+
+		// This works because the game will null terminate an invalid gamecode
 		if (gameCodeInteger == 0)
 			throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 
-		// TODO: Figure Out How To Continue Reversing Bytes To Game Code
-
-		return "TODO: Implement Me!!!"; //convertIntToGameCode(gameCodeInteger);
+		return convertIntToGameCode(gameCodeInteger);
 	}
 
+	// V2 - Convert Bytes to GameCode String
+	// TODO: Fix This
+	private static String convertIntToGameCode(int input) {
+		int a = input & 0x3FF;
+		int b = (input >> 10) & 0xFFFFF;
+
+		// https://gist.github.com/codyphobe/1478d7b8794ab52d4ff9fc673c944058
+		return Stream.of(
+				gameCodeLetters[a % 26],
+				gameCodeLetters[a / 26],
+				gameCodeLetters[b % 26],
+				gameCodeLetters[b / 26 % 26],
+				gameCodeLetters[b / (26 * 26) % 26],
+				gameCodeLetters[b / (26 * 26 * 26) % 26]
+		).map(Object::toString).collect(Collectors.joining(""));
+	}
+
+	// Convert String to GameCode Bytes
 	public static byte[] generateGameCodeBytes(String gameCode) {
 		// Game Codes Can Be 4 or 6 Capital Letters Long
 		// Technically the client allows numbers in the game code, but it results in an integer 0.
 
-		// Ensure GameCode Is Valid Or Convertable To Valid
+		// Ensure GameCode Is Valid Or Convertible To Valid
 		if (!gameCode.matches("([A-Z]|[a-z])+"))
 			return new byte[0];
 
@@ -55,6 +84,7 @@ public class GameCodeHelper {
 		return new byte[0];
 	}
 
+	// V2 - Convert String to GameCode Bytes
 	private static byte[] generateGameCodeV2(String gameCode) {
 		if (gameCode.length() < 6)
 			return new byte[0];
@@ -72,22 +102,5 @@ public class GameCodeHelper {
 		int gameCodeInt = one | ((two << 10) & 0x3FFFFC00) | 0x80000000;
 
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(gameCodeInt).array();
-	}
-
-	private static String convertIntToGameCode(int input) {
-		int a = input & 0x3FF;
-		int b = (input >> 10) & 0xFFFFF;
-
-		StringBuilder gameCode = new StringBuilder();
-		gameCode.append(gameCodeLetters[a % 26]);
-		gameCode.append(gameCodeLetters[a / 26]);
-		gameCode.append(gameCodeLetters[b % 26]);
-		gameCode.append(gameCodeLetters[b / 26 % 26]);
-		gameCode.append(gameCodeLetters[b / (26 * 26) % 26]);
-		gameCode.append(gameCodeLetters[b / (26 * 26 * 26) % 26]);
-
-		System.out.println("Game Code String: " + gameCode);
-
-		return gameCode.toString();
 	}
 }
