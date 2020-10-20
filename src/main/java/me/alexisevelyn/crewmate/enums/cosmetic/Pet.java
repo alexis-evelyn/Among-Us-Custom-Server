@@ -37,6 +37,10 @@ public enum Pet {
 
 	public static String getPetName(Pet pet) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (pet == null)
+			return translation.getString("unknown");
+
 		switch (pet) {
 			case NONE:
 				return translation.getString("pet_none");

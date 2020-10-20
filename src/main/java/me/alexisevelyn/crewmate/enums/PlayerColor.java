@@ -37,6 +37,10 @@ public enum PlayerColor {
 
 	public static String getColorName(PlayerColor playerColor) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (playerColor == null)
+			return translation.getString("unknown");
+
 		switch (playerColor) {
 			case RED:
 				return translation.getString("color_red");

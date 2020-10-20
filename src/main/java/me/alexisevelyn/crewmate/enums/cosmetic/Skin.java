@@ -41,6 +41,10 @@ public enum Skin {
 
 	public static String getSkinName(Skin skin) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (skin == null)
+			return translation.getString("unknown");
+
 		switch (skin) {
 			case NONE:
 				return translation.getString("skin_none");

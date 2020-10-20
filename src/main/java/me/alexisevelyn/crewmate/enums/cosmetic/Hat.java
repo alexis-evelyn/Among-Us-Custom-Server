@@ -119,6 +119,10 @@ public enum Hat {
 
 	public static String getHatName(Hat hat) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (hat == null)
+			return translation.getString("unknown");
+
 		switch (hat) {
 			case NONE:
 				return translation.getString("hat_none");
