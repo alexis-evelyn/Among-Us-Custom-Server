@@ -298,3 +298,11 @@ crow
 sheeps
 life
 xmas
+twenty
+teen
+pelt
+polish
+cake
+lied
+liar
+true
