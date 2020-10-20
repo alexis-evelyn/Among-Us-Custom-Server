@@ -284,3 +284,6 @@ plug
 bags
 caps
 escape
+hunt
+avoids
+deltas
