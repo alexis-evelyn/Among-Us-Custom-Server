@@ -10,8 +10,11 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 
+import java.io.*;
 import java.net.DatagramPacket;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class StartGame {
@@ -57,10 +60,48 @@ public class StartGame {
 		// S->C - 0000   01 00 01 04 00 00 45 9a 17 80                     ......E...
 
 		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x01, 0x04, 0x00, 0x00};
-		byte[] message = new byte[] {0x3b, (byte) 0xbe, 0x25, (byte) 0x8c}; // Game Code - ABCDEF (3b:be:25:8c)
+		byte[] message = getCodeFromList(); // Game Code
 
 		// The client will respond with a packet that triggers handleJoinPrivateGame(DatagramPacket);
 		return PacketHelper.mergeBytes(header, message);
+	}
+
+	@Deprecated
+	private static byte[] getCodeFromList() {
+		// This is a temporary test function
+		// https://stackoverflow.com/a/53673751/6828099
+
+		try {
+			// File To Pull Words From
+			URL filePath = Main.class.getClassLoader().getResource("codes/words.txt");
+
+			// Create Temporary File
+			File tempFile = File.createTempFile("words", ".tmp");
+			tempFile.deleteOnExit();
+
+			// Copy Word List to Temporary File
+			FileOutputStream out = new FileOutputStream(tempFile);
+			out.write(filePath.openStream().readAllBytes());
+
+			RandomAccessFile file = new RandomAccessFile(tempFile, "r");
+
+			// For Random Position
+			long length = file.length() - 1;
+			long position = (long) (Math.random() * length);
+
+			// Skip Ahead
+			file.seek(position);
+
+			// Skip to End of Line
+			file.readLine();
+
+			// Get Word
+			return GameCodeHelper.generateGameCodeBytes(file.readLine());
+		} catch (IOException | NullPointerException exception) {
+			exception.printStackTrace();
+
+			return GameCodeHelper.generateGameCodeBytes("FAIL");
+		}
 	}
 
 	// This gets called when the client either tries to join a game or create a game.
@@ -89,6 +130,8 @@ public class StartGame {
 		String gameCode;
 		try {
 			gameCode = GameCodeHelper.parseGameCode(gameCodeBytes);
+
+			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("gamecode_string"), gameCode));
 		} catch (InvalidBytesException e) {
 			LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("gamecode_exception"), e.getMessage()));
 			e.printStackTrace();
