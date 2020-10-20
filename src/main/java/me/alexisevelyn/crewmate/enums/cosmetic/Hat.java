@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums.cosmetic;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -113,11 +115,13 @@ public enum Hat {
 		return this.hat;
 	}
 
+	@Nullable
 	public static Hat getHat(int hatInteger) {
 		return hatSearch.get(hatInteger);
 	}
 
-	public static String getHatName(Hat hat) {
+	@NotNull
+	public static String getHatName(@NotNull Hat hat) {
 		ResourceBundle translation = Main.getTranslationBundle();
 
 		if (hat == null)

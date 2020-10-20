@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -31,11 +33,13 @@ public enum PlayerColor {
 		return this.playerColor;
 	}
 
+	@Nullable
 	public static PlayerColor getColor(int playerColorInteger) {
 		return playerColorSearch.get(playerColorInteger);
 	}
 
-	public static String getColorName(PlayerColor playerColor) {
+	@NotNull
+	public static String getColorName(@NotNull PlayerColor playerColor) {
 		ResourceBundle translation = Main.getTranslationBundle();
 
 		if (playerColor == null)

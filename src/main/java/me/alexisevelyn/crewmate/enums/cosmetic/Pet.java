@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums.cosmetic;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -31,11 +33,13 @@ public enum Pet {
 		return this.pet;
 	}
 
+	@Nullable
 	public static Pet getPet(int hatInteger) {
 		return petSearch.get(hatInteger);
 	}
 
-	public static String getPetName(Pet pet) {
+	@NotNull
+	public static String getPetName(@NotNull Pet pet) {
 		ResourceBundle translation = Main.getTranslationBundle();
 
 		if (pet == null)
