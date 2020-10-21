@@ -1,19 +1,52 @@
 package me.alexisevelyn.crewmate.handlers.gamepacket;
 
+import me.alexisevelyn.crewmate.GameCodeHelper;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
+import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.enums.*;
 import me.alexisevelyn.crewmate.enums.cosmetic.Hat;
 import me.alexisevelyn.crewmate.enums.cosmetic.Pet;
 import me.alexisevelyn.crewmate.enums.cosmetic.Skin;
+import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
+import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 
 import java.net.DatagramPacket;
 import java.util.ResourceBundle;
 
 public class Lobby {
-	public static byte[] handleGameVisibility(DatagramPacket packet) {
+	public static byte[] alterGame(DatagramPacket packet) {
+		int length = packet.getLength();
+		byte[] buffer = packet.getData();
+
+		if (length < 6)
+			return new byte[0];
+
+		AlterGame alterGameFlag = AlterGame.getAlterGameFlag(buffer[5]);
+
+		if (alterGameFlag == null)
+			return new byte[0];
+
+		switch (alterGameFlag) {
+			case CHANGE_PRIVACY:
+				return handleGameVisibility(packet);
+			default:
+				return new byte[0];
+		}
+	}
+
+	private static byte[] handleGameVisibility(DatagramPacket packet) {
 		// 0000   01 00 59 06 00 0a 3b be 25 8c 01 00               ..Y...;.%... - Private Game
 		// 0000   01 00 42 06 00 0a 3b be 25 8c 01 01               ..B...;.%... - Public Game
+
+		// 0000   RP NO NO ML ML MF GC GC GC GC AG PG
+		// RP = Reliable Packet (0x01)
+		// NO = Nonce
+		// ML = Message Length (LE UINT-16 - Starts After MF)
+		// MF = Message Flag (0x0a or 10 for Alter Game)
+		// GC = Game Code (LE UINT-32)
+		// AG = Alter Game Flag (0x01 For Change Privacy)
+		// PG = Public/Private Game Boolean
 
 		if (packet.getLength() != 12)
 			return new byte[0];
@@ -22,9 +55,20 @@ public class Lobby {
 
 		String visibility = (buffer[11] == 1) ? Main.getTranslationBundle().getString("public_game") : Main.getTranslationBundle().getString("private_game");
 
+		// Extract Game Code Bytes
+		byte[] gameCodeBytes = new byte[4];
+		System.arraycopy(buffer, 6, gameCodeBytes, 0, 4);
+
+		String gameCode;
+		try {
+			gameCode = GameCodeHelper.parseGameCode(gameCodeBytes);
+		} catch (InvalidBytesException | InvalidGameCodeException exception) {
+			return PacketHelper.closeWithMessage(exception.getMessage());
+		}
+
 		// Used For Debugging
-		LogHelper.printPacketBytes(buffer, packet.getLength());
-		LogHelper.printLine(visibility);
+		String displayVisibilityString = String.format(Main.getTranslationBundle().getString("print_key_value"), gameCode, visibility);
+		LogHelper.printLine(displayVisibilityString);
 
 		return new byte[0];
 	}
