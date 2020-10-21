@@ -37,7 +37,7 @@ public class GamePacketHandler {
 
 		// Sanitization Check
 		if (type == null)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
 
 		switch (type) {
 			case PRE_HOST_SETTINGS: // 0x00
@@ -57,7 +57,7 @@ public class GamePacketHandler {
 			case JOINED_GAME: // 0x07
 			case REDIRECT_GAME: // 0x0d
 			default:
-				return new byte[0];
+				return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
 		}
 	}
 
@@ -102,7 +102,7 @@ public class GamePacketHandler {
 				// Print RPC Header
 				LogHelper.printPacketBytes(rpcBytes, 15);
 
-				return new byte[0];
+				return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
 			}
 
 			switch (type) {
@@ -116,7 +116,7 @@ public class GamePacketHandler {
 				case SYNC_SETTINGS: // Double Check
 					return StartGame.getInitialGameSettings(packet); // At Least 173 Bytes?
 				default:
-					return new byte[0];
+					return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
 			}
 		}
 
@@ -175,6 +175,6 @@ public class GamePacketHandler {
 			return buffer;
 		}
 
-		return new byte[0];
+		return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("chat_packet_invalid_size"));
 	}
 }

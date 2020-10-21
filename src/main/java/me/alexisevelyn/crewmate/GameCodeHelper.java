@@ -69,13 +69,13 @@ public class GameCodeHelper {
 	}
 
 	// Convert String to GameCode Bytes
-	public static byte[] generateGameCodeBytes(String gameCode) {
+	public static byte[] generateGameCodeBytes(String gameCode) throws InvalidGameCodeException {
 		// Game Codes Can Be 4 or 6 Capital Letters Long
 		// Technically the client allows numbers in the game code, but it results in an integer 0.
 
 		// Ensure GameCode Is Valid Or Convertible To Valid
 		if (!gameCode.matches("([A-Z]|[a-z])+"))
-			return new byte[0];
+			throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 
 		String fixedCode = gameCode.toUpperCase();
 
@@ -85,13 +85,13 @@ public class GameCodeHelper {
 		else if (fixedCode.length() == 6)
 			return generateGameCodeV2(fixedCode);
 
-		return new byte[0];
+		throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_wrong_length"));
 	}
 
 	// V2 - Convert String to GameCode Bytes
-	private static byte[] generateGameCodeV2(String gameCode) {
+	private static byte[] generateGameCodeV2(String gameCode) throws InvalidGameCodeException {
 		if (gameCode.length() < 6)
-			return new byte[0];
+			throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_wrong_length_v2"));
 
 		int a = v2Map[gameCode.charAt(0) - 65];
 		int b = v2Map[gameCode.charAt(1) - 65];

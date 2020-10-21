@@ -26,7 +26,7 @@ public class SearchGame {
 		// 0030   01 0f                                             ..
 
 		if (packet.getLength() != 50)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_request_invalid_size"));
 
 		byte[] buffer = packet.getData();
 
@@ -135,7 +135,7 @@ public class SearchGame {
 		// 0010   00 00 00 00 00 00 00 00                           ........
 
 		if (maps.length == 0)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_maps_no_selected_maps"));
 
 		// Game Address and Port
 		InetAddress ipAddress = InetAddress.getByName("127.0.0.1");
@@ -147,7 +147,7 @@ public class SearchGame {
 
 		// Sanitization
 		if (language == null)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_language_unknown_language"));
 
 		String name = "Fake Game - " + Language.getLanguageName(language);
 		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;

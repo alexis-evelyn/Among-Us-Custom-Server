@@ -102,7 +102,9 @@ public class StartGame {
 		} catch (IOException | NullPointerException exception) {
 			exception.printStackTrace();
 
-			return GameCodeHelper.generateGameCodeBytes("FAIL");
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+		} catch (InvalidGameCodeException exception) {
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 		}
 	}
 
@@ -127,7 +129,7 @@ public class StartGame {
 		// OM = Owned Maps Bitfield (0x07 For Skeld, Mira, and Polus)
 
 		if (packet.getLength() != 11)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("join_game_invalid_size"));
 
 		// 00 03 05 00 01?
 		byte[] buffer = packet.getData();
@@ -238,13 +240,13 @@ public class StartGame {
 		// C->S - 00b0   65 78 69 73 08 00 00 00 00 00                     exis......
 
 		if (packet.getLength() < 4)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_invalid_size"));
 
 		byte[] buffer = packet.getData();
 
 		// Must Equal 01 00 03 (Join Game Via Code) or 01 00 04 (Create Game)
 		if (!(buffer[0] == SendOption.RELIABLE.getSendOption() && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_unknown_join_type"));
 
 		byte unknown = buffer[3]; // 180 for Alexis and 172 for Hi - +8
 		byte unknownTwo = buffer[129]; // 9 for Alexis and 5 for Hi - +4

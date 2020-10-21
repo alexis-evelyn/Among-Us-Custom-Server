@@ -20,18 +20,18 @@ public class Lobby {
 		byte[] buffer = packet.getData();
 
 		if (length < 6)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_invalid_size"));
 
 		AlterGame alterGameFlag = AlterGame.getAlterGameFlag(buffer[5]);
 
 		if (alterGameFlag == null)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_unknown_type"));
 
 		switch (alterGameFlag) {
 			case CHANGE_PRIVACY:
 				return handleGameVisibility(packet);
 			default:
-				return new byte[0];
+				return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_unknown_type"));
 		}
 	}
 
@@ -49,7 +49,7 @@ public class Lobby {
 		// PG = Public/Private Game Boolean
 
 		if (packet.getLength() != 12)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_invalid_size"));
 
 		byte[] buffer = packet.getData();
 
@@ -75,7 +75,7 @@ public class Lobby {
 
 	public static byte[] handleCosmetics(DatagramPacket packet) {
 		if (packet.getLength() != 16)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("cosmetic_packet_invalid_size"));
 
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
@@ -91,7 +91,7 @@ public class Lobby {
 
 		// Sanitization Check
 		if (rpcType == null)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("cosmetic_packet_unknown_type"));
 
 		switch (rpcType) {
 			case SET_COLOR:
