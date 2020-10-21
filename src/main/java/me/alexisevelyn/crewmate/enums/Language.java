@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -33,12 +35,18 @@ public enum Language {
 		return this.language;
 	}
 
+	@Nullable
 	public static Language getLanguage(int languageInteger) {
 		return languageSearch.get(languageInteger);
 	}
 
-	public static String getLanguageName(Language language) {
+	@NotNull
+	public static String getLanguageName(@NotNull Language language) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (language == null)
+			return translation.getString("unknown");
+
 		switch (language) {
 			case ARABIC:
 				return translation.getString("arabic");

@@ -12,7 +12,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
-public class TestLua implements Command {
+public class Lua implements Command {
 	public void execute(String command, Terminal terminal) {
 		// This is setup to capture Lua Output so I can manipulate it and log it how I want
 
@@ -47,11 +47,11 @@ public class TestLua implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("test_lua_command");
+		return Main.getTranslationBundle().getString("lua_command");
 	}
 
 	@Override
 	public String getHelp() {
-		return Main.getTranslationBundle().getString("test_lua_command_help");
+		return Main.getTranslationBundle().getString("lua_command_help");
 	}
 }

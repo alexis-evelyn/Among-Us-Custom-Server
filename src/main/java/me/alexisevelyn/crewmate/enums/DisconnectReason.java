@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -37,13 +39,19 @@ public enum DisconnectReason {
 		return this.reason;
 	}
 
+	@Nullable
 	public static DisconnectReason getReason(byte reasonByte) {
 		return reasonSearch.get(reasonByte);
 	}
 
-	public static String getReasonName(DisconnectReason map) {
+	@NotNull
+	public static String getReasonName(@NotNull DisconnectReason disconnectReason) {
 		ResourceBundle translation = Main.getTranslationBundle();
-		switch (map) {
+
+		if (disconnectReason == null)
+			return translation.getString("unknown");
+
+		switch (disconnectReason) {
 			case NONE:
 				return translation.getString("none");
 			case GAME_FULL:

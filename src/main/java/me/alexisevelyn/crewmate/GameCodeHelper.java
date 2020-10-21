@@ -44,12 +44,16 @@ public class GameCodeHelper {
 		if (gameCodeInteger == 0)
 			throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 
-		return convertIntToGameCode(gameCodeInteger);
+		try {
+			return convertIntToGameCode(gameCodeInteger);
+		} catch (ArrayIndexOutOfBoundsException exception) {
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_invalid_bytes_exception"));
+		}
 	}
 
 	// V2 - Convert Bytes to GameCode String
 	// TODO: Fix This
-	private static String convertIntToGameCode(int input) {
+	private static String convertIntToGameCode(int input) throws ArrayIndexOutOfBoundsException {
 		int a = input & 0x3FF;
 		int b = (input >> 10) & 0xFFFFF;
 

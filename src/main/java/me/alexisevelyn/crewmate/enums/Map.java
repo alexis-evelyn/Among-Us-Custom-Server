@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -22,12 +24,18 @@ public enum Map {
 		return this.map;
 	}
 
+	@Nullable
 	public static Map getMap(int mapInteger) {
 		return mapSearch.get(mapInteger);
 	}
 
-	public static String getMapName(Map map) {
+	@NotNull
+	public static String getMapName(@NotNull Map map) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (map == null)
+			return translation.getString("unknown");
+
 		switch (map) {
 			case SKELD:
 				return translation.getString("skeld");
