@@ -51,7 +51,7 @@ public class GamePacketHandler {
 			case GAME_DATA: // 0x05
 				return parseGameData(packet, server);
 			case ALTER_GAME: // 0x0a
-				return Lobby.handleGameVisibility(packet, server); // 12 Bytes Total
+				return Lobby.alterGame(packet, server); // 12 Bytes Total
 			case SEARCH_PUBLIC_GAME: // 0x10
 				return SearchGame.handleSearchPublicGame(packet, server); // 50 Bytes Total
 			case START_GAME: // 0x02

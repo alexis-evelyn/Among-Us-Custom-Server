@@ -13,7 +13,7 @@ import java.net.DatagramPacket;
 import java.util.ResourceBundle;
 
 public class Lobby {
-	public static byte[] alterGame(DatagramPacket packet) {
+	public static byte[] alterGame(DatagramPacket packet, Server server) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -27,13 +27,13 @@ public class Lobby {
 
 		switch (alterGameFlag) {
 			case CHANGE_PRIVACY:
-				return handleGameVisibility(packet);
+				return handleGameVisibility(packet, server);
 			default:
 				return new byte[0];
 		}
 	}
 
-	private static byte[] handleGameVisibility(DatagramPacket packet) {
+	private static byte[] handleGameVisibility(DatagramPacket packet, Server server) {
 		// 0000   01 00 59 06 00 0a 3b be 25 8c 01 00               ..Y...;.%... - Private Game
 		// 0000   01 00 42 06 00 0a 3b be 25 8c 01 01               ..B...;.%... - Public Game
 
@@ -57,7 +57,7 @@ public class Lobby {
 		return new byte[0];
 	}
 
-	public static byte[] handleCosmetics(DatagramPacket packet) {
+	public static byte[] handleCosmetics(DatagramPacket packet, Server server) {
 		if (packet.getLength() != 16)
 			return new byte[0];
 
