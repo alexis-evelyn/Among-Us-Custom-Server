@@ -41,14 +41,19 @@ public class CommandHandler {
 			new Bug().execute(command, terminal);
 		}
 
-		// Test Lua Command
-		if (checkCommand.equals(Main.getTranslationBundle().getString("test_lua_command"))) {
-			new TestLua().execute(command, terminal);
+		// Lua Command
+		if (checkCommand.equals(Main.getTranslationBundle().getString("lua_command"))) {
+			new Lua().execute(command, terminal);
 		}
 
 		// Game Code To Bytes Or String
 		if (checkCommand.equals(Main.getTranslationBundle().getString("gamecode_command"))) {
 			new GameCode().execute(command, terminal);
+		}
+
+		// SSH Control Command
+		if (checkCommand.equals(Main.getTranslationBundle().getString("ssh_command"))) {
+			new SSH().execute(command, terminal);
 		}
 	}
 }

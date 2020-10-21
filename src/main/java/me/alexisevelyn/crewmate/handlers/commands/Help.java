@@ -20,8 +20,9 @@ public class Help implements Command {
 		commands.add(RegionFileGenerator.class);
 		commands.add(Help.class);
 		commands.add(Bug.class);
-		commands.add(TestLua.class);
+		commands.add(Lua.class);
 		commands.add(GameCode.class);
+		commands.add(SSH.class);
 
 		// TODO: Sort List and Pull From Registry
 	}
