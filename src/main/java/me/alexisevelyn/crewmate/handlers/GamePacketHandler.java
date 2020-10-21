@@ -43,7 +43,7 @@ public class GamePacketHandler {
 			case PRE_HOST_SETTINGS: // 0x00
 				return StartGame.getNewGameSettings(packet); // 49 Bytes Total
 			case JOIN_GAME: // 0x01
-				return StartGame.getClientGameCode(packet); // 11 Bytes Total
+				return StartGame.joinGame(packet); // 11 Bytes Total
 			case GAME_DATA: // 0x05
 				return parseGameData(packet);
 			case ALTER_GAME: // 0x0a
@@ -170,6 +170,9 @@ public class GamePacketHandler {
 			int playerID = buffer[13];
 
 			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("received_chat"), playerID, chatMessage));
+
+			// Chat reply is literally just this packet sent back
+			return buffer;
 		}
 
 		return new byte[0];

@@ -6,6 +6,13 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import java.util.ArrayList;
 
 public class PacketHelper {
+	public static byte[] getAcknowledgement(byte[] nonceBytes) {
+		if (nonceBytes.length != 2)
+			return new byte[0];
+
+		return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), nonceBytes[0], nonceBytes[1], (byte) 0xff};
+	}
+
 	public static byte[] closeWithMessage(String message) {
 		return closeConnection(message, DisconnectReason.CUSTOM);
 	}

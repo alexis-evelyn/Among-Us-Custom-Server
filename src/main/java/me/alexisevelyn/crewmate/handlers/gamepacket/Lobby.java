@@ -79,6 +79,7 @@ public class Lobby {
 
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
+		byte[] nonce = new byte[] {buffer[1], buffer[2]};
 
 //		LogHelper.printLine(Main.getTranslationBundle().getString("cosmetic_packet"));
 //		LogHelper.printPacketBytes(buffer, length);

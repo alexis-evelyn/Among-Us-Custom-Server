@@ -5,7 +5,6 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.FragmentPacketHandler;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
-import me.alexisevelyn.crewmate.handlers.PingHandler;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -117,12 +116,12 @@ public class Server extends Thread {
 			case HELLO: // Initial Connection (Handshake)
 				replyBuffer = HandshakeHandler.handleHandshake(packet);
 				break;
-			case ACKNOWLEDGEMENT: // Reply To Ping
 			case PING: // Ping
-				replyBuffer = PingHandler.handlePing(packet);
-				break;
+				sendReliablePacketAcknowledgement(packet);
+				return;
 			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
 				replyBuffer = GamePacketHandler.handleReliablePacket(packet);
+				this.sendReliablePacketAcknowledgement(packet); // To Let Client Know Packet Was Received
 				break;
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
 				replyBuffer = GamePacketHandler.handleUnreliablePacket(packet);
@@ -130,6 +129,7 @@ public class Server extends Thread {
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
 				replyBuffer = FragmentPacketHandler.handleFragmentPacket(packet);
 				break;
+			case ACKNOWLEDGEMENT: // Unhandled
 			default:
 				return;
 		}
@@ -148,8 +148,49 @@ public class Server extends Thread {
 		// Send Reply Back
 		this.socket.send(packet);
 
-		// TODO: Check if Reply is Disconnect and Disconnect From Our End!!!
-		// SendOption.DISCONNECT...
+		// Check If Disconnect and Disconnect From Our End
+		SendOption replyOption = SendOption.getSendOption(replyBuffer[0]);
+
+		// Sanitization
+		if (replyOption == null)
+			return;
+
+		// Disconnect Client From Server End
+		if (replyOption.equals(SendOption.DISCONNECT)) {
+			// TODO: Figure out how to close one client's connection
+			// LogHelper.printLine("Closing Connection!!!");
+			// this.socket.disconnect();
+		}
+	}
+
+	private void sendReliablePacketAcknowledgement(DatagramPacket packet) {
+		// Received Packet Port and Address
+		InetAddress address = packet.getAddress();
+		int port = packet.getPort();
+
+		// Get Packet Info
+		int length = packet.getLength();
+		byte[] buffer = packet.getData();
+
+		// Verify Packet Length
+		if (length < 3)
+			return;
+
+		// Get Nonce
+		byte[] nonce = new byte[] {buffer[1], buffer[2]};
+
+		// Get Acknowledgement
+		byte[] acknowledgement = PacketHelper.getAcknowledgement(nonce);
+
+		// Packet to Send Back to Client
+		packet = this.createSendPacket(acknowledgement, acknowledgement.length, address, port);
+
+		// Send Reply Back
+		try {
+			this.socket.send(packet);
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
 	}
 
 	private DatagramPacket createSendPacket(byte[] buffer, int length, InetAddress address, int port) {

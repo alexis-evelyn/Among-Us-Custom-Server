@@ -68,7 +68,7 @@ public class SearchGame {
 		return printableMapsList.toString();
 	}
 
-	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) throws UnknownHostException {
+	private static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int languageInt) throws UnknownHostException {
 		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u
 		// 0010   07 56 e6 71 31 80 08 73 75 73 68 69 69 69 69 03   .V.q1..sushiiii.
@@ -143,7 +143,13 @@ public class SearchGame {
 
 		// Temporary String - Not Translating
 		// Visible Game Information
-		String name = "Fake Game - " + Language.getLanguageName(Language.getLanguage(language));
+		Language language = Language.getLanguage(languageInt);
+
+		// Sanitization
+		if (language == null)
+			return new byte[0];
+
+		String name = "Fake Game - " + Language.getLanguageName(language);
 		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;
 		int playerCount = 3;
 		int maxPlayerCount = 10;

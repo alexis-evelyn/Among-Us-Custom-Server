@@ -108,7 +108,7 @@ public class StartGame {
 
 	// This gets called when the client either tries to join a game or create a game.
 	// For C->S
-	public static byte[] getClientGameCode(DatagramPacket packet) {
+	public static byte[] joinGame(DatagramPacket packet) {
 		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 89 5a 2a 80 07                  .......Z*..
 
@@ -117,6 +117,14 @@ public class StartGame {
 
 		// Game Code - SIXLXQ (45:9a:17:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 45 9a 17 80 07                  ......E....
+
+		// C->S - 0000   RP NO NO ML ML PT GC GC GC GC OM
+		// RP = Reliable Packet (0x01)
+		// NO = Nonce
+		// ML = Message Length (LE UINT-16 - Starts After PT)
+		// PT = Packet Type (0x01 For Join Game)
+		// GC = Game Code (LE UINT-32)
+		// OM = Owned Maps Bitfield (0x07 For Skeld, Mira, and Polus)
 
 		if (packet.getLength() != 11)
 			return new byte[0];
