@@ -1,5 +1,7 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.api.Plugin;
+import me.alexisevelyn.crewmate.api.PluginLoader;
 import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.bus.EventBus;
@@ -8,6 +10,7 @@ import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
 import me.alexisevelyn.crewmate.handlers.PingHandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -28,6 +31,11 @@ public class Server extends Thread {
 
 	private final EventBus eventBus = new EventBus();
 
+	private final File projectFolder;
+	private final File serversFolder;
+	private final File root;
+	private final File pluginsFolder;
+
 	public Server() throws SocketException {
 		// null means bind to any address
 		this(22023, null);
@@ -42,6 +50,19 @@ public class Server extends Thread {
 
 		this.port = this.socket.getLocalPort();
 		this.boundIP = this.socket.getLocalAddress();
+
+		projectFolder = new File(System.getProperty("user.dir"));
+		if (!projectFolder.exists()) projectFolder.mkdirs();
+		serversFolder = new File(projectFolder, "servers");
+		if (!serversFolder.exists()) serversFolder.mkdirs();
+		root = new File(serversFolder, port + "");
+		if (!root.exists()) root.mkdirs();
+		pluginsFolder = new File(root, "plugins");
+		if (!pluginsFolder.exists()) pluginsFolder.mkdirs();
+
+		for (Plugin plugin : PluginLoader.loadPlugins(pluginsFolder, this)) {
+			LogHelper.printLine(plugin.getId());
+		}
 	}
 
 	@Override
