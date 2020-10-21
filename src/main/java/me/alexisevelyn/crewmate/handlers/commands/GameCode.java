@@ -36,7 +36,14 @@ public class GameCode implements Command {
 
 	// Convert Game Code String to Bytes
 	private void convertStringToBytes(String[] arguments, Terminal terminal) {
-		byte[] gameCodeBytes = GameCodeHelper.generateGameCodeBytes(arguments[2]);
+		byte[] gameCodeBytes;
+
+		try {
+			gameCodeBytes = GameCodeHelper.generateGameCodeBytes(arguments[2]);
+		} catch (InvalidGameCodeException exception) {
+			LogHelper.printErr(exception.getMessage());
+			return;
+		}
 
 		// Game Code is not valid if true
 		if (gameCodeBytes.length == 0) {

@@ -180,7 +180,7 @@ public class StartGame {
 		return PacketHelper.mergeBytes(header, gameCodeBytes, messagePartOne, gameCodeBytes, messagePartTwo);
 	}
 
-	public static byte[] getInitialGameSettings(DatagramPacket packet) {
+	public static byte[] getLobbyGameSettings(DatagramPacket packet) {
 		// TODO: Figure out what this packet is for!!!
 
 		// Username Hi
@@ -245,8 +245,10 @@ public class StartGame {
 		byte[] buffer = packet.getData();
 
 		// Must Equal 01 00 03 (Join Game Via Code) or 01 00 04 (Create Game)
+		// TODO: Toss Check!!!
 		if (!(buffer[0] == SendOption.RELIABLE.getSendOption() && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_unknown_join_type"));
+			// return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_unknown_join_type"));
+			return new byte[0];
 
 		byte unknown = buffer[3]; // 180 for Alexis and 172 for Hi - +8
 		byte unknownTwo = buffer[129]; // 9 for Alexis and 5 for Hi - +4

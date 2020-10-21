@@ -114,7 +114,7 @@ public class GamePacketHandler {
 				case SET_PET:
 					return Lobby.handleCosmetics(packet); // 16 Bytes Total
 				case SYNC_SETTINGS: // Double Check
-					return StartGame.getInitialGameSettings(packet); // At Least 173 Bytes?
+					return StartGame.getLobbyGameSettings(packet); // At Least 173 Bytes?
 				default:
 					return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
 			}
