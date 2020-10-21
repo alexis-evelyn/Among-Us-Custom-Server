@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jmlspecs.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -51,12 +53,18 @@ public enum RPC {
 		return this.rpc;
 	}
 
+	@Nullable
 	public static RPC getRPC(int rpcInteger) {
 		return rpcSearch.get(rpcInteger);
 	}
 
-	public static String getRPCName(RPC rpc) {
+	@NotNull
+	public static String getRPCName(@NotNull RPC rpc) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (rpc == null)
+			return translation.getString("unknown");
+
 		switch (rpc) {
 			case ANIMATION:
 				return translation.getString("rpc_animation");

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'me.alexisevelyn'
-version '0.0.2-SNAPSHOT'
+version '0.0.3-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -23,6 +23,15 @@ dependencies {
     // License (MIT) - https://github.com/luaj/luaj/blob/master/LICENSE
     implementation "org.luaj:luaj-jse:${project.luaj_version}"
     shadow "org.luaj:luaj-jse:${project.luaj_version}"
+
+    // License (Apache 2.0) - https://github.com/JetBrains/java-annotations/blob/master/LICENSE.txt
+    implementation "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
+
+    // License (Apache 2.0) - https://github.com/apache/mina-sshd/blob/master/LICENSE.txt
+    // Compatible With MIT According To https://www.quora.com/Is-the-MIT-license-compatible-with-the-Apache-License-Version-2-APLv2
+    // Modules - https://github.com/apache/mina-sshd/blob/master/README.md#basic-artifacts-structure
+    implementation "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
+    shadow "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
 }
 
 //shadowJar {

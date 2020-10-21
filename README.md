@@ -41,6 +41,20 @@ My goals are:
 
 So, for the detecting the modded client, I'll see what packet headers are unused and see if the vanilla client handles unknown packets gracefully. If not, I'll use the init server side ping with a predefined, but not likely to be accidental sequence to see if a modded client responds with a custom packet (and vanilla just pings back and ignores it). The ping idea is a page out of port knocking, but instead of ports, it's ping messages.
 
+## Modding Future
+
+Given that the Imposter mod loader is currently private and there are disagreements on how the protocol works (including some wanting to break compatibility with the vanilla servers), I'll probably implement my own modding protocol after vanilla support is done.
+
+My goals are: 
+
+* keep the modded client compatible with vanilla unless a mod requires breaking it.
+* implement sandbox mod support so servers can send mods on connection.
+* send the locale to server on handshake
+* allow mods to be able to be turned on/off with a switch (and potentially profiles too).
+* make mods cross compatible so only the client has to be platform dependent
+* runtime permission system for mods that need to break sandbox
+* obviously, add proper custom server support, so we don't need to faff with region files
+
 [nickcis-issue]: https://github.com/NickCis/among-us-proxy/issues/4
 [discord]: https://discord.com/invite/DFUaVMx
 [wiki]: https://github.com/alexis-evelyn/Among-Us-Protocol/wiki

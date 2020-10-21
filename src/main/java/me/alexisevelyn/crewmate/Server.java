@@ -175,6 +175,9 @@ public class Server extends Thread {
 
 		// Send Reply Back
 		this.socket.send(packet);
+
+		// TODO: Check if Reply is Disconnect and Disconnect From Our End!!!
+		// SendOption.DISCONNECT...
 	}
 
 	private DatagramPacket createSendPacket(byte[] buffer, int length, InetAddress address, int port) {

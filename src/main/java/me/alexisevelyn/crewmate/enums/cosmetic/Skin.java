@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums.cosmetic;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -35,12 +37,18 @@ public enum Skin {
 		return this.skin;
 	}
 
+	@Nullable
 	public static Skin getSkin(int skinInteger) {
 		return skinSearch.get(skinInteger);
 	}
 
-	public static String getSkinName(Skin skin) {
+	@NotNull
+	public static String getSkinName(@NotNull Skin skin) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (skin == null)
+			return translation.getString("unknown");
+
 		switch (skin) {
 			case NONE:
 				return translation.getString("skin_none");

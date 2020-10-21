@@ -1,6 +1,8 @@
 package me.alexisevelyn.crewmate.enums;
 
 import me.alexisevelyn.crewmate.Main;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -34,12 +36,18 @@ public enum ReliablePacketType {
 		return this.reliablePacketType;
 	}
 
+	@Nullable
 	public static ReliablePacketType getReliablePacketType(int reliablePacketTypeInteger) {
 		return reliablePacketTypeSearch.get(reliablePacketTypeInteger);
 	}
 
-	public static String getReliablePacketTypeName(ReliablePacketType reliablePacketType) {
+	@NotNull
+	public static String getReliablePacketTypeName(@NotNull ReliablePacketType reliablePacketType) {
 		ResourceBundle translation = Main.getTranslationBundle();
+
+		if (reliablePacketType == null)
+			return translation.getString("unknown");
+
 		switch (reliablePacketType) {
 			case PRE_HOST_SETTINGS:
 				return translation.getString("reliable_packet_pre_host_settings");
