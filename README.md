@@ -60,6 +60,6 @@ My goals are:
 [wiki]: https://github.com/alexis-evelyn/Among-Us-Protocol/wiki
 [regionFileGenerator]: https://aeonlucid.com/Impostor/
 [localhost]: udp://127.0.0.1:22023/
-[redirect-file]: redirect-to-localhost.sh
-[remove-redirect-file]: remove-redirect-to-localhost.sh
-[regionFile]: regionInfo.dat
+[redirect-file]: resources/redirect-to-localhost.sh
+[remove-redirect-file]: resources/remove-redirect-to-localhost.sh
+[regionFile]: resources/regionInfo.dat

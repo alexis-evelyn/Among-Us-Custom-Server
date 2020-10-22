@@ -55,5 +55,10 @@ public class CommandHandler {
 		if (checkCommand.equals(Main.getTranslationBundle().getString("ssh_command"))) {
 			new SSH().execute(command, terminal);
 		}
+
+		// Plugin Info Command
+		if (checkCommand.equals(Main.getTranslationBundle().getString("plugin_command"))) {
+			new Plugin().execute(command, terminal);
+		}
 	}
 }
