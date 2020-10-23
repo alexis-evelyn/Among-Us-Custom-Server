@@ -64,11 +64,11 @@ public class StartGame {
 
 		byte[] randomCode = getCodeFromList();
 		GameManager.addGame(new Game(randomCode));
-		return getRandomGameCode();
+		return useCustomCode(randomCode);
 	}
 
 	// For S->C
-	private static byte[] getRandomGameCode() throws InvalidGameCodeException, IOException {
+	private static byte[] getRandomGameCode() {
 		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
 		// S->C - 0000   01 00 01 04 00 00 89 5a 2a 80                     .......Z*.
 
@@ -119,13 +119,20 @@ public class StartGame {
 		//  so it doesn't NPE for reading the line on the last word of the list
 		file.readLine();
 
-		// Get Word
-		return GameCodeHelper.generateGameCodeBytes(file.readLine());
+			// Get Word
+			return GameCodeHelper.generateGameCodeBytes(file.readLine());
+		} catch (IOException | NullPointerException exception) {
+			exception.printStackTrace();
+
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+		} catch (InvalidGameCodeException exception) {
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+		}
 	}
 
 	// This gets called when the client either tries to join a game or create a game.
 	// For C->S
-	public static byte[] getClientGameCode(DatagramPacket packet, Server server) throws InvalidGameCodeException {
+	public static byte[] getClientGameCode(DatagramPacket packet) {
 		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 89 5a 2a 80 07                  .......Z*..
 
@@ -135,8 +142,16 @@ public class StartGame {
 		// Game Code - SIXLXQ (45:9a:17:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 45 9a 17 80 07                  ......E....
 
+		// C->S - 0000   RP NO NO ML ML PT GC GC GC GC OM
+		// RP = Reliable Packet (0x01)
+		// NO = Nonce
+		// ML = Message Length (LE UINT-16 - Starts After PT)
+		// PT = Packet Type (0x01 For Join Game)
+		// GC = Game Code (LE UINT-32)
+		// OM = Owned Maps Bitfield (0x07 For Skeld, Mira, and Polus)
+
 		if (packet.getLength() != 11)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("join_game_invalid_size"));
 
 		// 00 03 05 00 01?
 		byte[] buffer = packet.getData();
@@ -195,7 +210,7 @@ public class StartGame {
 		return PacketHelper.mergeBytes(header, gameCodeBytes, messagePartOne, gameCodeBytes, messagePartTwo);
 	}
 
-	public static byte[] getInitialGameSettings(DatagramPacket packet) {
+	public static byte[] getLobbyGameSettings(DatagramPacket packet) {
 		// TODO: Figure out what this packet is for!!!
 
 		// Username Hi
@@ -255,12 +270,14 @@ public class StartGame {
 		// C->S - 00b0   65 78 69 73 08 00 00 00 00 00                     exis......
 
 		if (packet.getLength() < 4)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_invalid_size"));
 
 		byte[] buffer = packet.getData();
 
 		// Must Equal 01 00 03 (Join Game Via Code) or 01 00 04 (Create Game)
+		// TODO: Toss Check!!!
 		if (!(buffer[0] == SendOption.RELIABLE.getSendOption() && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
+			// return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_unknown_join_type"));
 			return new byte[0];
 
 		byte unknown = buffer[3]; // 180 for Alexis and 172 for Hi - +8

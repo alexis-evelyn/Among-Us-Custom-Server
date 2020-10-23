@@ -6,6 +6,14 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import java.util.ArrayList;
 
 public class PacketHelper {
+	public static byte[] getAcknowledgement(byte[] nonceBytes) {
+		// Should this be an exception or close connection?
+		if (nonceBytes.length != 2)
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
+
+		return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), nonceBytes[0], nonceBytes[1], (byte) 0xff};
+	}
+
 	public static byte[] closeWithMessage(String message) {
 		return closeConnection(message, DisconnectReason.CUSTOM);
 	}

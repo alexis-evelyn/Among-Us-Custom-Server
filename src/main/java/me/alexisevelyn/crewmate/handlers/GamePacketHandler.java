@@ -3,13 +3,8 @@ package me.alexisevelyn.crewmate.handlers;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.PacketHelper;
-import me.alexisevelyn.crewmate.Server;
-import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.RPC;
 import me.alexisevelyn.crewmate.enums.ReliablePacketType;
-import me.alexisevelyn.crewmate.events.impl.PlayerChatEvent;
-import me.alexisevelyn.crewmate.events.impl.PlayerPreJoinEvent;
-import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.handlers.gamepacket.Lobby;
 import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
@@ -30,7 +25,7 @@ public class GamePacketHandler {
 	// PL = Packet Length (Starts After PT)
 	// PT = Packet Type (What We Check In This File)
 
-	public static byte[] handleReliablePacket(DatagramPacket packet, Server server) {
+	public static byte[] handleReliablePacket(DatagramPacket packet) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -42,7 +37,7 @@ public class GamePacketHandler {
 
 		// Sanitization Check
 		if (type == null)
-			return new byte[0];
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
 
 		try {
 			switch (type) {
@@ -65,7 +60,7 @@ public class GamePacketHandler {
 				case JOINED_GAME: // 0x07
 				case REDIRECT_GAME: // 0x0d
 				default:
-					return new byte[0];
+					return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,7 +119,7 @@ public class GamePacketHandler {
 				// Print RPC Header
 				LogHelper.printPacketBytes(rpcBytes, 15);
 
-				return new byte[0];
+				return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
 			}
 
 			switch (type) {
@@ -136,9 +131,9 @@ public class GamePacketHandler {
 				case SET_PET:
 					return Lobby.handleCosmetics(packet, server); // 16 Bytes Total
 				case SYNC_SETTINGS: // Double Check
-					return StartGame.getInitialGameSettings(packet); // At Least 173 Bytes?
+					return StartGame.getLobbyGameSettings(packet); // At Least 173 Bytes?
 				default:
-					return new byte[0];
+					return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
 			}
 		}
 
@@ -194,8 +189,11 @@ public class GamePacketHandler {
 			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("received_chat"), playerID, chatMessage));
 
 			new PlayerChatEvent(playerID, chatMessage).call(server);
+
+			// Chat reply is literally just this packet sent back
+			return buffer;
 		}
 
-		return new byte[0];
+		return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("chat_packet_invalid_size"));
 	}
 }
