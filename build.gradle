@@ -32,6 +32,10 @@ dependencies {
     // Modules - https://github.com/apache/mina-sshd/blob/master/README.md#basic-artifacts-structure
     implementation "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
     shadow "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
+
+    // Licence - https://github.com/stleary/JSON-java/blob/master/LICENSE
+    implementation "org.json:json:20200518"
+    shadow "org.json:json:20200518"
 }
 
 //shadowJar {
