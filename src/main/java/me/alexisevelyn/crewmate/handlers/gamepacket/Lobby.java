@@ -8,6 +8,7 @@ import me.alexisevelyn.crewmate.enums.cosmetic.Hat;
 import me.alexisevelyn.crewmate.enums.cosmetic.Pet;
 import me.alexisevelyn.crewmate.enums.cosmetic.Skin;
 import me.alexisevelyn.crewmate.events.impl.*;
+import me.alexisevelyn.crewmate.handlers.PlayerManager;
 
 import java.net.DatagramPacket;
 import java.util.ResourceBundle;
@@ -44,7 +45,7 @@ public class Lobby {
 
 		String visibility = (buffer[11] == 1) ? Main.getTranslationBundle().getString("public_game") : Main.getTranslationBundle().getString("private_game");
 
-		ChangeVisibilityEvent event = new ChangeVisibilityEvent(visibility.equals(Main.getTranslationBundle().getString("public_game")));
+		ChangeVisibilityEvent event = new ChangeVisibilityEvent(server, PlayerManager.getPlayerByAddress(packet.getAddress(), packet.getPort()), visibility.equals(Main.getTranslationBundle().getString("public_game")));
 		event.call(server);
 		if (!event.isCancelled()) {
 			visibility = event.isVisible() ? Main.getTranslationBundle().getString("public_game") : Main.getTranslationBundle().getString("private_game");
