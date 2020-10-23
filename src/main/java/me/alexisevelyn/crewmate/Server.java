@@ -8,7 +8,6 @@ import me.alexisevelyn.crewmate.events.bus.EventBus;
 import me.alexisevelyn.crewmate.handlers.FragmentPacketHandler;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
-import me.alexisevelyn.crewmate.handlers.PingHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -152,7 +151,7 @@ public class Server extends Thread {
 			case HELLO: // Initial Connection (Handshake)
 				replyBuffer = HandshakeHandler.handleHandshake(packet, this);
 				break;
-			case ACKNOWLEDGEMENT: // Reply To Ping
+			case ACKNOWLEDGEMENT: // Unhandled
 			case PING: // Ping
 				sendReliablePacketAcknowledgement(packet);
 				return;
@@ -166,7 +165,6 @@ public class Server extends Thread {
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
 				replyBuffer = FragmentPacketHandler.handleFragmentPacket(packet);
 				break;
-			case ACKNOWLEDGEMENT: // Unhandled
 			default:
 				return;
 		}

@@ -91,33 +91,35 @@ public class StartGame {
 	}
 
 	@Deprecated
-	private static byte[] getCodeFromList() throws InvalidGameCodeException, IOException {
-		// This is a temporary test function
-		// https://stackoverflow.com/a/53673751/6828099
-		// File To Pull Words From
-		URL filePath = Main.class.getClassLoader().getResource("codes/words.txt");
+	private static byte[] getCodeFromList() {
+		try {
 
-		// Create Temporary File
-		File tempFile = File.createTempFile("words", ".tmp");
-		tempFile.deleteOnExit();
+			// This is a temporary test function
+			// https://stackoverflow.com/a/53673751/6828099
+			// File To Pull Words From
+			URL filePath = Main.class.getClassLoader().getResource("codes/words.txt");
 
-		// Copy Word List to Temporary File
-		FileOutputStream out = new FileOutputStream(tempFile);
-		out.write(filePath.openStream().readAllBytes());
+			// Create Temporary File
+			File tempFile = File.createTempFile("words", ".tmp");
+			tempFile.deleteOnExit();
 
-		RandomAccessFile file = new RandomAccessFile(tempFile, "r");
+			// Copy Word List to Temporary File
+			FileOutputStream out = new FileOutputStream(tempFile);
+			out.write(filePath.openStream().readAllBytes());
 
-		// For Random Position
-		long length = file.length() - 1;
-		long position = (long) (Math.random() * length);
+			RandomAccessFile file = new RandomAccessFile(tempFile, "r");
 
-		// Skip Ahead
-		file.seek(position);
+			// For Random Position
+			long length = file.length() - 1;
+			long position = (long) (Math.random() * length);
 
-		// Skip to End of Line
-		// TODO: Fix so it can grab the first word on the list and
-		//  so it doesn't NPE for reading the line on the last word of the list
-		file.readLine();
+			// Skip Ahead
+			file.seek(position);
+
+			// Skip to End of Line
+			// TODO: Fix so it can grab the first word on the list and
+			//  so it doesn't NPE for reading the line on the last word of the list
+			file.readLine();
 
 			// Get Word
 			return GameCodeHelper.generateGameCodeBytes(file.readLine());
@@ -132,7 +134,7 @@ public class StartGame {
 
 	// This gets called when the client either tries to join a game or create a game.
 	// For C->S
-	public static byte[] getClientGameCode(DatagramPacket packet) {
+	public static byte[] getClientGameCode(DatagramPacket packet, Server server) throws InvalidGameCodeException {
 		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 89 5a 2a 80 07                  .......Z*..
 

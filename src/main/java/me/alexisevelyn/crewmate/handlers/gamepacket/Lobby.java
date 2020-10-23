@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
+import me.alexisevelyn.crewmate.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.*;
 import me.alexisevelyn.crewmate.enums.cosmetic.Hat;
