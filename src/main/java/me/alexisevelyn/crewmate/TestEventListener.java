@@ -1,7 +1,9 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.events.bus.EventHandler;
 import me.alexisevelyn.crewmate.events.impl.*;
+import me.alexisevelyn.crewmate.handlers.PlayerManager;
 
 public class TestEventListener {
 
@@ -17,6 +19,10 @@ public class TestEventListener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         //event.setCancelled(true, "Kicked during Join");
+        //PlayerManager.getPlayerByAddress(event.getAddress(), event.getPort()).kick("funi");
+        for (Player player : PlayerManager.getPlayers()) {
+            LogHelper.printLine(player.getName());
+        }
     }
 
     @EventHandler

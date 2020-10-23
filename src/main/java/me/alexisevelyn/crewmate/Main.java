@@ -62,7 +62,7 @@ public class Main {
 
 		try {
 			if (portNumber != -1)
-				server = new Server(portNumber, null);
+				server = new Server(portNumber, null, 15000);
 			else
 				server = new Server();
 

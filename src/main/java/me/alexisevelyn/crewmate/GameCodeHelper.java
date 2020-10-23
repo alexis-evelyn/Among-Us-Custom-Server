@@ -69,13 +69,13 @@ public class GameCodeHelper {
 	}
 
 	// Convert String to GameCode Bytes
-	public static byte[] generateGameCodeBytes(String gameCode) {
+	public static byte[] generateGameCodeBytes(String gameCode) throws InvalidGameCodeException {
 		// Game Codes Can Be 4 or 6 Capital Letters Long
 		// Technically the client allows numbers in the game code, but it results in an integer 0.
 
 		// Ensure GameCode Is Valid Or Convertible To Valid
 		if (!gameCode.matches("([A-Z]|[a-z])+"))
-			return new byte[0];
+			throw new InvalidGameCodeException(gameCode + " contains numbers.");
 
 		String fixedCode = gameCode.toUpperCase();
 
@@ -85,7 +85,7 @@ public class GameCodeHelper {
 		else if (fixedCode.length() == 6)
 			return generateGameCodeV2(fixedCode);
 
-		return new byte[0];
+		throw new InvalidGameCodeException(gameCode + " has an invalid length. (" + gameCode.length() + " characters)");
 	}
 
 	// V2 - Convert String to GameCode Bytes

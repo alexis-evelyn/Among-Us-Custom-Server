@@ -3,6 +3,8 @@ package me.alexisevelyn.crewmate.handlers;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.Server;
+import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 
 import java.math.BigInteger;
@@ -22,7 +24,7 @@ import java.util.ResourceBundle;
 public class HandshakeHandler {
 	private static char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
-	public static byte[] handleHandshake(DatagramPacket packet) {
+	public static byte[] handleHandshake(DatagramPacket packet, Server server) {
 		// 0000   08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73      ....F....Alexis
 		// 0000   08 00 01 00 46 d2 02 03 03 50 4f 4d               ....F....POM
 		// 0000   08 00 01 00 00 02 18 00                           ........
@@ -51,6 +53,8 @@ public class HandshakeHandler {
 			// Debug Logging
 			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("name_logged"), name));
 			logVersionInfo(clientVersionRaw);
+
+			PlayerManager.addPlayer(new Player(name, packet.getAddress(), packet.getPort(), hazelVersion, clientVersionRaw, server));
 
 			// Start Ping
 			return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), 0x00, 0x01, (byte) 0xff};

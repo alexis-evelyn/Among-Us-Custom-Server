@@ -1,6 +1,7 @@
 package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.*;
+import me.alexisevelyn.crewmate.api.Game;
 import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
@@ -9,16 +10,20 @@ import me.alexisevelyn.crewmate.events.impl.HostGameEvent;
 import me.alexisevelyn.crewmate.events.impl.PlayerJoinEvent;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
+import me.alexisevelyn.crewmate.handlers.GameManager;
+import me.alexisevelyn.crewmate.handlers.PlayerManager;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class StartGame {
-	public static byte[] getNewGameSettings(DatagramPacket packet, Server server) {
+	public static byte[] getNewGameSettings(DatagramPacket packet, Server server) throws InvalidGameCodeException, InvalidBytesException, IOException {
 		// 0000   01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00   ...+..*.........
 		// 0010   80 3f 00 00 40 3f 00 00 80 3f 00 00 f0 41 01 01   .?..@?...?...A..
 		// 0020   03 01 00 00 00 02 00 00 00 00 00 87 00 00 00 00   ................
@@ -49,16 +54,21 @@ public class StartGame {
 			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap(map), language);
 			event.call(server);
 			byte[] newCode = GameCodeHelper.generateGameCodeBytes(event.getGameCode());
-			if (newCode.length != 0) return useCustomCode(newCode);
+			if (newCode.length != 0) {
+				GameManager.addGame(new Game(newCode));
+				return useCustomCode(newCode);
+			}
 		} catch (InvalidBytesException | InvalidGameCodeException e) {
 			e.printStackTrace();
 		}
 
+		byte[] randomCode = getCodeFromList();
+		GameManager.addGame(new Game(randomCode));
 		return getRandomGameCode();
 	}
 
 	// For S->C
-	private static byte[] getRandomGameCode() {
+	private static byte[] getRandomGameCode() throws InvalidGameCodeException, IOException {
 		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
 		// S->C - 0000   01 00 01 04 00 00 89 5a 2a 80                     .......Z*.
 
@@ -81,48 +91,41 @@ public class StartGame {
 	}
 
 	@Deprecated
-	private static byte[] getCodeFromList() {
+	private static byte[] getCodeFromList() throws InvalidGameCodeException, IOException {
 		// This is a temporary test function
 		// https://stackoverflow.com/a/53673751/6828099
+		// File To Pull Words From
+		URL filePath = Main.class.getClassLoader().getResource("codes/words.txt");
 
-		try {
-			// File To Pull Words From
-			URL filePath = Main.class.getClassLoader().getResource("codes/words.txt");
+		// Create Temporary File
+		File tempFile = File.createTempFile("words", ".tmp");
+		tempFile.deleteOnExit();
 
-			// Create Temporary File
-			File tempFile = File.createTempFile("words", ".tmp");
-			tempFile.deleteOnExit();
+		// Copy Word List to Temporary File
+		FileOutputStream out = new FileOutputStream(tempFile);
+		out.write(filePath.openStream().readAllBytes());
 
-			// Copy Word List to Temporary File
-			FileOutputStream out = new FileOutputStream(tempFile);
-			out.write(filePath.openStream().readAllBytes());
+		RandomAccessFile file = new RandomAccessFile(tempFile, "r");
 
-			RandomAccessFile file = new RandomAccessFile(tempFile, "r");
+		// For Random Position
+		long length = file.length() - 1;
+		long position = (long) (Math.random() * length);
 
-			// For Random Position
-			long length = file.length() - 1;
-			long position = (long) (Math.random() * length);
+		// Skip Ahead
+		file.seek(position);
 
-			// Skip Ahead
-			file.seek(position);
+		// Skip to End of Line
+		// TODO: Fix so it can grab the first word on the list and
+		//  so it doesn't NPE for reading the line on the last word of the list
+		file.readLine();
 
-			// Skip to End of Line
-			// TODO: Fix so it can grab the first word on the list and
-			//  so it doesn't NPE for reading the line on the last word of the list
-			file.readLine();
-
-			// Get Word
-			return GameCodeHelper.generateGameCodeBytes(file.readLine());
-		} catch (IOException | NullPointerException exception) {
-			exception.printStackTrace();
-
-			return GameCodeHelper.generateGameCodeBytes("FAIL");
-		}
+		// Get Word
+		return GameCodeHelper.generateGameCodeBytes(file.readLine());
 	}
 
 	// This gets called when the client either tries to join a game or create a game.
 	// For C->S
-	public static byte[] getClientGameCode(DatagramPacket packet, Server server) {
+	public static byte[] getClientGameCode(DatagramPacket packet, Server server) throws InvalidGameCodeException {
 		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 89 5a 2a 80 07                  .......Z*..
 
@@ -185,6 +188,8 @@ public class StartGame {
 		if (event.isCancelled()) {
 			return PacketHelper.closeConnection(event.getReason(), DisconnectReason.CUSTOM);
 		}
+
+		GameManager.getGameByCode(gameCode).addPlayer(PlayerManager.getPlayerByAddress(packet.getAddress(), packet.getPort()));
 
 		// This is enough to get to the lobby
 		return PacketHelper.mergeBytes(header, gameCodeBytes, messagePartOne, gameCodeBytes, messagePartTwo);
