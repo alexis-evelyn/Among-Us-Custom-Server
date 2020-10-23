@@ -1,10 +1,12 @@
 plugins {
-    id 'java'
-    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "java" // https://docs.gradle.org/current/userguide/java_plugin.html
+    id "signing" // https://docs.gradle.org/current/userguide/signing_plugin.html
+    id "com.github.johnrengelman.shadow" version "6.1.0" // https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow
+    id "com.github.vlsi.license-gather" version "1.7.0" // https://plugins.gradle.org/plugin/com.github.vlsi.license-gather
 }
 
 group 'me.alexisevelyn'
-version '0.0.4-SNAPSHOT'
+version '0.0.5-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -32,7 +34,15 @@ dependencies {
     // Modules - https://github.com/apache/mina-sshd/blob/master/README.md#basic-artifacts-structure
     implementation "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
     shadow "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
+
+    // License (BSD-3) - https://github.com/jline/jline3/blob/master/LICENSE.txt
+    // Requires License In Binary Distribution - Can Be Found in `META-INF/licenses/jline3-license.txt`
+    implementation "org.jline:jline:${project.jline_version}"
+    shadow "org.jline:jline:${project.jline_version}"
 }
+
+// Configure Auto Relocation
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 
 //shadowJar {
 //    archiveBaseName.set('shadow')
@@ -40,10 +50,20 @@ dependencies {
 //    archiveVersion.set('')
 //}
 
+// This is to prevent dependency conflicts
+// https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
+task relocateShadowJar(type: ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = "shadow.crewmate" // Default value is "shadow"
+}
+
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
+
 jar {
     manifest {
         attributes(
-            'Main-Class': 'me.alexisevelyn.crewmate.Main'
+            'Main-Class': 'me.alexisevelyn.crewmate.Main',
+            'Bundle-License': 'MIT; link="https://github.com/alexis-evelyn/Crewmate/blob/master/LICENSE.md"'
         )
     }
 }
@@ -58,4 +78,11 @@ processResources {
 
 test {
     useJUnitPlatform()
+}
+
+// Currently None of the libraries appear to use a standard for machine license reading
+// https://github.com/vlsi/vlsi-release-plugins#license-gather-plugin
+tasks.register('generateLicense', com.github.vlsi.gradle.license.GatherLicenseTask.class) {
+    configurations.add(project.configurations.runtime)
+    licenseDir.set(file("$buildDir/third-party-licenses"))
 }
