@@ -35,7 +35,7 @@ public class LogHelper {
 		if (showTimestamp && !isTerminalThread)
 			System.out.println(createLogTimestamp(ZonedDateTime.now(), twentyFourHour, simpleDateTime) + line);
 		else {
-			// System.out.println(line);
+			System.out.println(line);
 			// https://www.baeldung.com/logback
 			// logger.debug("{}", line);
 		}
