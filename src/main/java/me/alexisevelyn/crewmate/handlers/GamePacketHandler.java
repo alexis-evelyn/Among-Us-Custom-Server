@@ -3,8 +3,13 @@ package me.alexisevelyn.crewmate.handlers;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.Server;
+import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.RPC;
 import me.alexisevelyn.crewmate.enums.ReliablePacketType;
+import me.alexisevelyn.crewmate.events.impl.PlayerChatEvent;
+import me.alexisevelyn.crewmate.events.impl.PlayerPreJoinEvent;
+import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.handlers.gamepacket.Lobby;
 import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
@@ -25,7 +30,7 @@ public class GamePacketHandler {
 	// PL = Packet Length (Starts After PT)
 	// PT = Packet Type (What We Check In This File)
 
-	public static byte[] handleReliablePacket(DatagramPacket packet) {
+	public static byte[] handleReliablePacket(DatagramPacket packet, Server server) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -39,25 +44,42 @@ public class GamePacketHandler {
 		if (type == null)
 			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
 
-		switch (type) {
-			case PRE_HOST_SETTINGS: // 0x00
-				return StartGame.getNewGameSettings(packet); // 49 Bytes Total
-			case JOIN_GAME: // 0x01
-				return StartGame.joinGame(packet); // 11 Bytes Total
-			case GAME_DATA: // 0x05
-				return parseGameData(packet);
-			case ALTER_GAME: // 0x0a
-				return Lobby.alterGame(packet); // 12 Bytes Total
-			case SEARCH_PUBLIC_GAME: // 0x10
-				return SearchGame.handleSearchPublicGame(packet); // 50 Bytes Total
-			case START_GAME: // 0x02
-			case REMOVE_GAME: // 0x03
-			case REMOVE_PLAYER: // 0x04
-			case GAME_DATA_TO: // 0x06
-			case JOINED_GAME: // 0x07
-			case REDIRECT_GAME: // 0x0d
-			default:
-				return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
+		try {
+			switch (type) {
+				case PRE_HOST_SETTINGS: // 0x00
+					return StartGame.getNewGameSettings(packet, server); // 49 Bytes Total
+				case JOIN_GAME: // 0x01
+					return handlePreJoinGame(packet, server); // 11 Bytes Total
+				case GAME_DATA: // 0x05
+					return parseGameData(packet, server);
+				case ALTER_GAME: // 0x0a
+					return Lobby.alterGame(packet, server); // 12 Bytes Total
+				case SEARCH_PUBLIC_GAME: // 0x10
+					return SearchGame.handleSearchPublicGame(packet, server); // 50 Bytes Total
+				case START_GAME: // 0x02
+				case REMOVE_GAME: // 0x03
+					// TODO: Get code from data and remove game.
+				case REMOVE_PLAYER: // 0x04
+					PlayerManager.removePlayer(packet.getAddress(), packet.getPort());
+				case GAME_DATA_TO: // 0x06
+				case JOINED_GAME: // 0x07
+				case REDIRECT_GAME: // 0x0d
+				default:
+					return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PacketHelper.closeConnection("An Error Occured: " + e.getClass().getSimpleName() + "\n \n" + e.getMessage(), DisconnectReason.CUSTOM);
+		}
+	}
+
+	private static byte[] handlePreJoinGame(DatagramPacket packet, Server server) throws InvalidGameCodeException {
+		PlayerPreJoinEvent event = new PlayerPreJoinEvent(packet.getAddress(), packet.getPort());
+		event.call(server);
+		if (!event.isCancelled()) {
+			return StartGame.getClientGameCode(packet, server);
+		} else {
+			return PacketHelper.closeConnection(event.getReason(), DisconnectReason.CUSTOM);
 		}
 	}
 
@@ -71,7 +93,7 @@ public class GamePacketHandler {
 		return new byte[0];
 	}
 
-	private static byte[] parseGameData(DatagramPacket packet) {
+	private static byte[] parseGameData(DatagramPacket packet, Server server) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -107,12 +129,12 @@ public class GamePacketHandler {
 
 			switch (type) {
 				case SEND_CHAT:
-					return handleChat(packet);
+					return handleChat(packet, server);
 				case SET_COLOR:
 				case SET_HAT:
 				case SET_SKIN:
 				case SET_PET:
-					return Lobby.handleCosmetics(packet); // 16 Bytes Total
+					return Lobby.handleCosmetics(packet, server); // 16 Bytes Total
 				case SYNC_SETTINGS: // Double Check
 					return StartGame.getLobbyGameSettings(packet); // At Least 173 Bytes?
 				default:
@@ -123,7 +145,7 @@ public class GamePacketHandler {
 		return new byte[0];
 	}
 
-	private static byte[] handleChat(DatagramPacket packet) {
+	private static byte[] handleChat(DatagramPacket packet, Server server) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -170,6 +192,8 @@ public class GamePacketHandler {
 			int playerID = buffer[13];
 
 			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("received_chat"), playerID, chatMessage));
+
+			new PlayerChatEvent(playerID, chatMessage).call(server);
 
 			// Chat reply is literally just this packet sent back
 			return buffer;

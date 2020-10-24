@@ -4,9 +4,13 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Terminal;
 import me.alexisevelyn.crewmate.handlers.commands.*;
 
+import java.util.HashMap;
+
 public class CommandHandler {
 	// TODO: Replace printLine with Terminal Specific (Implementation) Print Line
 	// TODO: Replace Hardcode With Registry
+
+	public static HashMap<String, Command> commands = new HashMap<>();
 
 	/**
 	 * See {@link Help#Help()}
@@ -59,6 +63,12 @@ public class CommandHandler {
 		// Plugin Info Command
 		if (checkCommand.equals(Main.getTranslationBundle().getString("plugin_command"))) {
 			new Plugin().execute(command, terminal);
+		}
+
+		for (String commandName : commands.keySet()) {
+			if (checkCommand.equalsIgnoreCase(commandName)) {
+				commands.get(commandName).execute(command, terminal);
+			}
 		}
 	}
 }

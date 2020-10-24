@@ -1,16 +1,17 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.api.Plugin;
+import me.alexisevelyn.crewmate.api.PluginLoader;
 import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
+import me.alexisevelyn.crewmate.events.bus.EventBus;
 import me.alexisevelyn.crewmate.handlers.FragmentPacketHandler;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -23,17 +24,47 @@ public class Server extends Thread {
 
 	private final InetAddress boundIP;
 	private final int port;
+	private final int maxPlayers;
+
+	private final EventBus eventBus = new EventBus();
+
+	private final File projectFolder;
+	private final File serversFolder;
+	private final File root;
+	private final File pluginsFolder;
 
 	public Server() throws SocketException {
 		// null means bind to any address
-		this(22023, null);
+		this(22023, null, 15000);
 	}
 
-	public Server(int port, InetAddress bindAddress) throws SocketException {
+	public Server(int maxPlayers) throws SocketException {
+		this(22023, null, maxPlayers);
+	}
+
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+
+	public Server(int port, InetAddress bindAddress, int maxPlayers) throws SocketException {
 		this.socket = new DatagramSocket(port, bindAddress);
 
 		this.port = this.socket.getLocalPort();
 		this.boundIP = this.socket.getLocalAddress();
+		this.maxPlayers = maxPlayers;
+
+		projectFolder = new File(System.getProperty("user.dir"));
+		if (!projectFolder.exists()) projectFolder.mkdirs();
+		serversFolder = new File(projectFolder, "servers");
+		if (!serversFolder.exists()) serversFolder.mkdirs();
+		root = new File(serversFolder, port + "");
+		if (!root.exists()) root.mkdirs();
+		pluginsFolder = new File(root, "plugins");
+		if (!pluginsFolder.exists()) pluginsFolder.mkdirs();
+
+		for (Plugin plugin : PluginLoader.loadPlugins(pluginsFolder, this)) {
+			LogHelper.printLine(plugin.getId());
+		}
 	}
 
 	@Override
@@ -98,6 +129,10 @@ public class Server extends Thread {
 		}
 	}
 
+	public int getMaxPlayers() {
+		return maxPlayers;
+	}
+
 	// TODO: TODO TODO - https://discord.com/channels/757425025379729459/759066383090188308/765419168466993162
 	// "Yeah, lengths for Hazel messages are always 2 bytes little-endian" - codyphobe from Imposter Discord
 	private void parsePacketAndReply(DatagramPacket packet) throws IOException {
@@ -114,14 +149,15 @@ public class Server extends Thread {
 		byte[] replyBuffer;
 		switch (sendOption) {
 			case HELLO: // Initial Connection (Handshake)
-				replyBuffer = HandshakeHandler.handleHandshake(packet);
+				replyBuffer = HandshakeHandler.handleHandshake(packet, this);
 				break;
+			case ACKNOWLEDGEMENT: // Unhandled
 			case PING: // Ping
 				sendReliablePacketAcknowledgement(packet);
 				return;
 			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
-				replyBuffer = GamePacketHandler.handleReliablePacket(packet);
-				this.sendReliablePacketAcknowledgement(packet); // To Let Client Know Packet Was Received
+				replyBuffer = GamePacketHandler.handleReliablePacket(packet, this);
+				this.sendReliablePacketAcknowledgement(packet);
 				break;
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
 				replyBuffer = GamePacketHandler.handleUnreliablePacket(packet);
@@ -129,7 +165,6 @@ public class Server extends Thread {
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
 				replyBuffer = FragmentPacketHandler.handleFragmentPacket(packet);
 				break;
-			case ACKNOWLEDGEMENT: // Unhandled
 			default:
 				return;
 		}
@@ -193,7 +228,15 @@ public class Server extends Thread {
 		}
 	}
 
-	private DatagramPacket createSendPacket(byte[] buffer, int length, InetAddress address, int port) {
+	public void sendPacket(DatagramPacket packet) {
+		try {
+			this.socket.send(packet);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public DatagramPacket createSendPacket(byte[] buffer, int length, InetAddress address, int port) {
 		byte[] sendBuffer = new byte[length];
 
 		if (length >= 0)

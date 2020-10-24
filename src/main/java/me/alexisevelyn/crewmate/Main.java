@@ -62,11 +62,14 @@ public class Main {
 
 		try {
 			if (portNumber != -1)
-				server = new Server(portNumber, null);
+				server = new Server(portNumber, null, 15000);
 			else
 				server = new Server();
 
 			server.start();
+
+			// TODO: Remove after testing.
+			new TestEventListener(server);
 		} catch (SocketException e) {
 			LogHelper.printLineErr(getTranslationBundle().getString("failed_socket_bind"));
 		}
