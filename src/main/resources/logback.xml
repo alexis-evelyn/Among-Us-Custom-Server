@@ -1,0 +1,21 @@
+<configuration>
+    <appender name="Server" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="Terminal" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="Terminal" />
+    </root>
+
+    <root level="debug">
+        <appender-ref ref="Server" />
+    </root>
+</configuration>

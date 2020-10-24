@@ -2,6 +2,8 @@ package me.alexisevelyn.crewmate;
 
 // NOTE: This file is supposed to help with ensuring the terminal is always at the bottom and never left in place when the server logs information.
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogHelper {
+	// Terminal Logger
+	private static final Logger logger = LoggerFactory.getLogger(Server.class);
+
 	// https://unix.stackexchange.com/a/26592/181269
 	private static String CLEAR_LINE_UP_TO_CURSOR = "\\033[1K";
 	private static String CLEAR_WHOLE_LINE = "\\033[2K";
@@ -19,8 +24,6 @@ public class LogHelper {
 	private static boolean showTimestamp = false;
 	private static boolean twentyFourHour = true;
 	private static boolean simpleDateTime = true;
-
-	// private static final Logger logger = LoggerFactory.getLogger(ServerLogger.class);
 
 	public static void printLine() {
 		System.out.println();
@@ -32,9 +35,9 @@ public class LogHelper {
 		if (showTimestamp && !isTerminalThread)
 			System.out.println(createLogTimestamp(ZonedDateTime.now(), twentyFourHour, simpleDateTime) + line);
 		else {
-			System.out.println(line);
+			// System.out.println(line);
 			// https://www.baeldung.com/logback
-			// logger.info("Example log from {}", ServerLogger.class.getSimpleName());
+			// logger.debug("{}", line);
 		}
 	}
 
@@ -246,5 +249,14 @@ public class LogHelper {
 		}
 
 		return String.format(formatter.toString(), valueList.toArray());
+	}
+
+	private static void printLogbackInternal() {
+		// https://logback.qos.ch/manual/configuration.html
+		// assume SLF4J is bound to logback in the current environment
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+		// print logback's internal status
+		StatusPrinter.print(lc);
 	}
 }

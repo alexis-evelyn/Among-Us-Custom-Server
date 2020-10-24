@@ -31,7 +31,7 @@ public class Bug implements Command {
 	public void execute(String command, Terminal terminal) {
 		String message = String.format(Main.getTranslationBundle().getString("bug_command_issue_message"), issuesLink);
 
-		LogHelper.printLine(message);
+		Terminal.getLogger().info(message);
 	}
 
 	@Override

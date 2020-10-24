@@ -18,6 +18,10 @@ dependencies {
     implementation "ch.qos.logback:logback-core:${project.logback_version}"
     shadow "ch.qos.logback:logback-core:${project.logback_version}"
 
+    // License (Dual Licensed Under EPL v1.0 and LGPL 2.1) - https://logback.qos.ch/license.html
+    implementation "ch.qos.logback:logback-classic:${project.logback_version}"
+    shadow "ch.qos.logback:logback-classic:${project.logback_version}"
+
     // License (Identical to MIT) - http://slf4j.org/license.html
     implementation "org.slf4j:slf4j-api:${project.slf4j_api_version}"
     shadow "org.slf4j:slf4j-api:${project.slf4j_api_version}"
@@ -54,14 +58,14 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocatio
 //    archiveVersion.set('')
 //}
 
-// This is to prevent dependency conflicts
+// This is to prevent dependency conflicts (causes too many problems right now, will deal with later)
 // https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
-task relocateShadowJar(type: ConfigureShadowRelocation) {
-    target = tasks.shadowJar
-    prefix = "shadow.crewmate" // Default value is "shadow"
-}
+//task relocateShadowJar(type: ConfigureShadowRelocation) {
+//    target = tasks.shadowJar
+//    prefix = "shadow.crewmate" // Default value is "shadow"
+//}
 
-tasks.shadowJar.dependsOn tasks.relocateShadowJar
+//tasks.shadowJar.dependsOn tasks.relocateShadowJar
 
 jar {
     manifest {

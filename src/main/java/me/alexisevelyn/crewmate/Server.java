@@ -8,6 +8,8 @@ import me.alexisevelyn.crewmate.events.bus.EventBus;
 import me.alexisevelyn.crewmate.handlers.FragmentPacketHandler;
 import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
 import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +18,9 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class Server extends Thread {
+	// Server Logger
+	private static final Logger logger = LoggerFactory.getLogger(Server.class);
+
 	// https://www.scadacore.com/tools/programming-calculators/online-hex-converter/
 
 	private final DatagramSocket socket;

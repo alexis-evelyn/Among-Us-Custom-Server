@@ -1,10 +1,15 @@
 package me.alexisevelyn.crewmate;
 
 import me.alexisevelyn.crewmate.handlers.CommandHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
 public class Terminal extends Thread {
+	// Terminal Logger
+	private static final Logger logger = LoggerFactory.getLogger(Terminal.class);
+
 	// This prefix will be changeable via commands in the future
 	private String prefix = "# ";
 	private boolean running = false;
@@ -70,5 +75,9 @@ public class Terminal extends Thread {
 
 	private void setupShutdownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> Main.getTerminal().exit()));
+	}
+
+	public static Logger getLogger() {
+		return logger;
 	}
 }
