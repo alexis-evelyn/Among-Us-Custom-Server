@@ -4,7 +4,6 @@ import me.alexisevelyn.crewmate.enums.cosmetic.Skin;
 import me.alexisevelyn.crewmate.events.EventCancellable;
 
 public class PlayerChangeSkinEvent extends EventCancellable {
-
     private final Skin skin;
 
     public PlayerChangeSkinEvent(Skin skin) {
@@ -14,5 +13,4 @@ public class PlayerChangeSkinEvent extends EventCancellable {
     public Skin getSkin() {
         return skin;
     }
-
 }

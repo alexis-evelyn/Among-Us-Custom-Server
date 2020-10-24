@@ -7,7 +7,6 @@ import me.alexisevelyn.crewmate.events.Event;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 
 public class HostGameEvent extends Event {
-
     private String gameCode;
     private final int maxPlayers;
     private final int impostorCount;
@@ -24,7 +23,8 @@ public class HostGameEvent extends Event {
 
     public void setGameCode(String gameCode) throws IllegalArgumentException {
         if (gameCode.length() != 4 && gameCode.length() != 6)
-            throw new IllegalArgumentException(Main.getTranslationBundle().getString("gamecode_invalid_length_exception"));
+            throw new IllegalArgumentException(Main.getTranslationBundle().getString("gamecode_wrong_length"));
+
         this.gameCode = gameCode;
     }
 

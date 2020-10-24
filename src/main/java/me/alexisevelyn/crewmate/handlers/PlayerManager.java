@@ -1,6 +1,7 @@
 package me.alexisevelyn.crewmate.handlers;
 
 import me.alexisevelyn.crewmate.LogHelper;
+import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.api.Player;
 
 import java.net.InetAddress;
@@ -14,11 +15,12 @@ public class PlayerManager {
     public static final HashMap<String, Player> playersByAddress = new HashMap<>();
 
     public static void addPlayer(Player player) {
-        LogHelper.printLine("Adding player: " + player.getName());
+        LogHelper.printLine(String.format(Main.getTranslationBundle().getString("adding_player"), player.getName()));
         removePlayer(player);
-        playersByID.put(player.getId(), player);
+
+        playersByID.put(player.getID(), player);
         playersByAddress.put(player.getAddress() + ":" + player.getPort(), player);
-        LogHelper.printLine("Added player: " + player.getName());
+        LogHelper.printLine(String.format(Main.getTranslationBundle().getString("added_player"), player.getName()));
     }
 
     public static void removePlayer(Player player) {
@@ -29,6 +31,7 @@ public class PlayerManager {
         if (existsWithAddress(address, port)) {
             for (int key : playersByID.keySet()) {
                 Player foundPlayer = playersByID.get(key);
+
                 if (foundPlayer.getAddress().equals(address) && foundPlayer.getPort() == port) {
                     playersByID.remove(key, foundPlayer);
                     playersByAddress.remove(address + ":" + port, foundPlayer);
@@ -47,14 +50,16 @@ public class PlayerManager {
      */
     @Deprecated
     public static void removePlayer(int id) {
-        if (existsWithId(id)) {
+        if (existsWithID(id)) {
             for (String key : playersByAddress.keySet()) {
                 Player foundPlayer = playersByAddress.get(key);
-                if (foundPlayer.getId() == id) {
+
+                if (foundPlayer.getID() == id) {
                     playersByAddress.remove(key, foundPlayer);
                     playersByID.remove(id, foundPlayer);
                     removeFromGames(foundPlayer);
-                    LogHelper.printLine("Removed player: " + foundPlayer.getName());
+
+                    LogHelper.printLine(String.format(Main.getTranslationBundle().getString("removed_player"), foundPlayer.getName()));
                     break;
                 }
             }
@@ -65,7 +70,7 @@ public class PlayerManager {
         GameManager.removePlayer(player);
     }
 
-    public static boolean existsWithId(int id) {
+    public static boolean existsWithID(int id) {
         return playersByID.containsKey(id);
     }
 
@@ -94,5 +99,4 @@ public class PlayerManager {
     public static Collection<Player> getPlayers() {
         return Collections.unmodifiableCollection(playersByAddress.values());
     }
-
 }

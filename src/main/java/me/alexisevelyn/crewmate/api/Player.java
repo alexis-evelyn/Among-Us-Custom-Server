@@ -8,7 +8,7 @@ import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import java.net.InetAddress;
 import java.util.Random;
 
-public class Player extends CrewmateObject {
+public class Player extends Entity {
 
     private final String name;
     private final int id;
@@ -25,7 +25,7 @@ public class Player extends CrewmateObject {
         super(4);
         this.name = name;
         int id = rnd.nextInt(server.getMaxPlayers());
-        while (PlayerManager.existsWithId(id)) {
+        while (PlayerManager.existsWithID(id)) {
             id = rnd.nextInt(server.getMaxPlayers());
         }
         this.id = id;
@@ -45,7 +45,7 @@ public class Player extends CrewmateObject {
         return address;
     }
 
-    public int getId() {
+    public int getID() {
         return id;
     }
 
@@ -69,10 +69,10 @@ public class Player extends CrewmateObject {
         return clientVersion;
     }
 
-    /*public void spawnObject(CrewmateObject object) throws IOException {
-        int id = object.getObjectId();
-        int ownerId = getId();
-        byte flags = (byte) (object instanceof Player ? 1 : 0);
+    /*public void spawnEntity(Entity entity) throws IOException {
+        int id = entity.getEntityID();
+        int ownerId = getID();
+        byte flags = (byte) (entity instanceof Player ? 1 : 0);
         byte[] components = new byte[]{};
         int componentCount = components.length;
         byte[] message = new byte[]{SendOption.RELIABLE.getSendOption(), 0x04, (byte) id, (byte) ownerId, flags, (byte) componentCount, 0x0};

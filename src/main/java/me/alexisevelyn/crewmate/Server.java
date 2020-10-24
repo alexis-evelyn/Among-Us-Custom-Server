@@ -11,9 +11,11 @@ import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.NoPermissionException;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
+import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -33,42 +35,34 @@ public class Server extends Thread {
 
 	private final EventBus eventBus = new EventBus();
 
-	private final File projectFolder;
-	private final File serversFolder;
 	private final File root;
 	private final File pluginsFolder;
-
-	public Server() throws SocketException {
-		// null means bind to any address
-		this(22023, null, 15000);
-	}
-
-	public Server(int maxPlayers) throws SocketException {
-		this(22023, null, maxPlayers);
-	}
 
 	public EventBus getEventBus() {
 		return eventBus;
 	}
 
-	public Server(int port, InetAddress bindAddress, int maxPlayers) throws SocketException {
-		this.socket = new DatagramSocket(port, bindAddress);
+	public Server(Config config) throws SocketException, AccessDeniedException {
+		this.socket = new DatagramSocket(config.getServerPort(), config.getServerAddress());
 
 		this.port = this.socket.getLocalPort();
 		this.boundIP = this.socket.getLocalAddress();
-		this.maxPlayers = maxPlayers;
+		this.maxPlayers = config.getMaxPlayers();
 
-		projectFolder = new File(System.getProperty("user.dir"));
-		if (!projectFolder.exists()) projectFolder.mkdirs();
-		serversFolder = new File(projectFolder, "servers");
-		if (!serversFolder.exists()) serversFolder.mkdirs();
-		root = new File(serversFolder, port + "");
-		if (!root.exists()) root.mkdirs();
-		pluginsFolder = new File(root, "plugins");
-		if (!pluginsFolder.exists()) pluginsFolder.mkdirs();
+		// Root Directory For Server Files
+		root = config.getRootDir();
+
+		// Create Root Folder If It Does Not Exist
+		if (!root.exists() && !root.mkdirs()) {
+			// https://docs.oracle.com/javase/7/docs/api/java/nio/file/AccessDeniedException.html
+			throw new AccessDeniedException(String.format(Main.getTranslationBundle().getString("root_directory_failed_creation"), root.getAbsolutePath()));
+		}
+
+		// Plugins Directory For Server Plugins
+		pluginsFolder = config.getPluginsDir();
 
 		for (Plugin plugin : PluginLoader.loadPlugins(pluginsFolder, this)) {
-			LogHelper.printLine(plugin.getId());
+			LogHelper.printLine(plugin.getID());
 		}
 	}
 

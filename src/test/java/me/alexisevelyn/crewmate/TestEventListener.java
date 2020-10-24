@@ -1,14 +1,36 @@
 package me.alexisevelyn.crewmate;
 
 import me.alexisevelyn.crewmate.api.Player;
+import me.alexisevelyn.crewmate.enums.Language;
+import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.events.bus.EventHandler;
 import me.alexisevelyn.crewmate.events.impl.*;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 
-public class TestEventListener {
+import java.net.SocketException;
+import java.nio.file.AccessDeniedException;
 
-    public TestEventListener(Server server) {
+import org.junit.jupiter.api.Test;
+
+public class TestEventListener {
+    Server server;
+
+    @Test
+    public void testEventListener() {
+        try {
+            this.server = new Server(new Config());
+        } catch (SocketException | AccessDeniedException exception) {
+            System.err.println(exception.getMessage());
+
+            exception.printStackTrace();
+        }
+
         server.getEventBus().register(this);
+
+        // TODO: Figure Out Best Testing Practices For Event Handlers
+        // Test Host
+        HostGameEvent hostGameEvent = new HostGameEvent("CODE", 20, 6, Map.STICKMIN, Language.ENGLISH);
+        this.onHostGame(hostGameEvent);
     }
 
     @EventHandler
@@ -27,7 +49,17 @@ public class TestEventListener {
 
     @EventHandler
     public void onHostGame(HostGameEvent event) {
+        System.out.printf("Current Game Code: %s%n", event.getGameCode());
+
+        // Check Initial Game Code
+        assert event.getGameCode().equals("CODE");
+
         event.setGameCode("TEST");
+
+        System.out.printf("New Game Code: %s%n", event.getGameCode());
+
+        // Check Initial Game Code
+        assert event.getGameCode().equals("TEST");
     }
 
     @EventHandler
@@ -64,5 +96,4 @@ public class TestEventListener {
     public void onRequestGamesList(GameSearchEvent event) {
         LogHelper.printLine(event.getLanguage());
     }
-
 }

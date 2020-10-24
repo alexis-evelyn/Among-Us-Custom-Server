@@ -10,6 +10,10 @@ Some dumps of what I wrote to some friends about this will be pasted below to he
 
 To connect to this server, you can either use the scripts [redirect-to-localhost.sh][redirect-file] and [remove-redirect-to-localhost.sh][remove-redirect-file] (to redirect the connection and remove the redirect respectively), or you can change your region file according to [this site][regionFileGenerator]. Eventually a region file generator will be implemented into this server to give to clients. If you are connecting to [localhost:22023][localhost], you can use this [region file][regionFile] I generated for that purpose.
 
+# Contributing
+
+For consistency's sake, I'll be writing a coding standard for the server soon. For now, just keep the code in the style that already exists.
+
 ### Me:
 
 I'm working on a custom Among Us server which will allow for custom styled games. Especially minigames like what you may have seen some youtubers do (but at least the minigame will be enforceable by code so it can be played in public groups).

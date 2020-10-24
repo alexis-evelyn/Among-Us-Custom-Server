@@ -4,7 +4,6 @@ import me.alexisevelyn.crewmate.enums.PlayerColor;
 import me.alexisevelyn.crewmate.events.EventCancellable;
 
 public class PlayerChangeColorEvent extends EventCancellable {
-
     private PlayerColor color;
 
     public PlayerChangeColorEvent(PlayerColor color) {
@@ -18,5 +17,4 @@ public class PlayerChangeColorEvent extends EventCancellable {
     public void setColor(PlayerColor color) {
         this.color = color;
     }
-
 }

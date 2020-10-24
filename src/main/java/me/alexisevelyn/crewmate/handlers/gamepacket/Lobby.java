@@ -48,9 +48,9 @@ public class Lobby {
 
 		ChangeVisibilityEvent event = new ChangeVisibilityEvent(server, PlayerManager.getPlayerByAddress(packet.getAddress(), packet.getPort()), visibility.equals(Main.getTranslationBundle().getString("public_game")));
 		event.call(server);
-		if (!event.isCancelled()) {
+
+		if (!event.isCancelled())
 			visibility = event.isVisible() ? Main.getTranslationBundle().getString("public_game") : Main.getTranslationBundle().getString("private_game");
-		}
 
 		// Used For Debugging
 		LogHelper.printPacketBytes(buffer, packet.getLength());
@@ -114,11 +114,13 @@ public class Lobby {
 				printByteMeaning("skin_packet", Skin.getSkinName(Skin.getSkin(cosmeticByte)));
 				PlayerChangeSkinEvent event3 = new PlayerChangeSkinEvent(Skin.getSkin(cosmeticByte));
 				event3.call(server);
+
 				if (!event3.isCancelled()) {
 					// TODO: Change skin to PlayerChangeSkinEvent#getSkin()
 				} else {
 					// TODO: Cancel skin changing.
 				}
+
 				break;
 		}
 

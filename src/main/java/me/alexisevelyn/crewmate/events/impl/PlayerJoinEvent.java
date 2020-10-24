@@ -7,10 +7,9 @@ import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import java.net.InetAddress;
 
 public class PlayerJoinEvent extends EventCancellable {
-
     private final InetAddress address;
     private final int port;
-    private final String fullAddress;
+
     private final String gameCode;
     private final byte[] gameCodeBytes;
 
@@ -18,13 +17,12 @@ public class PlayerJoinEvent extends EventCancellable {
     public PlayerJoinEvent(String gameCode, InetAddress address, int port) throws InvalidGameCodeException {
         this.address = address;
         this.port = port;
-        this.fullAddress = address.getHostAddress() + ":" + port;
         this.gameCode = gameCode;
         this.gameCodeBytes = GameCodeHelper.generateGameCodeBytes(gameCode);
     }
 
     public String getFullAddress() {
-        return fullAddress;
+        return this.address.getHostAddress() + ":" + this.port;
     }
 
     public InetAddress getAddress() {
@@ -42,5 +40,4 @@ public class PlayerJoinEvent extends EventCancellable {
     public String getGameCode() {
         return gameCode;
     }
-
 }

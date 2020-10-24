@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate.handlers;
 
 import me.alexisevelyn.crewmate.GameCodeHelper;
 import me.alexisevelyn.crewmate.LogHelper;
+import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.api.Game;
 import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
@@ -11,14 +12,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class GameManager {
-
     private static final HashMap<String, Game> gamesByCode = new HashMap<>();
     private static final HashMap<byte[], Game> gamesByCodeBytes = new HashMap<>();
 
     public static void addGame(Game game) {
         gamesByCode.put(game.getCode(), game);
         gamesByCodeBytes.put(game.getCodeBytes() , game);
-        LogHelper.printLine("Added Game: " + game.getCode());
+
+        LogHelper.printLine(String.format(Main.getTranslationBundle().getString("added_game"), game.getCode()));
     }
 
     public static void removeGame(Game game) {
@@ -59,5 +60,4 @@ public class GameManager {
             game.removePlayer(player);
         }
     }
-
 }

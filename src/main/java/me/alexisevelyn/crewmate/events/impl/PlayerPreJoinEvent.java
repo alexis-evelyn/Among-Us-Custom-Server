@@ -5,15 +5,12 @@ import me.alexisevelyn.crewmate.events.EventCancellable;
 import java.net.InetAddress;
 
 public class PlayerPreJoinEvent extends EventCancellable {
-
     private final InetAddress address;
     private final int port;
-    private final String fullAddress;
 
     public PlayerPreJoinEvent(InetAddress address, int port) {
         this.address = address;
         this.port = port;
-        this.fullAddress = address.getHostAddress() + ":" + port;
     }
 
     public int getPort() {
@@ -25,7 +22,6 @@ public class PlayerPreJoinEvent extends EventCancellable {
     }
 
     public String getFullAddress() {
-        return fullAddress;
+        return address.getHostAddress() + ":" + port;
     }
-
 }

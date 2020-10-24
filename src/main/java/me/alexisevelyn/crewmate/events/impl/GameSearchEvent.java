@@ -11,7 +11,6 @@ import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 import java.net.UnknownHostException;
 
 public class GameSearchEvent extends Event {
-
     private final Language language;
     private final Map[] maps;
     private final int impostors;
@@ -21,6 +20,7 @@ public class GameSearchEvent extends Event {
         this.language = language;
         this.maps = maps;
         this.impostors = impostors;
+
         try {
             this.games = SearchGame.getFakeSearchBytes(impostors, maps, language.getLanguage());
         } catch (UnknownHostException e) {

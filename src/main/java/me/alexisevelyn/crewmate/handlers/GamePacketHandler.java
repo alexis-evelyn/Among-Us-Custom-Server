@@ -69,7 +69,8 @@ public class GamePacketHandler {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return PacketHelper.closeConnection("An Error Occured: " + e.getClass().getSimpleName() + "\n \n" + e.getMessage(), DisconnectReason.CUSTOM);
+
+			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
 		}
 	}
 

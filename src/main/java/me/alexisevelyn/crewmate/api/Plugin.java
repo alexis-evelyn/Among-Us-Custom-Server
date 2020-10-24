@@ -4,6 +4,6 @@ public abstract class Plugin {
 
     public abstract void onEnable();
     public abstract void onDisable();
-    public abstract String getId();
+    public abstract String getID();
 
 }

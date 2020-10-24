@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.nio.file.AccessDeniedException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -21,17 +22,20 @@ public class Main {
 	private static final Properties compileTimeProperties = new Properties();
 
 	public static void main(String[] args) {
+		// TODO: Add Proper Argument Parser and Quit Passing Raw Args Array
+		Config config = setUpConfig(args);
+
 		// Store Main Thread
 		main = Thread.currentThread();
 
 		// Start Server
-		startServer(args);
+		startServer(config);
 
 		// Start Terminal For Local Commands
-		startTerminal(args);
+		startTerminal(config);
 	}
 
-	public static void startServer(String[] args) {
+	public static void startServer(Config config) {
 		// Read Compile Time Properties
 		String versionString;
 		try {
@@ -48,36 +52,38 @@ public class Main {
 		// Print Server Starting Message
 		LogHelper.printLine(getTranslationBundle().getString("server_starting"));
 
+		try {
+			server = new Server(config);
+			server.start();
+		} catch (SocketException e) {
+			LogHelper.printLineErr(getTranslationBundle().getString("failed_socket_bind"));
+		} catch (AccessDeniedException e) {
+			LogHelper.printLineErr(e.getMessage());
+		}
+	}
+
+	public static void startTerminal(Config config) {
+		terminal = new Terminal();
+		terminal.start();
+	}
+
+	private static Config setUpConfig(String[] args) {
+		// To Be Able To Modify Config
+		// TODO: Add Ability To Specify Config Location Or Default To Server Jar Directory
+		Config config = new Config();
+
 		// TODO: Create an Argument Parsing Function
-		// TODO: Figure out why client "ignores" different port number from 22023
-		int portNumber = -1;
+		// TODO: Determine If I Want To Parse --Some-- Config Options From Arguments
 		try {
 			if (args.length > 0) {
-				portNumber = Integer.parseInt(args[0]);
+				config.setServerPort(Integer.parseInt(args[0]));
 			}
 		} catch (NumberFormatException ignored) {
 			// Do Nothing!!!
 			// ignored.printStackTrace();
 		}
 
-		try {
-			if (portNumber != -1)
-				server = new Server(portNumber, null, 15000);
-			else
-				server = new Server();
-
-			server.start();
-
-			// TODO: Remove after testing.
-			new TestEventListener(server);
-		} catch (SocketException e) {
-			LogHelper.printLineErr(getTranslationBundle().getString("failed_socket_bind"));
-		}
-	}
-
-	public static void startTerminal(String[] args) {
-		terminal = new Terminal();
-		terminal.start();
+		return config;
 	}
 
 	public static Server getServer() {

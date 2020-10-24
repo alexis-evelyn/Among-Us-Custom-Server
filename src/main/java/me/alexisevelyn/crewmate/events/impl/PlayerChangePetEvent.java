@@ -4,7 +4,6 @@ import me.alexisevelyn.crewmate.enums.cosmetic.Pet;
 import me.alexisevelyn.crewmate.events.EventCancellable;
 
 public class PlayerChangePetEvent extends EventCancellable {
-
     private final Pet pet;
 
     public PlayerChangePetEvent(Pet pet) {
@@ -14,5 +13,4 @@ public class PlayerChangePetEvent extends EventCancellable {
     public Pet getPet() {
         return pet;
     }
-
 }
