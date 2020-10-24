@@ -50,6 +50,16 @@ public enum Map {
 				return translation.getString("mira_hq");
 			case POLUS:
 				return translation.getString("polus");
+			case STICKMIN:
+				return translation.getString("stickmin");
+			case MAP_FIVE:
+				return translation.getString("map_five");
+			case MAP_SIX:
+				return translation.getString("map_six");
+			case MAP_SEVEN:
+				return translation.getString("map_seven");
+			case MAP_EIGHT:
+				return translation.getString("map_eight");
 			default:
 				return translation.getString("unknown");
 		}
