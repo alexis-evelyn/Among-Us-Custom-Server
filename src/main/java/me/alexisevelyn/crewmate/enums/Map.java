@@ -10,7 +10,14 @@ import java.util.ResourceBundle;
 public enum Map {
 	SKELD(0),
 	MIRA_HQ(1),
-	POLUS(2);
+	POLUS(2),
+
+	// These are deprecated, because I will use the map's proper name on map release.
+	@Deprecated STICKMIN(3),
+	@Deprecated MAP_FIVE(4),
+	@Deprecated MAP_SIX(5),
+	@Deprecated MAP_SEVEN(6),
+	@Deprecated MAP_EIGHT(7);
 
 	private final int map;
 

@@ -256,6 +256,13 @@ public class SearchGame {
 		int miraBit = 0b10;
 		int polusBit = 0b100;
 
+		// Will Be Renamed To Map Names On Map Release
+		int stickminBit = 0b1000;
+		int fiveBit = 0b10000;
+		int sixBit = 0b100000;
+		int sevenBit = 0b1000000;
+		int eightBit = 0b10000000;
+
 		ArrayList<Map> maps = new ArrayList<>();
 		if ((skeldBit & mapNumber) > 0) {
 			// Skeld
@@ -270,6 +277,33 @@ public class SearchGame {
 		if ((polusBit & mapNumber) > 0) {
 			// Polus
 			maps.add(Map.POLUS);
+		}
+
+		// As of this writing, these maps have either not been released or created yet.
+		// So, I could not tell you the official names of the maps (especially for the ones that simply don't exist).
+		if ((stickminBit & mapNumber) > 0) {
+			// Stickmin Map
+			maps.add(Map.STICKMIN);
+		}
+
+		if ((fiveBit & mapNumber) > 0) {
+			// Fifth Map
+			maps.add(Map.MAP_FIVE);
+		}
+
+		if ((sixBit & mapNumber) > 0) {
+			// Sixth Map
+			maps.add(Map.MAP_SIX);
+		}
+
+		if ((sevenBit & mapNumber) > 0) {
+			// Seventh Map
+			maps.add(Map.MAP_SEVEN);
+		}
+
+		if ((eightBit & mapNumber) > 0) {
+			// Eighth Map
+			maps.add(Map.MAP_EIGHT);
 		}
 
 		// https://stackoverflow.com/a/5061692/6828099
