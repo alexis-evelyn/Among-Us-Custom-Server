@@ -92,8 +92,13 @@ public class PluginLoader {
                         server.getEventBus().register(newPlugin);
                     }
                 }
-            } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException | UnsupportedClassVersionError exception) {
+            } catch (UnsupportedClassVersionError exception) {
+                LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail_wrong_java"), plugin.getName()));
+            } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException | ClassFormatError exception) {
                 LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail"), plugin.getName()));
+            } catch (Exception exception) {
+                LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail_unbelievable"), plugin.getName()));
+                exception.printStackTrace();
             }
         }
 

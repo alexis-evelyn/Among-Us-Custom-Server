@@ -1,0 +1,57 @@
+String example_plugin_version = "0.0.1-SNAPSHOT"
+
+// https://stackoverflow.com/a/11581420/6828099
+sourceSets {
+    examplePlugin {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+        }
+    }
+}
+
+configurations {
+    examplePluginCompile.extendsFrom testCompile
+    examplePluginRuntime.extendsFrom testRuntime
+}
+
+// This needs to be replaced by a generic test plugins system
+//task testExamplePlugin(type: Test) {
+//    description = "Compile Example Plugin"
+//
+//    // testClassesDir = project.sourceSets.examplePlugin.output.classesDir
+//    classpath = project.sourceSets.examplePlugin.runtimeClasspath
+//}
+
+//task compileExamplePlugin(type: JavaCompile) {
+//    classpath = project.sourceSets.examplePlugin.runtimeClasspath
+//}
+
+// This needs to be replaced by a generic compile plugins system
+task buildExamplePlugin(type: Jar) {
+    // from sourceSets.examplePlugin.runtimeClasspath // Includes Everything Including The Kitchen Sink
+    // from sourceSets.examplePlugin.allJava // Missing Resources and No Compile
+    // from sourceSets.examplePlugin.allSource // No Compile
+
+    manifest {
+        attributes(
+                'Main-Class': 'me.alexisevelyn.exampleplugin.Instructions',
+                'Bundle-License': 'MIT; link="https://github.com/alexis-evelyn/Crewmate/blob/master/LICENSE.md"'
+        )
+    }
+
+    from sourceSets.examplePlugin.output // Perfect
+
+    // Set Plugin Name Properties
+    archiveBaseName.set("ExamplePlugin") // Different Name For Plugin
+    archiveVersion.set(example_plugin_version) // Different Version For Plugin
+
+    filesMatching('crewmate.plugin.json') {
+        // Be Warned, filter is evil. It will screw up your class files if you let it, so make sure you don't let is see class files.
+        filter {
+            line -> line.replaceAll('\\(example-plugin-version\\)', example_plugin_version)
+        }
+    }
+}
+
+// buildExamplePlugin.dependsOn(compileExamplePlugin)

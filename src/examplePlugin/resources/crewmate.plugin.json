@@ -1,0 +1,14 @@
+{
+  "name": "Example Plugin",
+  "description": "Example Plugin Description",
+  "authors": ["Alexis Evelyn"],
+  "id": "example-plugin",
+  "version": "(example-plugin-version)",
+  "contact": {
+    "website": "https://alexisevelyn.me/",
+    "github": "https://github.com/alexis-evelyn",
+    "discord": "Alexis.Evelyn#7572"
+  },
+  "main": "me.alexisevelyn.exampleplugin.Main",
+  "depends": []
+}

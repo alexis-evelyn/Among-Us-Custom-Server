@@ -112,3 +112,6 @@ tasks.register('generateLicense', com.github.vlsi.gradle.license.GatherLicenseTa
     configurations.add(project.configurations.runtime)
     licenseDir.set(file("$buildDir/third-party-licenses"))
 }
+
+// Include Source Set For Example Plugin
+apply from: "example-plugin.gradle"
