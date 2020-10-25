@@ -1,8 +1,9 @@
-package me.alexisevelyn.crewmate.handlers;
+package me.alexisevelyn.crewmate.packethandler.packets;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
@@ -21,7 +22,7 @@ import java.util.ResourceBundle;
 // Client: v2020.9.9a = vvvvvvvv (Current Release At Time of Writing) - Android
 // Client: v2020.10.8i = 50518400 (Current Beta At Time of Writing) - Steam
 
-public class HandshakeHandler {
+public class HandshakePacket {
 	private static char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
 	public static byte[] handleHandshake(DatagramPacket packet, Server server) {

@@ -2,7 +2,7 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.*;
 import me.alexisevelyn.crewmate.enums.cosmetic.Hat;
@@ -10,6 +10,7 @@ import me.alexisevelyn.crewmate.enums.cosmetic.Pet;
 import me.alexisevelyn.crewmate.enums.cosmetic.Skin;
 import me.alexisevelyn.crewmate.events.impl.*;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
 import java.net.DatagramPacket;
 import java.util.ResourceBundle;
@@ -20,18 +21,18 @@ public class Lobby {
 		byte[] buffer = packet.getData();
 
 		if (length < 6)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_invalid_size"));
 
 		AlterGame alterGameFlag = AlterGame.getAlterGameFlag(buffer[5]);
 
 		if (alterGameFlag == null)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_unknown_type"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_unknown_type"));
 
 		switch (alterGameFlag) {
 			case CHANGE_PRIVACY:
 				return handleGameVisibility(packet, server);
 			default:
-				return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_unknown_type"));
+				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_unknown_type"));
 		}
 	}
 
@@ -40,7 +41,7 @@ public class Lobby {
 		// 0000   01 00 42 06 00 0a 3b be 25 8c 01 01               ..B...;.%... - Public Game
 
 		if (packet.getLength() != 12)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_invalid_size"));
 
 		byte[] buffer = packet.getData();
 
@@ -61,7 +62,7 @@ public class Lobby {
 
 	public static byte[] handleCosmetics(DatagramPacket packet, Server server) {
 		if (packet.getLength() != 16)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("cosmetic_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("cosmetic_packet_invalid_size"));
 
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
@@ -77,7 +78,7 @@ public class Lobby {
 
 		// Sanitization Check
 		if (rpcType == null)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("cosmetic_packet_unknown_type"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("cosmetic_packet_unknown_type"));
 
 		switch (rpcType) {
 			case SET_COLOR:

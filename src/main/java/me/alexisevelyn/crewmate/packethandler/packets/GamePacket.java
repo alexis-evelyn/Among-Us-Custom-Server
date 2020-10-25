@@ -1,10 +1,10 @@
-package me.alexisevelyn.crewmate.handlers;
+package me.alexisevelyn.crewmate.packethandler.packets;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
-import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.RPC;
 import me.alexisevelyn.crewmate.enums.ReliablePacketType;
 import me.alexisevelyn.crewmate.events.impl.PlayerChatEvent;
@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
-public class GamePacketHandler {
+public class GamePacket {
 	// TODO: Read Game Packet Data
 	// Movement Packet - https://gist.github.com/codyphobe/cc738881daf11da519ee9d4a77d24f62
 	// Reliable Packet Format - https://wiki.weewoo.net/wiki/Protocol#Reliable_Packets
@@ -36,13 +36,13 @@ public class GamePacketHandler {
 
 		// Needs to Be At Least 6 Bytes Long To Be A Valid Reliable Packet
 		if (length < 6)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_invalid_size"));
 
 		ReliablePacketType type = ReliablePacketType.getReliablePacketType(buffer[5]);
 
 		// Sanitization Check
 		if (type == null)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
 
 		try {
 			switch (type) {
@@ -65,12 +65,12 @@ public class GamePacketHandler {
 				case JOINED_GAME: // 0x07
 				case REDIRECT_GAME: // 0x0d
 				default:
-					return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
+					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
 		}
 	}
 
@@ -80,11 +80,11 @@ public class GamePacketHandler {
 		if (!event.isCancelled()) {
 			return StartGame.getClientGameCode(packet, server);
 		} else {
-			return PacketHelper.closeWithMessage(event.getReason());
+			return ClosePacket.closeWithMessage(event.getReason());
 		}
 	}
 
-	public static byte[] handleUnreliablePacket(DatagramPacket packet) {
+	public static byte[] handleUnreliablePacket(DatagramPacket packet, Server server) {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
@@ -125,7 +125,7 @@ public class GamePacketHandler {
 				// Print RPC Header
 				LogHelper.printPacketBytes(rpcBytes, 15);
 
-				return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
+				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
 			}
 
 			switch (type) {
@@ -139,7 +139,7 @@ public class GamePacketHandler {
 				case SYNC_SETTINGS: // Double Check
 					return StartGame.getLobbyGameSettings(packet); // At Least 173 Bytes?
 				default:
-					return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
+					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
 			}
 		}
 
@@ -200,6 +200,6 @@ public class GamePacketHandler {
 			return buffer;
 		}
 
-		return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("chat_packet_invalid_size"));
+		return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("chat_packet_invalid_size"));
 	}
 }

@@ -2,7 +2,7 @@ package me.alexisevelyn.crewmate.handlers.commands;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Terminal;
 
 import java.io.File;
@@ -10,8 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class RegionFileGenerator implements Command {
 	public void execute(String command, Terminal terminal) {

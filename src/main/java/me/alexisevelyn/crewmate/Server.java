@@ -5,9 +5,7 @@ import me.alexisevelyn.crewmate.api.PluginLoader;
 import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.bus.EventBus;
-import me.alexisevelyn.crewmate.handlers.FragmentPacketHandler;
-import me.alexisevelyn.crewmate.handlers.GamePacketHandler;
-import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
+import me.alexisevelyn.crewmate.packethandler.HazelParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +35,6 @@ public class Server extends Thread {
 
 	private final EventBus eventBus = new EventBus();
 
-	private final File root;
-	private final File pluginsFolder;
-
 	public Server(Config config) throws SocketException, AccessDeniedException {
 		this.socket = new DatagramSocket(config.getServerPort(), config.getServerAddress());
 
@@ -48,7 +43,7 @@ public class Server extends Thread {
 		this.maxPlayers = config.getMaxPlayers();
 
 		// Root Directory For Server Files
-		root = config.getRootDir();
+		File root = config.getRootDir();
 
 		// Create Root Folder If It Does Not Exist
 		if (!root.exists() && !root.mkdirs()) {
@@ -57,7 +52,7 @@ public class Server extends Thread {
 		}
 
 		// Plugins Directory For Server Plugins
-		pluginsFolder = config.getPluginsDir();
+		File pluginsFolder = config.getPluginsDir();
 
 		for (Plugin plugin : PluginLoader.loadPlugins(pluginsFolder, this)) {
 			LogHelper.printLine(plugin.getID());
@@ -134,41 +129,11 @@ public class Server extends Thread {
 		return maxPlayers;
 	}
 
-	// TODO: TODO TODO - https://discord.com/channels/757425025379729459/759066383090188308/765419168466993162
-	// "Yeah, lengths for Hazel messages are always 2 bytes little-endian" - codyphobe from Imposter Discord
 	private void parsePacketAndReply(DatagramPacket packet) throws IOException {
 		if (packet.getData().length < 1)
 			return;
 
-		SendOption sendOption = SendOption.getSendOption(packet.getData()[0]);
-
-		// Throw Out Any Unknown Packets
-		// Sanitization Check
-		if (sendOption == null)
-			return;
-
-		byte[] replyBuffer;
-		switch (sendOption) {
-			case HELLO: // Initial Connection (Handshake)
-				replyBuffer = HandshakeHandler.handleHandshake(packet, this);
-				break;
-			case ACKNOWLEDGEMENT: // Unhandled
-			case PING: // Ping
-				sendReliablePacketAcknowledgement(packet);
-				return;
-			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
-				replyBuffer = GamePacketHandler.handleReliablePacket(packet, this);
-				this.sendReliablePacketAcknowledgement(packet);
-				break;
-			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
-				replyBuffer = GamePacketHandler.handleUnreliablePacket(packet);
-				break;
-			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
-				replyBuffer = FragmentPacketHandler.handleFragmentPacket(packet);
-				break;
-			default:
-				return;
-		}
+		byte[] replyBuffer = HazelParser.handlePacket(packet, this);
 
 		// Don't Send Packet if No Data To Send
 		if (replyBuffer.length == 0)
@@ -196,36 +161,6 @@ public class Server extends Thread {
 			// TODO: Figure out how to close one client's connection
 			// LogHelper.printLine("Closing Connection!!!");
 			// this.socket.disconnect();
-		}
-	}
-
-	private void sendReliablePacketAcknowledgement(DatagramPacket packet) {
-		// Received Packet Port and Address
-		InetAddress address = packet.getAddress();
-		int port = packet.getPort();
-
-		// Get Packet Info
-		int length = packet.getLength();
-		byte[] buffer = packet.getData();
-
-		// Verify Packet Length
-		if (length < 3)
-			return;
-
-		// Get Nonce
-		byte[] nonce = new byte[] {buffer[1], buffer[2]};
-
-		// Get Acknowledgement
-		byte[] acknowledgement = PacketHelper.getAcknowledgement(nonce);
-
-		// Packet to Send Back to Client
-		packet = this.createSendPacket(acknowledgement, acknowledgement.length, address, port);
-
-		// Send Reply Back
-		try {
-			this.socket.send(packet);
-		} catch (IOException exception) {
-			exception.printStackTrace();
 		}
 	}
 

@@ -2,7 +2,6 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.*;
 import me.alexisevelyn.crewmate.api.Game;
-import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
@@ -12,6 +11,8 @@ import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.handlers.GameManager;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
+import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -126,9 +127,9 @@ public class StartGame {
 		} catch (IOException | NullPointerException exception) {
 			exception.printStackTrace();
 
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
 		} catch (InvalidGameCodeException exception) {
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 		}
 	}
 
@@ -153,7 +154,7 @@ public class StartGame {
 		// OM = Owned Maps Bitfield (0x07 For Skeld, Mira, and Polus)
 
 		if (packet.getLength() != 11)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("join_game_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("join_game_invalid_size"));
 
 		// 00 03 05 00 01?
 		byte[] buffer = packet.getData();
@@ -172,9 +173,9 @@ public class StartGame {
 			LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("gamecode_exception"), e.getMessage()));
 			e.printStackTrace();
 
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("gamecode_server_side_error_exception"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_server_side_error_exception"));
 		} catch (InvalidGameCodeException e) {
-			return PacketHelper.closeWithMessage(e.getMessage());
+			return ClosePacket.closeWithMessage(e.getMessage());
 		}
 
 		// LogHelper.printLine("Game Code (Byte Form): " + Arrays.toString(gameCodeBytes));
@@ -203,7 +204,7 @@ public class StartGame {
 		PlayerJoinEvent event = new PlayerJoinEvent(gameCode, packet.getAddress(), packet.getPort());
 		event.call(server);
 		if (event.isCancelled()) {
-			return PacketHelper.closeWithMessage(event.getReason());
+			return ClosePacket.closeWithMessage(event.getReason());
 		}
 
 		GameManager.getGameByCode(gameCode).addPlayer(PlayerManager.getPlayerByAddress(packet.getAddress(), packet.getPort()));
@@ -272,14 +273,14 @@ public class StartGame {
 		// C->S - 00b0   65 78 69 73 08 00 00 00 00 00                     exis......
 
 		if (packet.getLength() < 4)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_invalid_size"));
 
 		byte[] buffer = packet.getData();
 
 		// Must Equal 01 00 03 (Join Game Via Code) or 01 00 04 (Create Game)
 		// TODO: Toss Check!!!
 		if (!(buffer[0] == SendOption.RELIABLE.getSendOption() && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
-			// return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_unknown_join_type"));
+			// return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_unknown_join_type"));
 			return new byte[0];
 
 		byte unknown = buffer[3]; // 180 for Alexis and 172 for Hi - +8

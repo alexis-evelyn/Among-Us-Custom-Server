@@ -1,6 +1,6 @@
 package me.alexisevelyn.crewmate.api;
 
-import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
@@ -80,12 +80,12 @@ public class Player extends Entity {
     }*/
 
     public void kick(DisconnectReason reason) {
-        byte[] message = PacketHelper.closeConnection(reason);
+        byte[] message = ClosePacket.closeConnection(reason);
         server.sendPacket(server.createSendPacket(message, message.length, address, port));
     }
 
     public void kick(String reason) {
-        byte[] message = PacketHelper.closeWithMessage(reason);
+        byte[] message = ClosePacket.closeWithMessage(reason);
         server.sendPacket(server.createSendPacket(message, message.length, address, port));
     }
 

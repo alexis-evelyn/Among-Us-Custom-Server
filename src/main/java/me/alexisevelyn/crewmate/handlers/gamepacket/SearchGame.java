@@ -2,12 +2,13 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.PacketHelper;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.GameSearchEvent;
+import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -28,7 +29,7 @@ public class SearchGame {
 		// 0030   01 0f                                             ..
 
 		if (packet.getLength() != 50)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_request_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_request_invalid_size"));
 
 		byte[] buffer = packet.getData();
 
@@ -133,7 +134,7 @@ public class SearchGame {
 		// 0010   00 00 00 00 00 00 00 00                           ........
 
 		if (maps.length == 0)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_maps_no_selected_maps"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_maps_no_selected_maps"));
 
 		// Game Address and Port
 		InetAddress ipAddress = InetAddress.getByName("127.0.0.1");
@@ -145,7 +146,7 @@ public class SearchGame {
 
 		// Sanitization
 		if (languageObj == null)
-			return PacketHelper.closeWithMessage(Main.getTranslationBundle().getString("search_language_unknown_language"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_language_unknown_language"));
 
 		String name = "Fake Game - " + Language.getLanguageName(languageObj);
 		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;
