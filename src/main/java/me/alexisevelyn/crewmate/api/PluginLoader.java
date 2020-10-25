@@ -92,7 +92,7 @@ public class PluginLoader {
                         server.getEventBus().register(newPlugin);
                     }
                 }
-            } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException exception) {
+            } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException | UnsupportedClassVersionError exception) {
                 LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail"), plugin.getName()));
             }
         }

@@ -11,10 +11,12 @@ import me.alexisevelyn.crewmate.handlers.HandshakeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.naming.NoPermissionException;
 import java.io.File;
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
