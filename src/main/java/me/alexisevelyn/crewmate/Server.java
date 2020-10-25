@@ -38,10 +38,6 @@ public class Server extends Thread {
 	private final File root;
 	private final File pluginsFolder;
 
-	public EventBus getEventBus() {
-		return eventBus;
-	}
-
 	public Server(Config config) throws SocketException, AccessDeniedException {
 		this.socket = new DatagramSocket(config.getServerPort(), config.getServerAddress());
 
@@ -126,6 +122,10 @@ public class Server extends Thread {
 				this.exit();
 			}
 		}
+	}
+
+	public EventBus getEventBus() {
+		return eventBus;
 	}
 
 	public int getMaxPlayers() {

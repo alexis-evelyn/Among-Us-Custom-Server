@@ -39,7 +39,7 @@ dependencies {
     implementation "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
     shadow "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
 
-    // Licence (Crockford MIT - aka the no evil license) - https://github.com/stleary/JSON-java/blob/master/LICENSE
+    // License (Crockford MIT - aka the no evil license) - https://github.com/stleary/JSON-java/blob/master/LICENSE
     implementation "org.json:json:${project.json_version}"
     shadow "org.json:json:${project.json_version}"
 
@@ -47,6 +47,9 @@ dependencies {
     // Requires License In Binary Distribution - Can Be Found in `META-INF/licenses/jline3-license.txt`
     implementation "org.jline:jline:${project.jline_version}"
     shadow "org.jline:jline:${project.jline_version}"
+
+    // License (Apache 2.0) - https://github.com/apiguardian-team/apiguardian/blob/master/LICENSE
+    implementation "org.apiguardian:apiguardian-api:${project.api_guardian_version}"
 
     // JUnit API
     // License (EPL-2.0) - https://github.com/junit-team/junit5/blob/main/LICENSE.md

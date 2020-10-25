@@ -80,7 +80,7 @@ public class GamePacketHandler {
 		if (!event.isCancelled()) {
 			return StartGame.getClientGameCode(packet, server);
 		} else {
-			return PacketHelper.closeConnection(event.getReason(), DisconnectReason.CUSTOM);
+			return PacketHelper.closeWithMessage(event.getReason());
 		}
 	}
 

@@ -203,7 +203,7 @@ public class StartGame {
 		PlayerJoinEvent event = new PlayerJoinEvent(gameCode, packet.getAddress(), packet.getPort());
 		event.call(server);
 		if (event.isCancelled()) {
-			return PacketHelper.closeConnection(event.getReason(), DisconnectReason.CUSTOM);
+			return PacketHelper.closeWithMessage(event.getReason());
 		}
 
 		GameManager.getGameByCode(gameCode).addPlayer(PlayerManager.getPlayerByAddress(packet.getAddress(), packet.getPort()));

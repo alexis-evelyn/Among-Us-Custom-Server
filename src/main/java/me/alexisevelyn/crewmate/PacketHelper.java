@@ -22,7 +22,7 @@ public class PacketHelper {
 		return closeConnection(null, disconnectReason);
 	}
 
-	public static byte[] closeConnection(String message, DisconnectReason disconnectReason) {
+	private static byte[] closeConnection(String message, DisconnectReason disconnectReason) {
 		byte[] header;
 
 		// Custom Disconnect Message

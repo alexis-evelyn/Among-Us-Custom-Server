@@ -85,7 +85,7 @@ public class Player extends Entity {
     }
 
     public void kick(String reason) {
-        byte[] message = PacketHelper.closeConnection(reason, DisconnectReason.CUSTOM);
+        byte[] message = PacketHelper.closeWithMessage(reason);
         server.sendPacket(server.createSendPacket(message, message.length, address, port));
     }
 
