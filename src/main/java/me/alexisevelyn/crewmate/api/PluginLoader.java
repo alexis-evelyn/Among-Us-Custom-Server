@@ -61,12 +61,9 @@ public class PluginLoader {
         for (File plugin : pluginsFolder.listFiles()) {
             try {
                 // Check if valid Crewmate Plugin
-                final long startTime = System.currentTimeMillis();
                 String fileMimeType = Files.probeContentType(plugin.toPath());
-                final long stopTime = System.currentTimeMillis();
 
-                LogHelper.printLine(String.format(Main.getTranslationBundle().getString("timing_file_output"), plugin.getName(), (stopTime - startTime)));
-
+                final long startTime = System.currentTimeMillis();
                 if (fileMimeType != null && fileMimeType.equals(MimePluginDetector.mimeType)) {
                     JarFile pluginJar = new JarFile(plugin);
                     JarEntry manifestEntry = pluginJar.getJarEntry(MimePluginDetector.manifestFileName);
@@ -75,9 +72,14 @@ public class PluginLoader {
 
                     JSONObject json = new JSONObject(manifestContents);
                     String mainClass = json.getString(MimePluginDetector.mainClassKey);
+                    final long stopTime = System.currentTimeMillis();
 
                     // Debug String
                     LogHelper.printLine(json.toString());
+
+                    // Debug String - May Make Part of Production Loading For Server Admins
+                    long loadTime = (stopTime - startTime);
+                    LogHelper.printLine(String.format(Main.getTranslationBundle().getString(loadTime == 1 ? "timing_file_output_singular" : "timing_file_output_plural"), plugin.getName(), (stopTime - startTime)));
 
                     if (mainClass == null)
                         continue;
