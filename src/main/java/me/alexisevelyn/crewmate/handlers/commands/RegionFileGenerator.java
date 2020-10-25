@@ -19,7 +19,7 @@ public class RegionFileGenerator implements Command {
 		int port = 22023;
 
 		String displayName = Main.getTranslationBundle().getString("region_file_generator_command_default_display_name");
-		String masterServerName = "CrewMate-Master-1";
+		String masterServerName = "Crewmate-Master-1";
 
 		File outFile = new File("regionInfo.dat");
 
