@@ -6,6 +6,7 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Terminal;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
+import me.alexisevelyn.crewmate.handlers.plugins.MimePluginDetector;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class Plugin implements Command {
 		// Check Mime Type To Plugin
 		try {
 			String mimeType = Files.probeContentType(pluginPath.toPath());
-			if (mimeType == null || !mimeType.equals("plugin/x-crewmate")) {
+			if (mimeType == null || !mimeType.equals(MimePluginDetector.mimeType)) {
 				LogHelper.printLine(translation.getString("plugin_command_fail"));
 				return;
 			}
