@@ -92,7 +92,7 @@ public class PluginLoader {
                         server.getEventBus().register(newPlugin);
                     }
                 }
-            } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
+            } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException exception) {
                 LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail"), plugin.getName()));
             }
         }
@@ -102,7 +102,7 @@ public class PluginLoader {
 
     @Nullable
     // This has the most exceptions I've seen being passed out of a method. I'll probably have to rewrite this
-    private static Plugin findPlugin(@NotNull String className) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    private static Plugin findPlugin(@NotNull String className) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, NullPointerException {
         Class<?> aClass = Class.forName(className, false, classLoader);
 
         if (!aClass.isInterface()) {

@@ -41,7 +41,7 @@ public class MimePluginDetector extends FileTypeDetector {
 			jarEntry = jarFile.getJarEntry(manifestFileName);
 
 			manifestContents = JarHelper.readTextJarEntry(jarFile, jarEntry);
-		} catch (IOException exception) {
+		} catch (IOException | NullPointerException exception) {
 			return null;
 		}
 
