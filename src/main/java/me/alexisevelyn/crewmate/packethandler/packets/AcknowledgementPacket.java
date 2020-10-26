@@ -10,12 +10,24 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 
 public class AcknowledgementPacket {
+
+	/**
+	 * Handle Acknowledgment Packet Sent From Client
+	 *
+	 * @param packet
+	 * @param server
+	 * @return
+	 */
+	public static byte[] handleAcknowledgement(DatagramPacket packet, Server server) {
+		return new byte[0];
+	}
+
 	/**
 	 * Generates acknowledgement packet bytes to send to client
 	 * @param nonceBytes 2 byte array of the nonce data to return to client
 	 * @return bytes to send to client in the form of a Hazel acknowledgment packet
 	 */
-	private static byte[] getAcknowledgement(byte[] nonceBytes) throws InvalidBytesException {
+	public static byte[] getAcknowledgement(byte[] nonceBytes) throws InvalidBytesException {
 		if (nonceBytes.length != 2)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("nonce_wrong_size"));
 

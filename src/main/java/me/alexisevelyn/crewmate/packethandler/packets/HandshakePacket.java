@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate.packethandler.packets;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
+import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
@@ -19,19 +20,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-// Client: v2020.9.9a = vvvvvvvv (Current Release At Time of Writing) - Android
-// Client: v2020.10.8i = 50518400 (Current Beta At Time of Writing) - Steam
-
 public class HandshakePacket {
-	private static char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+	@SuppressWarnings("SpellCheckingInspection") // I mean, I appreciate the IDE wanting to make sure I don't make a typo, but please, the whole alphabet doesn't even look like a word
+	private static final char[] revisionLetters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
+	/**
+	 * Parse out handshake packet and register player
+	 *
+	 * @param packet Handshake packet
+	 * @param server Server instance
+	 * @return Masters list or empty byte array
+	 */
 	public static byte[] handleHandshake(DatagramPacket packet, Server server) {
-		// 0000   08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73      ....F....Alexis
-		// 0000   08 00 01 00 46 d2 02 03 03 50 4f 4d               ....F....POM
-		// 0000   08 00 01 00 00 02 18 00                           ........
-		// 0000   08 00 01 00 80 d9 02 03 06 41 6c 65 78 69 73      .........Alexis (Steam Beta - v2020.10.8i)
-		// 0000   08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73      ....F....Alexis (Android Release - v2020.9.9a)
-
 		byte[] buffer = packet.getData();
 
 		// buffer[8] is the length of the name immediately after
@@ -57,58 +57,12 @@ public class HandshakePacket {
 
 			PlayerManager.addPlayer(new Player(name, packet.getAddress(), packet.getPort(), hazelVersion, clientVersionRaw, server));
 
-			// Start Ping
-			return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), 0x00, 0x01, (byte) 0xff};
-			// return this.getUnderConstructionMessage(name); // this.getFakeMastersList(packet);
-			// return getFakeMastersList(packet);
+			// TODO: Replace this with configurable choosing of returning masters list
+			return new byte[0];
 		}
 
 		// Invalid Packet Received - Close Connection
 		return new byte[] {SendOption.DISCONNECT.getSendOption()};
-	}
-
-	private static byte[] getFakeMastersList(DatagramPacket packet) {
-		// TODO: Figure out how to fix this!!!
-
-		// https://github.com/alexis-evelyn/Among-Us-Protocol/wiki/Master-Servers-List
-		// https://gist.github.com/codyphobe/cce98bfc9221a00f7d1c8fede5e87f9c
-
-		// TODO: Check if InetSocketAddress
-		InetSocketAddress queriedIP = (InetSocketAddress) packet.getSocketAddress();
-
-		// Convert Port to Little Endian Bytes
-		short port = 22023; // TODO: Figure out how to extract port number from packet
-		byte[] encodedPort = PacketHelper.convertShortToLE(port);
-
-		String fakeMasterName = "Pseudo-Master-1";
-		int numberOfMasters = 1;
-
-		// LogHelper.printLine("Queried IP: " + queriedIP.getAddress());
-		// LogHelper.printLine("Queried Port: " + port);
-
-		// LogHelper.printLine("Encoded IP: " + Arrays.toString(queriedIP.getAddress().getAddress()));
-		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("encoded_port_logged"), Arrays.toString(encodedPort)));
-
-		// Convert Player Count to Little Endian Bytes
-		short playerCount = 257;
-		byte[] playerCountBytes = PacketHelper.convertShortToLE(playerCount);
-
-		// LogHelper.printLine("Player Count: " + Arrays.toString(playerCountBytes));
-
-		byte[] endMessage = new byte[] {encodedPort[0], encodedPort[1], playerCountBytes[0], playerCountBytes[1]}; // Another Unknown if Not Last Master in List
-
-		byte[] message = PacketHelper.mergeBytes(fakeMasterName.getBytes(), queriedIP.getAddress().getAddress(), endMessage);
-
-		// 00 38 00 0e 01 02 18
-		// The + 4 from (message.length + 4) comes from starting at (byte) numberOfMasters
-//		LogHelper.printLine("Message Length: " + Arrays.toString(BigInteger.valueOf(255 + 4).toByteArray()));
-//		LogHelper.printLine("Message Length Reversed: " + Arrays.toString(BigInteger.valueOf(Integer.reverseBytes(255 + 4)).toByteArray()));
-
-		byte[] messageLength = BigInteger.valueOf(Integer.reverseBytes(message.length + 5)).toByteArray();
-		byte[] masterBytesLength = BigInteger.valueOf(Integer.reverseBytes(fakeMasterName.getBytes().length + 5)).toByteArray();
-		byte[] header = new byte[] {SendOption.NONE.getSendOption(), messageLength[0], messageLength[1], MasterBytes.FLAG.getMasterByte(), MasterBytes.UNKNOWN.getMasterByte(), (byte) numberOfMasters, masterBytesLength[0], masterBytesLength[1], MasterBytes.UNKNOWN_FLAG_TEMP.getMasterByte(), (byte) fakeMasterName.getBytes().length};
-
-		return PacketHelper.mergeBytes(header, message);
 	}
 
 	private static void logVersionInfo(long raw) {
@@ -145,7 +99,7 @@ public class HandshakePacket {
 		long revision = clientVersion % 50;
 
 		// Attempts to Grab Letter - If Fail, Then Use Number Instead
-		String revisionLetter = (revision >= 0 && revision < letters.length) ? String.valueOf(letters[(int) revision]) : String.valueOf(revision);
+		String revisionLetter = (revision >= 0 && revision < revisionLetters.length) ? String.valueOf(revisionLetters[(int) revision]) : String.valueOf(revision);
 
 		ResourceBundle translation = Main.getTranslationBundle();
 		Map<String, Object> parameters = new HashMap<>();
@@ -161,21 +115,5 @@ public class HandshakePacket {
 
 		String logLine = LogHelper.formatNamed(translation.getString("client_version_logged"), parameters);
 		LogHelper.printLine(logLine);
-	}
-
-	private enum MasterBytes {
-		FLAG((byte) 0x0e),
-		UNKNOWN((byte) 0x01),
-		UNKNOWN_FLAG_TEMP((byte) 0x00);
-
-		private final byte masterByte;
-
-		MasterBytes(byte masterByte) {
-			this.masterByte = masterByte;
-		}
-
-		public byte getMasterByte() {
-			return this.masterByte;
-		}
 	}
 }

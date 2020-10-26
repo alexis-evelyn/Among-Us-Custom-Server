@@ -27,29 +27,30 @@ public class HazelParser {
 		if (sendOption == null)
 			return new byte[0];
 
-		byte[] replyBuffer;
+		byte[] packetBytes = PacketHelper.extractBytes(packet.getData(), 0);
+		int packetLength = packet.getLength();
+
 		switch (sendOption) {
 			case HELLO: // Initial Connection (Handshake)
-				replyBuffer = HandshakePacket.handleHandshake(packet, server);
-				break;
+				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
+
+				return HandshakePacket.handleHandshake(packet, server);
 			case ACKNOWLEDGEMENT: // Unhandled
+				return AcknowledgementPacket.handleAcknowledgement(packet, server);
 			case PING: // Ping
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
+
 				return new byte[0];
 			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
-				replyBuffer = GamePacket.handleReliablePacket(packet, server);
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
-				break;
+
+				return GamePacket.handleReliablePacket(packet, server);
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
-				replyBuffer = GamePacket.handleUnreliablePacket(packet, server);
-				break;
+				return GamePacket.handleUnreliablePacket(packet, server);
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
-				replyBuffer = FragmentPacket.handleFragmentPacket(packet, server);
-				break;
-			default:
-				return new byte[0];
+				return FragmentPacket.handleFragmentPacket(packet, server);
 		}
 
-		return replyBuffer;
+		return new byte[0];
 	}
 }
