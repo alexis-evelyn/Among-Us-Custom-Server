@@ -52,6 +52,10 @@ public class HandshakePacket {
 			if (displayNameLength <= 0 || (byteLength - 6) < displayNameLength)
 				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("missing_display_name_handshake"));
 
+			// Client only allows up to 10 characters, we are enforcing that server side
+			if (displayNameLength > 10)
+				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("display_name_too_long"));
+
 			// Hazel Version
 			int hazelVersion = handshakeBytes[0];
 
