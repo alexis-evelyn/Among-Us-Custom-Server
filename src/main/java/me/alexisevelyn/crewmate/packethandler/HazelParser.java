@@ -1,11 +1,10 @@
 package me.alexisevelyn.crewmate.packethandler;
 
+import me.alexisevelyn.crewmate.LogHelper;
+import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
-import me.alexisevelyn.crewmate.packethandler.packets.AcknowledgementPacket;
-import me.alexisevelyn.crewmate.packethandler.packets.FragmentPacket;
-import me.alexisevelyn.crewmate.packethandler.packets.GamePacket;
-import me.alexisevelyn.crewmate.packethandler.packets.HandshakePacket;
+import me.alexisevelyn.crewmate.packethandler.packets.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.DatagramPacket;
@@ -27,16 +26,22 @@ public class HazelParser {
 		if (sendOption == null)
 			return new byte[0];
 
-		byte[] packetBytes = PacketHelper.extractBytes(packet.getData(), 0);
-		int packetLength = packet.getLength();
-
 		switch (sendOption) {
 			case HELLO: // Initial Connection (Handshake)
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
-				return HandshakePacket.handleHandshake(packet, server);
-			case ACKNOWLEDGEMENT: // Unhandled
-				return AcknowledgementPacket.handleAcknowledgement(packet, server);
+				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
+				byte[] handshakeBytes = PacketHelper.extractBytes(packet.getData(), 3);
+
+				return HandshakePacket.handleHandshake(handshakeBytes, (packet.getLength() - 3), server, packet.getAddress(), packet.getPort());
+			case ACKNOWLEDGEMENT: // Acknowledgement of Received Data From Client
+				if (packet.getLength() < 4)
+					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
+
+				// Nonce Bytes
+				byte[] nonce = new byte[]{packet.getData()[1], packet.getData()[2]};
+
+				return AcknowledgementPacket.handleAcknowledgement(nonce, packet.getAddress(), packet.getPort(), server);
 			case PING: // Ping
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 

@@ -41,7 +41,7 @@ public class PacketHelper {
 	 * Helper utility to grab the second part of the byte array for passing into more refined packet parsing functions
 	 *
 	 * @param bytes the byte array to split
-	 * @param pos the byte to split on. so, to drop only the first byte, specify 0.
+	 * @param pos the byte to split on. so, to drop only the first byte, specify 1.
 	 * @return the second part of the byte array
 	 */
 	public static byte[] extractBytes(byte[] bytes, int pos) {

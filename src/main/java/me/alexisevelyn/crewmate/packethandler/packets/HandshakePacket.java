@@ -2,20 +2,15 @@ package me.alexisevelyn.crewmate.packethandler.packets;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
-import me.alexisevelyn.crewmate.handlers.PlayerManager;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
+import me.alexisevelyn.crewmate.handlers.PlayerManager;
 
-import java.math.BigInteger;
-import java.net.DatagramPacket;
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -27,35 +22,55 @@ public class HandshakePacket {
 	/**
 	 * Parse out handshake packet and register player
 	 *
-	 * @param packet Handshake packet
+	 * @param handshakeBytes ?
 	 * @param server Server instance
 	 * @return Masters list or empty byte array
 	 */
-	public static byte[] handleHandshake(DatagramPacket packet, Server server) {
-		byte[] buffer = packet.getData();
+	public static byte[] handleHandshake(byte[] handshakeBytes, int byteLength, Server server, InetAddress clientAddress, int clientPort) {
+		/*
+			00 01 02 03 04 05 06 07 08 09 10 11 12 13 14
+			--------------------------------------------
+			08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73
+			HH NO NO HV CV CV CV CV NL NT NT NT NT NT NT
 
-		// buffer[8] is the length of the name immediately after
-		if (buffer.length > 9 && buffer[8] != 0 && (packet.getLength() - 9) >= buffer[8]) {
+			HH = Hazel Hello
+			NO = Nonce
+			HV = Hazel Version
+			CV = Client Version
+			NL = Name Length
+			NT = Name Text
+		 */
+
+		// Starts at 3
+		// 00 01 02 03 04 05
+		// HV CV CV CV CV NL
+
+		if (handshakeBytes.length > 6) {
+			int displayNameLength = handshakeBytes[5];
+
+			// If either the name is missing or the name length is bigger than the what the rest of the buffer has, close connection
+			if (displayNameLength <= 0 || (byteLength - 6) < displayNameLength)
+				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("missing_display_name_handshake"));
+
 			// Hazel Version
-			int hazelVersion = buffer[1];
+			int hazelVersion = handshakeBytes[0];
 
 			// Client Version
-			byte[] clientVersionBytes = new byte[4]; // Int-32
-			System.arraycopy(buffer, 4, clientVersionBytes, 0, 4);
+			byte[] clientVersionBytes = new byte[4]; // UInt-32 LE
+			System.arraycopy(handshakeBytes, 1, clientVersionBytes, 0, 4);
 
 			// Client Version Info
 			int clientVersionRaw = ByteBuffer.wrap(clientVersionBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
 			// Player Display Name
-			byte[] nameBytes = new byte[buffer[8]];
-			System.arraycopy(buffer, 9, nameBytes, 0, buffer[8]);
+			byte[] nameBytes = new byte[displayNameLength];
+
+			// Copy Name Out Of Handshake
+			System.arraycopy(handshakeBytes, 6, nameBytes, 0, displayNameLength);
 			String name = new String(nameBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
-			// Debug Logging
-			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("name_logged"), name));
-			logVersionInfo(clientVersionRaw);
-
-			PlayerManager.addPlayer(new Player(name, packet.getAddress(), packet.getPort(), hazelVersion, clientVersionRaw, server));
+			// Register Player On Server
+			PlayerManager.addPlayer(new Player(name, clientAddress, clientPort, hazelVersion, clientVersionRaw, server));
 
 			// TODO: Replace this with configurable choosing of returning masters list
 			return new byte[0];
@@ -65,7 +80,13 @@ public class HandshakePacket {
 		return new byte[] {SendOption.DISCONNECT.getSendOption()};
 	}
 
-	private static void logVersionInfo(long raw) {
+	/**
+	 * Logs Client Version to Console For Debugging
+	 *
+	 * @param raw Client Version as U-Int-32 LE Integer
+	 */
+	@Deprecated
+	private static void logVersionInfo(int raw) {
 		/* Client Version Reversal
 		 *
 		 * year = floor(version / 25000)

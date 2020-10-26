@@ -10,20 +10,31 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 
 public class AcknowledgementPacket {
-
 	/**
-	 * Handle Acknowledgment Packet Sent From Client
+	 * Updates the last time a client acknowledgement was seen as well as the value of the nonce.
 	 *
-	 * @param packet
-	 * @param server
-	 * @return
+	 * Used to help determine if the client's connection is dead.
+	 *
+	 * This method does not close the connection if the connection is dead. The Ping Method takes care of that (not implemented).
+	 *
+	 * @param nonce 2 byte array with the nonce value from the client
+	 * @param clientAddress Client's IP Address
+	 * @param clientPort Client's Port
+	 * @param server Server Instance
+	 * @return Empty Byte Array Or Close Connection Byte Array
 	 */
-	public static byte[] handleAcknowledgement(DatagramPacket packet, Server server) {
+	public static byte[] handleAcknowledgement(byte[] nonce, InetAddress clientAddress, int clientPort, Server server) {
+		if (nonce.length < 2)
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
+
+		// TODO: Implement
+
 		return new byte[0];
 	}
 
 	/**
 	 * Generates acknowledgement packet bytes to send to client
+	 *
 	 * @param nonceBytes 2 byte array of the nonce data to return to client
 	 * @return bytes to send to client in the form of a Hazel acknowledgment packet
 	 */
@@ -35,7 +46,8 @@ public class AcknowledgementPacket {
 	}
 
 	/**
-	 * Sends Acknowledgement Packet In Response To Reliable Packet Or Ping
+	 * Sends Acknowledgement Packet In Response To Reliable Packet, Handshake, Or Ping
+	 *
 	 * @param packet Reliable Packet or Ping
 	 * @param server Server Instance
 	 */
