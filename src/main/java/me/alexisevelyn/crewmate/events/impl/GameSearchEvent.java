@@ -17,13 +17,13 @@ public class GameSearchEvent extends Event {
     private final int impostors;
     private byte[] games;
 
-    public GameSearchEvent(Language language, Map[] maps, int impostors) {
+    public GameSearchEvent(Language language, int impostors, Map... maps) {
         this.language = language;
         this.maps = maps;
         this.impostors = impostors;
 
         try {
-            this.games = SearchGame.getFakeSearchBytes(impostors, maps, language.getLanguage());
+            this.games = SearchGame.getFakeSearchBytes(impostors, language.getLanguage(), maps);
         } catch (UnknownHostException e) {
             LogHelper.printLineErr(Main.getTranslationBundle().getString("search_unknown_host"));
             e.printStackTrace();
@@ -36,7 +36,7 @@ public class GameSearchEvent extends Event {
         return games;
     }
 
-    public void setGames(byte[] games) {
+    public void setGames(byte... games) {
         // TODO: Change to a ArrayList of Games
         this.games = games;
     }

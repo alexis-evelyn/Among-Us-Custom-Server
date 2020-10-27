@@ -19,12 +19,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 public class StartGame {
-	public static byte[] getNewGameSettings(DatagramPacket packet, Server server) throws InvalidGameCodeException, InvalidBytesException, IOException {
+	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) throws InvalidGameCodeException, InvalidBytesException, IOException {
 		// 0000   01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00   ...+..*.........
 		// 0010   80 3f 00 00 40 3f 00 00 80 3f 00 00 f0 41 01 01   .?..@?...?...A..
 		// 0020   03 01 00 00 00 02 00 00 00 00 00 87 00 00 00 00   ................
@@ -32,13 +33,28 @@ public class StartGame {
 
 		// 0000   01 00 12 05 00 01 00 00 00 00 07                  ...........
 
-		byte[] buffer = packet.getData();
+		// 0000   01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00   ...+..*.........
+		// 0010   80 3f 00 00 40 3f 00 00 80 3f 00 00 f0 41 01 01   .?..@?...?...A..
+		// 0020   03 01 00 00 00 02 00 00 00 00 00 87 00 00 00 00   ................
+		// 0030   0f                                                .
+
+		// 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f
+		// -----------------------------------------------
+		// 01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00
+		// -----------------------------------------------
+		// 00 00 00 00 00 00 01 02 03 04 05 06 07 08 09 0a
+		// RP NO NO PL PL PT PB PB PB PB PB PB PB PB PB PB...
+		// RP = Reliable Packet
+		// NO = Nonce
+		// PL = Payload Length (Int-16 Little Endian)
+		// PT = Payload Type
+		// PB = Payload Bytes
 
 		// Data
-		int maxPlayers = buffer[8];
-		int map = buffer[13];
-		int imposterCount = buffer[37];
-		Language language = Language.getLanguage(Language.convertToInt(buffer[9], buffer[10]));
+		int maxPlayers = reliableBytes[2];
+		int map = reliableBytes[8];
+		int imposterCount = reliableBytes[32]; // 13 - 8
+		Language language = Language.getLanguage(Language.convertToInt(reliableBytes[0], reliableBytes[1]));
 
 		String mapName = Map.getMapName(Map.getMap(map));
 		String languageName = Language.getLanguageName(language);
@@ -86,7 +102,11 @@ public class StartGame {
 		return PacketHelper.mergeBytes(header, message);
 	}
 
-	private static byte[] useCustomCode(byte[] code) {
+	// TODO: Rewrite
+	private static byte[] useCustomCode(byte... code) throws InvalidBytesException {
+		if (code.length != 4)
+			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 4));
+
 		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x01, 0x04, 0x00, 0x00};
 		return PacketHelper.mergeBytes(header, code);
 	}
@@ -148,9 +168,9 @@ public class StartGame {
 		// C->S - 0000   RP NO NO ML ML PT GC GC GC GC OM
 		// RP = Reliable Packet (0x01)
 		// NO = Nonce
-		// ML = Message Length (LE UINT-16 - Starts After PT)
+		// ML = Message Length (LE INT-16 - Starts After PT)
 		// PT = Packet Type (0x01 For Join Game)
-		// GC = Game Code (LE UINT-32)
+		// GC = Game Code (LE INT-32)
 		// OM = Owned Maps Bitfield (0x07 For Skeld, Mira, and Polus)
 
 		if (packet.getLength() != 11)

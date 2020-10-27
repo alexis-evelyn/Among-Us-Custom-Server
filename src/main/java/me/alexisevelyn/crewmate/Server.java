@@ -144,7 +144,7 @@ public class Server extends Thread {
 		int port = packet.getPort();
 
 		// Packet to Send Back to Client
-		packet = this.createSendPacket(replyBuffer, replyBuffer.length, address, port);
+		packet = this.createSendPacket(address, port, replyBuffer.length, replyBuffer);
 
 		// Send Reply Back
 		this.socket.send(packet);
@@ -172,7 +172,7 @@ public class Server extends Thread {
 		}
 	}
 
-	public DatagramPacket createSendPacket(byte[] buffer, int length, InetAddress address, int port) {
+	public DatagramPacket createSendPacket(InetAddress address, int port, int length, byte... buffer) {
 		byte[] sendBuffer = new byte[length];
 
 		if (length >= 0)

@@ -1,5 +1,8 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
@@ -21,7 +24,7 @@ public class Main {
 	// Compile Time Properties
 	private static final Properties compileTimeProperties = new Properties();
 
-	public static void main(String[] args) {
+	public static void main(String... args) {
 		// TODO: Add Proper Argument Parser and Quit Passing Raw Args Array
 		Config config = setUpConfig(args);
 
@@ -67,7 +70,7 @@ public class Main {
 		terminal.start();
 	}
 
-	private static Config setUpConfig(String[] args) {
+	private static Config setUpConfig(String... args) {
 		// To Be Able To Modify Config
 		// TODO: Add Ability To Specify Config Location Or Default To Server Jar Directory
 		Config config = new Config();

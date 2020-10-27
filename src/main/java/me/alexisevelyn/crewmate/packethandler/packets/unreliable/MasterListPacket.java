@@ -1,4 +1,4 @@
-package me.alexisevelyn.crewmate.packethandler.packets;
+package me.alexisevelyn.crewmate.packethandler.packets.unreliable;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;

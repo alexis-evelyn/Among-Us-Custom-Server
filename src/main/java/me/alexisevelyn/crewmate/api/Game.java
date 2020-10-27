@@ -20,7 +20,7 @@ public class Game {
         this.codeBytes = GameCodeHelper.generateGameCodeBytes(code);
     }
 
-    public Game(byte[] code) throws InvalidGameCodeException, InvalidBytesException {
+    public Game(byte... code) throws InvalidGameCodeException, InvalidBytesException {
         this.codeBytes = code;
         this.code = GameCodeHelper.parseGameCode(code);
     }

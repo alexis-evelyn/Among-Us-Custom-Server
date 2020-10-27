@@ -65,16 +65,16 @@ public class LogHelper {
 		System.err.print(line);
 	}
 
-	public static void printPacketBytes(byte[] bytes, int length) {
+	public static void printPacketBytes(int length, byte... bytes) {
 		// https://stackoverflow.com/a/15215434/6828099
 		if (bytes.length < length)
 			return;
 
 		setCurrentThread();
-		printPacketBytesHorizontal(bytes, length);
+		printPacketBytesHorizontal(length, bytes);
 	}
 
-	public static void printPacketBytesHorizontal(byte[] bytes, int length) {
+	public static void printPacketBytesHorizontal(int length, byte... bytes) {
 		// https://stackoverflow.com/a/15215434/6828099
 		if (bytes.length < length)
 			return;
@@ -124,7 +124,7 @@ public class LogHelper {
 	}
 
 	@SuppressWarnings("unused")
-	public static void printPacketBytesVertical(byte[] bytes, int length) {
+	public static void printPacketBytesVertical(int length, byte... bytes) {
 		// https://stackoverflow.com/a/15215434/6828099
 		if (bytes.length < length)
 			return;

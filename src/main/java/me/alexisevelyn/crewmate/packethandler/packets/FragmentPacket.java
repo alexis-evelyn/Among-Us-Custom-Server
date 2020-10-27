@@ -23,8 +23,9 @@ public class FragmentPacket {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
-		LogHelper.printLine(Main.getTranslationBundle().getString("fragment_packet"));
-		LogHelper.printPacketBytes(buffer, length);
+		// This will be added back once I get proper logging. That way the information would be invisible unless using debug level or something
+//		LogHelper.printLine(Main.getTranslationBundle().getString("fragment_packet"));
+//		LogHelper.printPacketBytes(length, buffer);
 
 		return new byte[0];
 	}

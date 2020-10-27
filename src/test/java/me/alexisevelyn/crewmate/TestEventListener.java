@@ -34,7 +34,7 @@ public class TestEventListener {
     }
 
     @EventHandler
-    public void onPreJoin(PlayerPreJoinEvent event) {
+    public void onPreJoin(PlayerJoinLobbyEvent event) {
         //event.setCancelled(true, "Kicked during PreJoin");
     }
 

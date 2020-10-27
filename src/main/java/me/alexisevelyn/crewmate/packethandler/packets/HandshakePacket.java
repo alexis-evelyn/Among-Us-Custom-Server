@@ -26,7 +26,7 @@ public class HandshakePacket {
 	 * @param server Server instance
 	 * @return Masters list or empty byte array
 	 */
-	public static byte[] handleHandshake(byte[] handshakeBytes, int byteLength, Server server, InetAddress clientAddress, int clientPort) {
+	public static byte[] handleHandshake(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... handshakeBytes) {
 		/*
 			00 01 02 03 04 05 06 07 08 09 10 11 12 13 14
 			--------------------------------------------
@@ -60,7 +60,7 @@ public class HandshakePacket {
 			int hazelVersion = handshakeBytes[0];
 
 			// Client Version
-			byte[] clientVersionBytes = new byte[4]; // UInt-32 LE
+			byte[] clientVersionBytes = new byte[4]; // Int-32 LE
 			System.arraycopy(handshakeBytes, 1, clientVersionBytes, 0, 4);
 
 			// Client Version Info
@@ -87,7 +87,7 @@ public class HandshakePacket {
 	/**
 	 * Logs Client Version to Console For Debugging
 	 *
-	 * @param raw Client Version as U-Int-32 LE Integer
+	 * @param raw Client Version as Int-32 LE Integer
 	 */
 	@Deprecated
 	private static void logVersionInfo(int raw) {

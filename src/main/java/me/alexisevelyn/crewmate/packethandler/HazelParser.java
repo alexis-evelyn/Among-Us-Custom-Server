@@ -31,9 +31,9 @@ public class HazelParser {
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
 				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
-				byte[] handshakeBytes = PacketHelper.extractBytes(packet.getData(), 3);
+				byte[] handshakeBytes = PacketHelper.extractSecondPartBytes(3, packet.getData());
 
-				return HandshakePacket.handleHandshake(handshakeBytes, (packet.getLength() - 3), server, packet.getAddress(), packet.getPort());
+				return HandshakePacket.handleHandshake(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 3), handshakeBytes);
 			case ACKNOWLEDGEMENT: // Acknowledgement of Received Data From Client
 				if (packet.getLength() < 4)
 					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
@@ -41,18 +41,24 @@ public class HazelParser {
 				// Nonce Bytes
 				byte[] nonce = new byte[]{packet.getData()[1], packet.getData()[2]};
 
-				return AcknowledgementPacket.handleAcknowledgement(nonce, packet.getAddress(), packet.getPort(), server);
+				return AcknowledgementPacket.handleAcknowledgement(packet.getAddress(), packet.getPort(), server, nonce);
 			case PING: // Ping
+				// This is to stay the current format as we don't care about parsing ping past the nonce bytes.
+				// Besides, there's three packet types that have nonce values, so it's better to keep the generic nonce parser
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
 				return new byte[0];
 			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
-				return GamePacket.handleReliablePacket(packet, server);
+				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
+				byte[] reliableBytes = PacketHelper.extractSecondPartBytes(3, packet.getData());
+
+				return ReliablePacket.handleReliablePacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 3), reliableBytes);
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
-				return GamePacket.handleUnreliablePacket(packet, server);
+				return UnreliablePacket.handleUnreliablePacket(packet, server);
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
+				// Not Implemented Even on Hazel. No Idea What The Packet Structure Would Look Like
 				return FragmentPacket.handleFragmentPacket(packet, server);
 		}
 

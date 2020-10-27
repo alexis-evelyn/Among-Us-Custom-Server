@@ -9,8 +9,8 @@ import java.util.ResourceBundle;
 
 public enum ReliablePacketType {
 	// https://wiki.weewoo.net/wiki/Protocol#Reliable_Packets
-	PRE_HOST_SETTINGS(0x00),
-	JOIN_GAME(0x01),
+	HOST_SETTINGS(0x00),
+	JOIN_LOBBY(0x01),
 	START_GAME(0x02),
 	REMOVE_GAME(0x03),
 	REMOVE_PLAYER(0x04),
@@ -45,14 +45,11 @@ public enum ReliablePacketType {
 	public static String getReliablePacketTypeName(@NotNull ReliablePacketType reliablePacketType) {
 		ResourceBundle translation = Main.getTranslationBundle();
 
-		if (reliablePacketType == null)
-			return translation.getString("unknown");
-
 		switch (reliablePacketType) {
-			case PRE_HOST_SETTINGS:
-				return translation.getString("reliable_packet_pre_host_settings");
-			case JOIN_GAME:
-				return translation.getString("reliable_packet_join_game");
+			case HOST_SETTINGS:
+				return translation.getString("reliable_packet_host_settings");
+			case JOIN_LOBBY:
+				return translation.getString("reliable_packet_join_lobby");
 			case START_GAME:
 				return translation.getString("reliable_packet_start_game");
 			case REMOVE_GAME:

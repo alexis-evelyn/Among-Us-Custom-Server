@@ -17,7 +17,7 @@ public class GameManager {
 
     public static void addGame(Game game) {
         gamesByCode.put(game.getCode(), game);
-        gamesByCodeBytes.put(game.getCodeBytes() , game);
+        gamesByCodeBytes.put(game.getCodeBytes(), game);
 
         LogHelper.printLine(String.format(Main.getTranslationBundle().getString("added_game"), game.getCode()));
     }
@@ -35,7 +35,7 @@ public class GameManager {
         gamesByCodeBytes.remove(GameCodeHelper.generateGameCodeBytes(code));
     }
 
-    public static void removeGame(byte[] code) throws InvalidGameCodeException, InvalidBytesException {
+    public static void removeGame(byte... code) throws InvalidGameCodeException, InvalidBytesException {
         gamesByCodeBytes.remove(code);
         gamesByCode.remove(GameCodeHelper.parseGameCode(code));
     }
@@ -44,7 +44,7 @@ public class GameManager {
         return gamesByCode.containsKey(code);
     }
 
-    public static boolean existsWithCodeBytes(byte[] code) {
+    public static boolean existsWithCodeBytes(byte... code) {
         return gamesByCodeBytes.containsKey(code);
     }
 

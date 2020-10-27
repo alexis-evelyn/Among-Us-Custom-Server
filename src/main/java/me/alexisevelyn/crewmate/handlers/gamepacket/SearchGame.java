@@ -47,13 +47,13 @@ public class SearchGame {
 		LogHelper.printLine(String.format(translation.getString("maps_logged"), getPrintableMapsList(maps)));
 		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getLanguageName(language)));
 
-		GameSearchEvent event = new GameSearchEvent(language, maps, numberOfImposters);
+		GameSearchEvent event = new GameSearchEvent(language, numberOfImposters, maps);
 		event.call(server);
 
 		return event.getGames();
 	}
 
-	public static String getPrintableMapsList(Map[] maps) {
+	public static String getPrintableMapsList(Map... maps) {
 		// List of Maps Being Included In Search
 		StringBuilder printableMapsList = new StringBuilder();
 
@@ -67,7 +67,7 @@ public class SearchGame {
 		return printableMapsList.toString();
 	}
 
-	public static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) throws UnknownHostException {
+	public static byte[] getFakeSearchBytes(int numberOfImposters, int language, Map... maps) throws UnknownHostException {
 		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u
 		// 0010   07 56 e6 71 31 80 08 73 75 73 68 69 69 69 69 03   .V.q1..sushiiii.

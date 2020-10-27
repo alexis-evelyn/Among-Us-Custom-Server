@@ -1,5 +1,10 @@
 package me.alexisevelyn.crewmate.packethandler;
 
+import me.alexisevelyn.crewmate.Main;
+import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -10,7 +15,7 @@ public class PacketHelper {
 	 * @param bytes byte[][] of byte[] to merge together as if one giant byte[]
 	 * @return the merged results of the array of byte arrays as a byte[]
 	 */
-	public static byte[] mergeBytes(byte[] ...bytes) {
+	public static byte[] mergeBytes(byte[]... bytes) {
 		// Don't Bother Merging If Nothing To Merge
 		if (bytes == null)
 			return new byte[0];
@@ -44,11 +49,19 @@ public class PacketHelper {
 	 * @param pos the byte to split on. so, to drop only the first byte, specify 1.
 	 * @return the second part of the byte array
 	 */
-	public static byte[] extractBytes(byte[] bytes, int pos) {
+	public static byte[] extractSecondPartBytes(int pos, byte... bytes) {
 		if ((bytes.length - 1) < pos)
 			return bytes;
 
 		return Arrays.copyOfRange(bytes, pos, bytes.length - 1);
+	}
+
+	// TODO: Verify Works Properly
+	public static byte[] extractFirstPartBytes(int pos, byte... bytes) {
+		if ((bytes.length - 1) < pos)
+			return bytes;
+
+		return Arrays.copyOfRange(bytes, 0, pos);
 	}
 
 	/**
@@ -59,5 +72,41 @@ public class PacketHelper {
 	 */
 	public static byte[] convertShortToLE(short value) {
 		return new byte[] {(byte)(value & 0xff), (byte)((value >> 8) & 0xff)};
+	}
+
+	/**
+	 * Flips bytes and internally calls {@link #getUnsignedShortLE(byte...)}
+	 *
+	 * @param shortBytes 2 byte array in Big Endian form
+	 * @return unsigned short formatted as a signed int
+	 * @throws InvalidBytesException for not providing the correct number of bytes
+	 */
+	public static int getUnsignedShortBE(byte... shortBytes) throws InvalidBytesException {
+		if (shortBytes.length != 2)
+			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 2));
+
+		return getUnsignedShortLE(shortBytes[1], shortBytes[0]);
+	}
+
+	/**
+	 * Retrieves an unsigned short and stores as a signed int.
+	 *
+	 * A short is 2 bytes or is otherwise known as being 16 bit. An int is 4 bytes or 32 bit.
+	 *
+	 * Java doesn't have unsigned data types except for char.
+	 *
+	 * See <a href="https://stackoverflow.com/a/6850755/6828099">this Stackoverflow Answer</a> for more details.
+	 * Also see <a href="https://www.darksleep.com/player/JavaAndUnsignedTypes.html">this page</a> for an in depth explanation on handling signed/unsigned data types.
+	 *
+	 * @param shortBytes 2 byte array in Little Endian form
+	 * @return unsigned short formatted as a signed int
+	 * @throws InvalidBytesException for not providing the correct number of bytes
+	 */
+	public static int getUnsignedShortLE(byte... shortBytes) throws InvalidBytesException {
+		if (shortBytes.length != 2)
+			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 2));
+
+		// Tutorial: https://stackoverflow.com/a/28580238/6828099
+		return ((shortBytes[0] & 0xff) | ((shortBytes[1] & 0xff) << 8));
 	}
 }

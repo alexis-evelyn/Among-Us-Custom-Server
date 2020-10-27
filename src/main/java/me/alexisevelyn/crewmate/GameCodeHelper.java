@@ -21,7 +21,7 @@ public class GameCodeHelper {
 	// https://www.geeksforgeeks.org/bitwise-operators-in-java/
 	// https://gist.github.com/alexis-evelyn/f541d27811b62fd987c93cf79ed049a7
 	// Convert Bytes to GameCode String
-	public static String parseGameCode(byte[] gameCodeBytes) throws InvalidBytesException, InvalidGameCodeException {
+	public static String parseGameCode(byte... gameCodeBytes) throws InvalidBytesException, InvalidGameCodeException {
 		if (gameCodeBytes == null)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_null_exception"));
 

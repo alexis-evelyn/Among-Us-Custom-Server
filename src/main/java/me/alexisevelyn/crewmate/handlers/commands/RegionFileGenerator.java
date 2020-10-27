@@ -26,7 +26,7 @@ public class RegionFileGenerator implements Command {
 
 			byte[] regionFileData = createRegionFileBytes(ipAddress, port, displayName, masterServerName);
 
-			saveRegionFile(regionFileData, outFile);
+			saveRegionFile(outFile, regionFileData);
 		} catch (UnknownHostException e) {
 			LogHelper.printLineErr(
 					String.format(
@@ -97,7 +97,7 @@ public class RegionFileGenerator implements Command {
 		byte[] portBytes = PacketHelper.convertShortToLE((short) port);
 
 //		LogHelper.print("Port Bytes: ");
-//		LogHelper.printPacketBytes(portBytes, portBytes.length);
+//		LogHelper.printPacketBytes(portBytes.length, portBytes);
 //		LogHelper.printLine();
 
 		// Footer
@@ -118,7 +118,7 @@ public class RegionFileGenerator implements Command {
 				footerBytes);
 	}
 
-	private static void saveRegionFile(byte[] bytes, File outFile) throws IOException {
+	private static void saveRegionFile(File outFile, byte... bytes) throws IOException {
 		if (outFile.exists() && !outFile.delete())
 			throw new IOException("Failed to delete existing file!!!");
 

@@ -76,17 +76,17 @@ public class Player extends Entity {
         byte[] components = new byte[]{};
         int componentCount = components.length;
         byte[] message = new byte[]{SendOption.RELIABLE.getSendOption(), 0x04, (byte) id, (byte) ownerId, flags, (byte) componentCount, 0x0};
-        server.sendPacket(server.createSendPacket(message, message.length, address, port));
+        server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }*/
 
     public void kick(DisconnectReason reason) {
         byte[] message = ClosePacket.closeConnection(reason);
-        server.sendPacket(server.createSendPacket(message, message.length, address, port));
+        server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }
 
     public void kick(String reason) {
         byte[] message = ClosePacket.closeWithMessage(reason);
-        server.sendPacket(server.createSendPacket(message, message.length, address, port));
+        server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }
 
     public static class Version {
