@@ -4,9 +4,11 @@ import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
+import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.packethandler.packets.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 
 public class HazelParser {
@@ -18,7 +20,7 @@ public class HazelParser {
 	 * @return packet bytes to send to client or empty byte array to skip sending
 	 */
 	@NotNull
-	public static byte[] handlePacket(DatagramPacket packet, Server server) {
+	public static byte[] handlePacket(DatagramPacket packet, Server server) throws InvalidGameCodeException, IOException {
 		SendOption sendOption = SendOption.getSendOption(packet.getData()[0]);
 
 		// Throw Out Any Unknown Packets
@@ -39,7 +41,7 @@ public class HazelParser {
 					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
 
 				// Nonce Bytes
-				byte[] nonce = new byte[]{packet.getData()[1], packet.getData()[2]};
+				byte[] nonce = new byte[] {packet.getData()[1], packet.getData()[2]};
 
 				return AcknowledgementPacket.handleAcknowledgement(packet.getAddress(), packet.getPort(), server, nonce);
 			case PING: // Ping

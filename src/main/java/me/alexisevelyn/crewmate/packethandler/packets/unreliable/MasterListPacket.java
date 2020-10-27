@@ -16,6 +16,8 @@ public class MasterListPacket {
 	 * Returns a fake masters list to send to client.
 	 * WARNING: This function produces a broken packet.
 	 *
+	 * TODO: Checkout https://amongus-debugger.vercel.app/
+	 *
 	 * @param packet Packet From Client
 	 * @param server Instance of Server
 	 * @return byte array of masters list to send back to client

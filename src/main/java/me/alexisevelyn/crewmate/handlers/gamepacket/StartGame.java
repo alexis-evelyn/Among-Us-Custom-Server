@@ -25,30 +25,31 @@ import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 public class StartGame {
-	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) throws InvalidGameCodeException, InvalidBytesException, IOException {
-		// 0000   01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00   ...+..*.........
-		// 0010   80 3f 00 00 40 3f 00 00 80 3f 00 00 f0 41 01 01   .?..@?...?...A..
-		// 0020   03 01 00 00 00 02 00 00 00 00 00 87 00 00 00 00   ................
-		// 0030   0f                                                .
-
-		// 0000   01 00 12 05 00 01 00 00 00 00 07                  ...........
-
-		// 0000   01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00   ...+..*.........
-		// 0010   80 3f 00 00 40 3f 00 00 80 3f 00 00 f0 41 01 01   .?..@?...?...A..
-		// 0020   03 01 00 00 00 02 00 00 00 00 00 87 00 00 00 00   ................
-		// 0030   0f                                                .
-
+	/**
+	 * TODO: Missing A Lot Of Information
+	 *
+	 * @param server
+	 * @param clientAddress
+	 * @param clientPort
+	 * @param byteLength
+	 * @param reliableBytes
+	 * @return
+	 * @throws InvalidGameCodeException
+	 * @throws InvalidBytesException
+	 */
+	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) throws InvalidGameCodeException, InvalidBytesException {
 		// 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f
 		// -----------------------------------------------
-		// 01 00 02 2b 00 00 2a 02 0a 00 01 00 00 00 00 00
+		// 2a 02 07 00 01 00 00 02 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 34 42 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
+		// 2A 02 07 00 01 00 00 02 00 00 80 3F 00 00 80 3F 00 00 C0 3F 00 00 34 42 01 01 02 01 00 00 00 02 01 0F 00 00 00 78 00 00 00 01 0F
+		// 2a 02 0a 00 01 00 00 00 00 00 80 3f 00 00 40 3f 00 00 80 3f 00 00 f0 41 01 01 03 01 00 00 00 02 00 00 00 00 00 87 00 00 00 00 0f
 		// -----------------------------------------------
-		// 00 00 00 00 00 00 01 02 03 04 05 06 07 08 09 0a
-		// RP NO NO PL PL PT PB PB PB PB PB PB PB PB PB PB...
-		// RP = Reliable Packet
-		// NO = Nonce
-		// PL = Payload Length (Int-16 Little Endian)
-		// PT = Payload Type
+		// TODO: Add Full Decipher of Payload Bytes - https://wiki.weewoo.net/wiki/Game_Options_Data
+		// PB PB PB PB PB PB PB PB PB PB...
 		// PB = Payload Bytes
+
+		// Useful For Verifying Bytes
+		// LogHelper.printPacketBytes(byteLength, reliableBytes);
 
 		// Data
 		int maxPlayers = reliableBytes[2];
@@ -68,6 +69,7 @@ public class StartGame {
 		LogHelper.printLine(extraData);
 
 		try {
+			// TODO: Double Check For "InvalidBytesException: Game Code Bytes Needs To Be 4 Bytes Long!!!" on Below Line
 			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap(map), language);
 			event.call(server);
 			byte[] newCode = GameCodeHelper.generateGameCodeBytes(event.getGameCode());
@@ -151,86 +153,6 @@ public class StartGame {
 		} catch (InvalidGameCodeException exception) {
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 		}
-	}
-
-	// This gets called when the client either tries to join a game or create a game.
-	// For C->S
-	public static byte[] getClientGameCode(DatagramPacket packet, Server server) throws InvalidGameCodeException {
-		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
-		// C->S - 0000   01 00 03 05 00 01 89 5a 2a 80 07                  .......Z*..
-
-		// Game Code - SZGEYQ (c3:41:38:80) - Purple - Goggles - Private - 1/10 Players
-		// C->S - 0000   01 00 03 05 00 01 c3 41 38 80 07                  .......A8..
-
-		// Game Code - SIXLXQ (45:9a:17:80) - Red - Goggles - Private - 1/10 Players
-		// C->S - 0000   01 00 03 05 00 01 45 9a 17 80 07                  ......E....
-
-		// C->S - 0000   RP NO NO ML ML PT GC GC GC GC OM
-		// RP = Reliable Packet (0x01)
-		// NO = Nonce
-		// ML = Message Length (LE INT-16 - Starts After PT)
-		// PT = Packet Type (0x01 For Join Game)
-		// GC = Game Code (LE INT-32)
-		// OM = Owned Maps Bitfield (0x07 For Skeld, Mira, and Polus)
-
-		if (packet.getLength() != 11)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("join_game_invalid_size"));
-
-		// 00 03 05 00 01?
-		byte[] buffer = packet.getData();
-		byte[] gameCodeBytes = new byte[4];
-		Map[] maps = SearchGame.parseMapsSearch(buffer[10]); // Client Owned Maps
-
-		// Extract Game Code Bytes From Buffer
-		System.arraycopy(buffer, 6, gameCodeBytes, 0, 4);
-
-		String gameCode;
-		try {
-			gameCode = GameCodeHelper.parseGameCode(gameCodeBytes);
-
-			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("gamecode_string"), gameCode));
-		} catch (InvalidBytesException e) {
-			LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("gamecode_exception"), e.getMessage()));
-			e.printStackTrace();
-
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_server_side_error_exception"));
-		} catch (InvalidGameCodeException e) {
-			return ClosePacket.closeWithMessage(e.getMessage());
-		}
-
-		// LogHelper.printLine("Game Code (Byte Form): " + Arrays.toString(gameCodeBytes));
-		// LogHelper.printLine(String.format(Main.getTranslationBundle().getString("gamecode_integer_form_logged"), gameCode));
-		// LogHelper.printLine(String.format(Main.getTranslationBundle().getString("owned_maps"), SearchGame.getPrintableMapsList(maps)));
-
-		// Game Code - NPGWQQ (cd:98:00:80) - Red - Goggles - Private - 1/10 Players
-		// C->S - 0000   01 00 03 05 00 01 cd 98 00 80 07                  ...........
-		//
-		// S->C - 0000   01 00 02 0d 00 07 cd 98 00 80 f5 e9 1e 00 f5 e9   ................
-		// S->C - 0010   1e 00 00 06 00 0a cd 98 00 80 01 00               ............
-
-		// Game Code - TVJUXQ (0c:0e:1b:80) - Red - Goggles - Private - 1/10 Players
-		// C->S - 0000   01 00 03 05 00 01 0c 0e 1b 80 07                  ...........
-		//
-		// S->C - 0000   01 00 02 0d 00 07 0c 0e 1b 80 94 04 02 00 94 04   ................
-		// S->C - 0010   02 00 00 06 00 0a 0c 0e 1b 80 01 00               ............
-
-		byte unknown = 0x00;
-
-		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x02, 0x0d, 0x00, 0x07};
-
-		byte[] messagePartOne = new byte[] {unknown, unknown, unknown, 0x00, unknown, unknown, unknown, 0x00, 0x00, 0x06, 0x00, 0x0a};
-		byte[] messagePartTwo = new byte[] {0x01, 0x00};
-
-		PlayerJoinEvent event = new PlayerJoinEvent(gameCode, packet.getAddress(), packet.getPort());
-		event.call(server);
-		if (event.isCancelled()) {
-			return ClosePacket.closeWithMessage(event.getReason());
-		}
-
-		GameManager.getGameByCode(gameCode).addPlayer(PlayerManager.getPlayerByAddress(packet.getAddress(), packet.getPort()));
-
-		// This is enough to get to the lobby
-		return PacketHelper.mergeBytes(header, gameCodeBytes, messagePartOne, gameCodeBytes, messagePartTwo);
 	}
 
 	public static byte[] getLobbyGameSettings(DatagramPacket packet) {

@@ -6,6 +6,7 @@ import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.bus.EventBus;
 import me.alexisevelyn.crewmate.packethandler.HazelParser;
+import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +134,13 @@ public class Server extends Thread {
 		if (packet.getData().length < 1)
 			return;
 
-		byte[] replyBuffer = HazelParser.handlePacket(packet, this);
+		byte[] replyBuffer;
+		try {
+			replyBuffer = HazelParser.handlePacket(packet, this);
+		} catch (Exception exception) {
+			// Generic Catch All For Uncaught Exceptions
+			replyBuffer = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+		}
 
 		// Don't Send Packet if No Data To Send
 		if (replyBuffer.length == 0)

@@ -45,20 +45,26 @@ public class PacketHelper {
 	/**
 	 * Helper utility to grab the second part of the byte array for passing into more refined packet parsing functions
 	 *
-	 * @param bytes the byte array to split
 	 * @param pos the byte to split on. so, to drop only the first byte, specify 1.
+	 * @param bytes the byte array to split
 	 * @return the second part of the byte array
 	 */
 	public static byte[] extractSecondPartBytes(int pos, byte... bytes) {
-		if ((bytes.length - 1) < pos)
+		if (bytes.length <= pos)
 			return bytes;
 
 		return Arrays.copyOfRange(bytes, pos, bytes.length - 1);
 	}
 
-	// TODO: Verify Works Properly
+	/**
+	 * Helper utility to grab the first part of the byte array for passing into more refined packet parsing functions
+	 *
+	 * @param pos the byte to split on. so, to keep only the first byte, specify 1.
+	 * @param bytes the byte array to split
+	 * @return the first part of the byte array
+	 */
 	public static byte[] extractFirstPartBytes(int pos, byte... bytes) {
-		if ((bytes.length - 1) < pos)
+		if (bytes.length <= pos)
 			return bytes;
 
 		return Arrays.copyOfRange(bytes, 0, pos);
