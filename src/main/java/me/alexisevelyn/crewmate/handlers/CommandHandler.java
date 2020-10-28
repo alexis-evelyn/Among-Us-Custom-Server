@@ -65,6 +65,11 @@ public class CommandHandler {
 			new Plugin().execute(command, terminal);
 		}
 
+		// Packed Ints Tester
+		if (checkCommand.equals(Main.getTranslationBundle().getString("packed_ints_command"))) {
+			new PackedInts().execute(command, terminal);
+		}
+
 		for (String commandName : commands.keySet()) {
 			if (checkCommand.equalsIgnoreCase(commandName)) {
 				commands.get(commandName).execute(command, terminal);

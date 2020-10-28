@@ -24,6 +24,7 @@ public class Help implements Command {
 		commands.add(GameCode.class);
 		commands.add(SSH.class);
 		commands.add(Plugin.class);
+		commands.add(PackedInts.class);
 
 		// TODO: Sort List and Pull From Registry
 	}
