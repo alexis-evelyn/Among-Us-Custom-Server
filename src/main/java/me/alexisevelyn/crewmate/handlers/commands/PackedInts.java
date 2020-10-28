@@ -27,11 +27,7 @@ public class PackedInts implements Command {
 
 		// Convert To Bytes
 		if (convertType.equals(translation.getString("packed_ints_bytes_argument"))) {
-			try {
-				this.convertIntToBytes(terminal, arguments);
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
+			this.convertIntToBytes(terminal, arguments);
 		}
 
 		// Convert To String
@@ -40,8 +36,15 @@ public class PackedInts implements Command {
 	}
 
 	// Convert Game Code String to Bytes
-	private void convertIntToBytes(Terminal terminal, String... arguments) throws NumberFormatException {
-		byte[] packedBytes = PacketHelper.packInteger(Integer.parseInt(arguments[2]));
+	private void convertIntToBytes(Terminal terminal, String... arguments) {
+		byte[] packedBytes;
+		try {
+			packedBytes = PacketHelper.packInteger(Integer.parseInt(arguments[2]));
+		} catch (NumberFormatException exception) {
+			LogHelper.printLineErr(Main.getTranslationBundle().getString("packed_ints_invalid_int"));
+
+			return;
+		}
 
 		LogHelper.printPacketBytes(packedBytes.length, packedBytes);
 	}

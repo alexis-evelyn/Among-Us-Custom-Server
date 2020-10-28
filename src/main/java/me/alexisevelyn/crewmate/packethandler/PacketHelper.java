@@ -2,9 +2,8 @@ package me.alexisevelyn.crewmate.packethandler;
 
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
+import org.jetbrains.annotations.NotNull;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,7 +14,8 @@ public class PacketHelper {
 	 * @param bytes byte[][] of byte[] to merge together as if one giant byte[]
 	 * @return the merged results of the array of byte arrays as a byte[]
 	 */
-	public static byte[] mergeBytes(byte[]... bytes) {
+	@NotNull
+	public static byte[] mergeBytes(@NotNull byte[]... bytes) {
 		// Don't Bother Merging If Nothing To Merge
 		if (bytes == null)
 			return new byte[0];
@@ -48,8 +48,13 @@ public class PacketHelper {
 	 * @param pos the byte to split on. so, to drop only the first byte, specify 1.
 	 * @param bytes the byte array to split
 	 * @return the second part of the byte array
+	 * @throws InvalidBytesException For null byte array
 	 */
-	public static byte[] extractSecondPartBytes(int pos, byte... bytes) {
+	@NotNull
+	public static byte[] extractSecondPartBytes(int pos, @NotNull byte... bytes) throws InvalidBytesException {
+		if (bytes == null)
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+
 		if (bytes.length <= pos)
 			return bytes;
 
@@ -62,8 +67,13 @@ public class PacketHelper {
 	 * @param pos the byte to split on. so, to keep only the first byte, specify 1.
 	 * @param bytes the byte array to split
 	 * @return the first part of the byte array
+	 * @throws InvalidBytesException For null byte array
 	 */
-	public static byte[] extractFirstPartBytes(int pos, byte... bytes) {
+	@NotNull
+	public static byte[] extractFirstPartBytes(int pos, @NotNull byte... bytes) {
+		if (bytes == null)
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+
 		if (bytes.length <= pos)
 			return bytes;
 
@@ -76,6 +86,7 @@ public class PacketHelper {
 	 * @param value The short to be converted
 	 * @return The byte array to be used as you wish
 	 */
+	@NotNull
 	public static byte[] convertShortToLE(short value) {
 		return new byte[] {(byte)(value & 0xff), (byte)((value >> 8) & 0xff)};
 	}
@@ -87,7 +98,11 @@ public class PacketHelper {
 	 * @return unsigned short formatted as a signed int
 	 * @throws InvalidBytesException for not providing the correct number of bytes
 	 */
-	public static int getUnsignedShortBE(byte... shortBytes) throws InvalidBytesException {
+	@NotNull
+	public static int getUnsignedShortBE(@NotNull byte... shortBytes) throws InvalidBytesException {
+		if (shortBytes == null)
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+
 		if (shortBytes.length != 2)
 			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 2));
 
@@ -108,7 +123,10 @@ public class PacketHelper {
 	 * @return unsigned short formatted as a signed int
 	 * @throws InvalidBytesException for not providing the correct number of bytes
 	 */
-	public static int getUnsignedShortLE(byte... shortBytes) throws InvalidBytesException {
+	public static int getUnsignedShortLE(@NotNull byte... shortBytes) throws InvalidBytesException {
+		if (shortBytes == null)
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+
 		if (shortBytes.length != 2)
 			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 2));
 
@@ -125,6 +143,7 @@ public class PacketHelper {
 	 * @param value Integer to pack
 	 * @return packed bytes
 	 */
+	@NotNull
 	public static byte[] packInteger(int value) {
 		ArrayList<Byte> packedBytes = new ArrayList<>();
 
@@ -158,7 +177,10 @@ public class PacketHelper {
 	 * @param packedBytes Packed Bytes to Unpack
 	 * @return Unsigned Integer Represented
 	 */
-	public static int unpackInteger(byte[] packedBytes) throws InvalidBytesException {
+	public static int unpackInteger(@NotNull byte... packedBytes) throws InvalidBytesException {
+		if (packedBytes == null)
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+
 		boolean readMore = true;
 		int shift = 0;
 		int value = 0;
