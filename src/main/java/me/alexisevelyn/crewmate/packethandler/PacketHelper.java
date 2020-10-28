@@ -135,7 +135,7 @@ public class PacketHelper {
 	}
 
 	/**
-	 * Public Domain (or Unlicense) Implementation of Packing An Integer For Among Us
+	 * Public Domain (or Unlicense) Implementation of Packing An Integer For Among Us.
 	 *
 	 * <br><br>
 	 * See <a href="https://wiki.weewoo.net/wiki/Packing">this packed ints explanation</a> and <a href="https://amongus-debugger.vercel.app/tools">this online debugger</a> for more info.
@@ -169,13 +169,13 @@ public class PacketHelper {
 	}
 
 	/**
-	 * Public Domain (or Unlicense) Implementation of Unpacking An Integer For Among Us
+	 * Public Domain (or Unlicense) Implementation of Unpacking An Integer For Among Us.
 	 *
 	 * <br><br>
 	 * See <a href="https://wiki.weewoo.net/wiki/Packing">this packed ints explanation</a> and <a href="https://amongus-debugger.vercel.app/tools">this online debugger</a> for more info.
 	 *
 	 * @param packedBytes Packed Bytes to Unpack
-	 * @return Unsigned Integer Represented
+	 * @return Signed Integer
 	 */
 	public static int unpackInteger(@NotNull byte... packedBytes) throws InvalidBytesException {
 		if (packedBytes == null)
