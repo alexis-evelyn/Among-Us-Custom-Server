@@ -1,6 +1,7 @@
 package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata;
 
 import me.alexisevelyn.crewmate.GameCodeHelper;
+import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.Map;
@@ -38,7 +39,18 @@ public class JoinLobbyPacket {
 
 		if (!event.isCancelled()) {
 			String gamecode = addClientToLobby(server, clientAddress, clientPort, payload);
-			return generateJoinLobbyReply(gamecode);
+
+			// TODO: Debug
+			byte[] reply = generateJoinLobbyReply(gamecode);
+			LogHelper.printPacketBytes(reply.length, reply);
+
+			// Added Game: SPOONS
+			// +-------------------------------------------------------------------------------------------------------------------------------------------------------+
+			// | Positions | 0  | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 |
+			// | Bytes     | 01 | 00 | 01 | 16 | 00 | 07 | BF | 28 | A2 | 8A | 94 | 04 | 02 | 00 | 94 | 04 | 02 | 00 | 00 | 06 | 00 | 0A | 0C | 0E | 1B | 80 | 01 | 00 |
+			// +-------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+			return reply;
 		} else {
 			return ClosePacket.closeWithMessage(event.getReason());
 		}
@@ -110,7 +122,7 @@ public class JoinLobbyPacket {
 		// ???
 		byte[] wtfKnows = new byte[] {0x06, 0x00, 0x0a, 0x0c, 0x0e, 0x1b, (byte) 0x80, 0x01, 0x00};
 
-		byte[] packetLength = PacketHelper.convertShortToLE((short) (13 + wtfKnows.length)); // Length (Basically Where Other Clients Count Is)
+		byte[] packetLength = PacketHelper.convertShortToLE((short) (13)); // Length (Basically Where Other Clients Count Is)
 
 		// Game Code - TVJUXQ (0c:0e:1b:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 0c 0e 1b 80 07                  ...........
@@ -125,8 +137,7 @@ public class JoinLobbyPacket {
 				GameCodeHelper.generateGameCodeBytes(gameCode), // TODO: Retrieve Game Assigned To Player From GameManager or Wherever
 				clientID,
 				hostID,
-				clientCount,
-				wtfKnows
+				clientCount
 		);
 	}
 }

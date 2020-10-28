@@ -52,7 +52,8 @@ public class ReliablePacket {
 			case JOIN_LOBBY: // 0x01
 				return JoinLobbyPacket.handleJoinLobby(server, clientAddress, clientPort, packetData); // 11 Bytes Total
 			case GAME_DATA: // 0x05
-				// return GameDataPacket.parseGameData(server, clientAddress, clientPort, payloadLength, packetData);
+//				LogHelper.printPacketBytes(payloadLength, packetData);
+//				return GameDataPacket.parseGameData(server, clientAddress, clientPort, payloadLength, packetData);
 				return new byte[0];
 			case ALTER_GAME: // 0x0a
 				// return Lobby.alterGame(server, clientAddress, clientPort, payloadLength, packetData); // 12 Bytes Total

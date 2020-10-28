@@ -11,25 +11,34 @@ import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.ChatPack
 import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.CosmeticPacket;
 
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class GameDataPacket {
-	// TODO: Read Game Packet Data
-	// Movement Packet - https://gist.github.com/codyphobe/cc738881daf11da519ee9d4a77d24f62
-	// Reliable Packet Format - https://wiki.weewoo.net/wiki/Protocol#Reliable_Packets
+	/**
+	 *
+	 *
+	 * @param server
+	 * @param clientAddress
+	 * @param clientPort
+	 * @param byteLength
+	 * @param payload
+	 * @return
+	 */
+	public static byte[] parseGameData(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... payload) {
+		// 00 01 02 03 04
+		// --------------
+		// A2 26 8E 83 07
+		// GC GC GC GC OM
+		// GC = Game Code (LE INT-32)
+		// OM = Owned Maps Bitfield (0x07 For Skeld, Mira, and Polus)
 
-	// Reliable Packet Format - RP NO NO PL PL PT
-	// RP = Reliable Packet Identifier (0x01)
-	// NO = Nonce
-	// PL = Packet Length (Starts After PT)
-	// PT = Packet Type (What We Check In This File)
-
-	public static byte[] parseGameData(DatagramPacket packet, Server server) {
-		int length = packet.getLength();
-		byte[] buffer = packet.getData();
+		// LogHelper.printPacketBytes(byteLength, payload);
 
 		// TODO: Create a Game Data Enum and Put 0x02 As The RPC Game Data Type
+		int length = 0;
+		byte[] buffer = new byte[0];
 		if (length >= 15 && buffer[12] == 0x02) {
 			RPC type = RPC.getRPC(buffer[14]);
 
@@ -61,14 +70,14 @@ public class GameDataPacket {
 
 			switch (type) {
 				case SEND_CHAT:
-					return ChatPacket.handleChat(packet, server);
+					// return ChatPacket.handleChat(packet, server);
 				case SET_COLOR:
 				case SET_HAT:
 				case SET_SKIN:
 				case SET_PET:
-					return CosmeticPacket.handleCosmetics(packet, server); // 16 Bytes Total
+					// return CosmeticPacket.handleCosmetics(packet, server); // 16 Bytes Total
 				case SYNC_SETTINGS: // Double Check
-					return StartGame.getLobbyGameSettings(packet); // At Least 173 Bytes?
+					// return StartGame.getLobbyGameSettings(packet); // At Least 173 Bytes?
 				default:
 					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
 			}

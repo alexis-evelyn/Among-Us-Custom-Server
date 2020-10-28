@@ -115,4 +115,73 @@ public class PacketHelper {
 		// Tutorial: https://stackoverflow.com/a/28580238/6828099
 		return ((shortBytes[0] & 0xff) | ((shortBytes[1] & 0xff) << 8));
 	}
+
+	/**
+	 * Public Domain (or Unlicense) Implementation of Packing An Integer For Among Us
+	 *
+	 * <br><br>
+	 * See <a href="https://wiki.weewoo.net/wiki/Packing">this packed ints explanation</a> and <a href="https://amongus-debugger.vercel.app/tools">this online debugger</a> for more info.
+	 *
+	 * @param value Integer to pack
+	 * @return packed bytes
+	 */
+	public static byte[] packInteger(int value) {
+		ArrayList<Byte> packedBytes = new ArrayList<>();
+
+		do {
+			byte bite = (byte) (value & 0b11111111);
+
+			if (value >= 0b10000000) {
+				bite |= 0b10000000;
+			}
+
+			value >>>= 7;
+			packedBytes.add(bite);
+		} while (value > 0);
+
+		// Create Primitive Byte Array
+		byte[] packedBytesPrimitive = new byte[packedBytes.size()];
+
+		// Unbox Byte Class to byte
+		for (int i = 0; i < packedBytesPrimitive.length; i++)
+			packedBytesPrimitive[i] = packedBytes.get(i); // Apparently Unboxing Is Automatic
+
+		return packedBytesPrimitive;
+	}
+
+	/**
+	 * Public Domain (or Unlicense) Implementation of Unpacking An Integer For Among Us
+	 *
+	 * <br><br>
+	 * See <a href="https://wiki.weewoo.net/wiki/Packing">this packed ints explanation</a> and <a href="https://amongus-debugger.vercel.app/tools">this online debugger</a> for more info.
+	 *
+	 * @param packedBytes Packed Bytes to Unpack
+	 * @return Unsigned Integer Represented
+	 */
+	public static int unpackInteger(byte[] packedBytes) throws InvalidBytesException {
+		boolean readMore = true;
+		int shift = 0;
+		int value = 0;
+
+		int bite;
+		int position = 0;
+		while (readMore && (position < packedBytes.length)) {
+			bite = (packedBytes[position] & 0xFF); // U-Int 8
+
+			if (bite >= 0x80) {
+				readMore = true;
+
+				bite ^= 0x80;
+			} else {
+				readMore = false;
+			}
+
+			value |= bite << shift;
+			shift += 7;
+
+			position++;
+		}
+
+		return value;
+	}
 }
