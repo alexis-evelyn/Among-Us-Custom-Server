@@ -23,7 +23,7 @@ public class GameSearchEvent extends Event {
         this.impostors = impostors;
 
         try {
-            this.games = SearchGame.getFakeSearchBytes(impostors, language.getLong(), maps);
+            this.games = SearchGame.getFakeSearchBytes(impostors, language.getUnsignedShort(), maps);
         } catch (UnknownHostException e) {
             LogHelper.printLineErr(Main.getTranslationBundle().getString("search_unknown_host"));
             e.printStackTrace();

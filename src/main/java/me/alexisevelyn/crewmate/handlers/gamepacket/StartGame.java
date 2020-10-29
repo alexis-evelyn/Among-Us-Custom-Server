@@ -50,12 +50,13 @@ public class StartGame {
 
 		// Useful For Verifying Bytes
 		// LogHelper.printPacketBytes(byteLength, reliableBytes);
-		
+
 		// Data
 		int maxPlayers = reliableBytes[2];
 		byte map = reliableBytes[7];
 		int imposterCount = reliableBytes[31];
-		Language language = Language.getLanguage(PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4]));
+
+		Language language = Language.getLanguage(PacketHelper.getUnsignedShortLE(reliableBytes[3], reliableBytes[4]));
 
 		String mapName = Map.getMapName(Map.getMap(map));
 		String languageName = Language.getLanguageName(language);

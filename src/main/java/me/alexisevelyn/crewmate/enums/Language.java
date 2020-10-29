@@ -8,32 +8,40 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
+/**
+ * Vanilla Supported Languages
+ */
 public enum Language {
-	ENGLISH(PacketHelper.getUnsignedIntLE((byte) 0x00, (byte) 0x01)),
-	OTHER(PacketHelper.getUnsignedIntLE((byte) 0x01, (byte) 0x00)),
-	SPANISH(PacketHelper.getUnsignedIntLE((byte) 0x02, (byte) 0x00)),
-	KOREAN(PacketHelper.getUnsignedIntLE((byte) 0x04, (byte) 0x00)),
-	RUSSIAN(PacketHelper.getUnsignedIntLE((byte) 0x08, (byte) 0x00)),
-	PORTUGUESE(PacketHelper.getUnsignedIntLE((byte) 0x10, (byte) 0x00)),
-	ARABIC(PacketHelper.getUnsignedIntLE((byte) 0x20, (byte) 0x00)),
-	FILIPINO(PacketHelper.getUnsignedIntLE((byte) 0x40, (byte) 0x00)),
-	POLISH(PacketHelper.getUnsignedIntLE((byte) 0x80, (byte) 0x00));
+	OTHER(1),
+	SPANISH(2),
+	KOREAN(4),
+	RUSSIAN(8),
+	PORTUGUESE(16),
+	ARABIC(32),
+	FILIPINO(64),
+	POLISH(128),
+	ENGLISH(256);
 
-	private final long language;
+	private final int language;
 
-	Language(long language) {
+	Language(int language) {
 		this.language = language;
 	}
 
-	private static final java.util.Map<Long, Language> languageSearch = new HashMap<>();
+	private static final java.util.Map<Integer, Language> languageSearch = new HashMap<>();
 
-	public long getLong() {
+	/**
+	 * Supposedly a UInt-32 according to <a href="https://wiki.weewoo.net/wiki/Languages">the wiki</a>. but I've only seen a UInt-16 LE.
+	 *
+	 * @return language as unsigned short (UInt-16)
+	 */
+	public int getUnsignedShort() {
 		return this.language;
 	}
 
 	@Nullable
-	public static Language getLanguage(long languageInteger) {
-		return languageSearch.get(languageInteger);
+	public static Language getLanguage(int languageInt) {
+		return languageSearch.get(languageInt);
 	}
 
 	@NotNull
