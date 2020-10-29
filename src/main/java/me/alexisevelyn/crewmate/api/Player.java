@@ -75,7 +75,7 @@ public class Player extends Entity {
         byte flags = (byte) (entity instanceof Player ? 1 : 0);
         byte[] components = new byte[]{};
         int componentCount = components.length;
-        byte[] message = new byte[]{SendOption.RELIABLE.getSendOption(), 0x04, (byte) id, (byte) ownerId, flags, (byte) componentCount, 0x0};
+        byte[] message = new byte[]{SendOption.RELIABLE.getByte(), 0x04, (byte) id, (byte) ownerId, flags, (byte) componentCount, 0x0};
         server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }*/
 
@@ -152,7 +152,7 @@ public class Player extends Entity {
 
     /*
         TODO: Implement Code
-        byte[] header = new byte[] {SendOption.NONE.getSendOption(), 0x00, 0x02, 0x0d, 0x00, 0x07};
+        byte[] header = new byte[] {SendOption.NONE.getByte(), 0x00, 0x02, 0x0d, 0x00, 0x07};
 	    return PacketHelper.mergeBytes(header, new byte[]{(byte) RPC.SNAP_TO.getRPC(), 5, 5});
      */
 

@@ -49,36 +49,46 @@ public class CosmeticPacket {
 		switch (rpcType) {
 			case SET_COLOR:
 				printByteMeaning("color_packet", PlayerColor.getColorName(PlayerColor.getColor(cosmeticByte)));
+
 				PlayerChangeColorEvent event = new PlayerChangeColorEvent(PlayerColor.getColor(cosmeticByte));
 				event.call(server);
+
 				if (!event.isCancelled()) {
 					// TODO: Change skin to PlayerChangeColorEvent#getColor()
 				} else {
 					// TODO: Cancel skin changing.
 				}
+
 				break;
 			case SET_HAT:
 				printByteMeaning("hat_packet", Hat.getHatName(Hat.getHat(cosmeticByte)));
+
 				PlayerChangeHatEvent event1 = new PlayerChangeHatEvent(Hat.getHat(cosmeticByte));
 				event1.call(server);
+
 				if (!event1.isCancelled()) {
 					// TODO: Change hat to PlayerChangeHatEvent#getHat()
 				} else {
 					// TODO: Cancel hat changing.
 				}
+
 				break;
 			case SET_PET:
 				printByteMeaning("pet_packet", Pet.getPetName(Pet.getPet(cosmeticByte)));
+
 				PlayerChangePetEvent event2 = new PlayerChangePetEvent(Pet.getPet(cosmeticByte));
 				event2.call(server);
+
 				if (!event2.isCancelled()) {
 					// TODO: Change pet to PlayerChangePetEvent#getPet()
 				} else {
 					// TODO: Cancel pet changing.
 				}
+
 				break;
 			case SET_SKIN:
 				printByteMeaning("skin_packet", Skin.getSkinName(Skin.getSkin(cosmeticByte)));
+
 				PlayerChangeSkinEvent event3 = new PlayerChangeSkinEvent(Skin.getSkin(cosmeticByte));
 				event3.call(server);
 

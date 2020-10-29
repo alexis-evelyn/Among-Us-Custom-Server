@@ -5,7 +5,7 @@ import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.Map;
-import me.alexisevelyn.crewmate.enums.ReliablePacketType;
+import me.alexisevelyn.crewmate.enums.GamePacketType;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.PlayerJoinEvent;
 import me.alexisevelyn.crewmate.events.impl.PlayerJoinLobbyEvent;
@@ -130,10 +130,10 @@ public class JoinLobbyPacket {
 		// S->C - 0000   01 00 02 0d 00 07 0c 0e 1b 80 94 04 02 00 94 04   ................
 		// S->C - 0010   02 00 00 06 00 0a 0c 0e 1b 80 01 00               ............
 
-		return PacketHelper.mergeBytes(new byte[] {SendOption.RELIABLE.getSendOption()},
+		return PacketHelper.mergeBytes(new byte[] {SendOption.RELIABLE.getByte()},
 				nonce,
 				packetLength, // Length (Basically Where Other Clients Count Is)
-				new byte[] {(byte) ReliablePacketType.JOINED_GAME.getReliablePacketType()},
+				new byte[] {(byte) GamePacketType.JOINED_GAME.getReliablePacketType()},
 				gameCodeBytes, // TODO: Retrieve Game Assigned To Player From GameManager or Wherever
 				clientID,
 				hostID,

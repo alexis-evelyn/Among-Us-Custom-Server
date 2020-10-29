@@ -8,22 +8,22 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public enum AlterGame {
-	CHANGE_PRIVACY(0x0a); // 0x0a = 10
+	CHANGE_PRIVACY((byte) 0x0a); // 0x0a = 10
 
-	private final int alterGameFlag;
+	private final byte alterGameFlag;
 
-	AlterGame(int playerColor) {
-		this.alterGameFlag = playerColor;
+	AlterGame(byte alterGameFlag) {
+		this.alterGameFlag = alterGameFlag;
 	}
 
-	private static final java.util.Map<Integer, AlterGame> alterGameFlagSearch = new HashMap<>();
+	private static final java.util.Map<Byte, AlterGame> alterGameFlagSearch = new HashMap<>();
 
-	public int getAlterGameFlag() {
+	public byte getAlterGameFlag() {
 		return this.alterGameFlag;
 	}
 
 	@Nullable
-	public static AlterGame getAlterGameFlag(int alterGameFlag) {
+	public static AlterGame getAlterGameFlag(byte alterGameFlag) {
 		return alterGameFlagSearch.get(alterGameFlag);
 	}
 
@@ -31,9 +31,7 @@ public enum AlterGame {
 	public static String getAlterGameFlagName(@NotNull AlterGame alterGameFlag) {
 		ResourceBundle translation = Main.getTranslationBundle();
 
-		if (alterGameFlag == null)
-			return translation.getString("unknown");
-
+		//noinspection SwitchStatementWithTooFewBranches
 		switch (alterGameFlag) {
 			case CHANGE_PRIVACY:
 				return translation.getString("alter_game_change_privacy");

@@ -4,24 +4,22 @@ import me.alexisevelyn.crewmate.*;
 import me.alexisevelyn.crewmate.api.Game;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
+import me.alexisevelyn.crewmate.enums.GamePacketType;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.HostGameEvent;
-import me.alexisevelyn.crewmate.events.impl.PlayerJoinEvent;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.handlers.GameManager;
-import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
+import org.apiguardian.api.API;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 public class StartGame {
@@ -37,6 +35,7 @@ public class StartGame {
 	 * @throws InvalidGameCodeException
 	 * @throws InvalidBytesException
 	 */
+	@API(status = API.Status.EXPERIMENTAL)
 	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) throws InvalidGameCodeException, InvalidBytesException {
 		// 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a
 		// --------------------------------------------------------------------------------------------------------------------------------
@@ -54,9 +53,9 @@ public class StartGame {
 		
 		// Data
 		int maxPlayers = reliableBytes[2];
-		int map = reliableBytes[7];
+		byte map = reliableBytes[7];
 		int imposterCount = reliableBytes[31];
-		Language language = Language.getLanguage(Language.convertToInt(reliableBytes[3], reliableBytes[4]));
+		Language language = Language.getLanguage(PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4]));
 
 		String mapName = Map.getMapName(Map.getMap(map));
 		String languageName = Language.getLanguageName(language);
@@ -71,9 +70,10 @@ public class StartGame {
 
 		try {
 			// TODO: Double Check For "InvalidBytesException: Game Code Bytes Needs To Be 4 Bytes Long!!!" on Below Line
-			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap(map), language);
+			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap((byte) map), language);
 			event.call(server);
 			byte[] newCode = GameCodeHelper.generateGameCodeBytes(event.getGameCode());
+
 			if (newCode.length != 0) {
 				GameManager.addGame(new Game(newCode));
 				return useCustomCode(newCode);
@@ -88,33 +88,31 @@ public class StartGame {
 	}
 
 	// For S->C
+	@API(status = API.Status.EXPERIMENTAL)
 	private static byte[] getRandomGameCode() {
-		// Game Code - AMLQTQ (89:5a:2a:80) - Purple - Goggles - Private - 1/10 Players
-		// S->C - 0000   01 00 01 04 00 00 89 5a 2a 80                     .......Z*.
+		byte[] nonce = new byte[] {(byte) 0xbb, 0x01};
+		byte[] gameCode = getCodeFromList(); // Game Code
+		byte[] gameCodeSize = PacketHelper.convertShortToLE((short) gameCode.length);
+		byte hostGame = (byte) GamePacketType.HOST_SETTINGS.getReliablePacketType();
 
-		// Game Code - SZGEYQ (c3:41:38:80) - Purple - Goggles - Private - 1/10 Players
-		// S->C - 0000   01 00 01 04 00 00 c3 41 38 80                     .......A8.
-
-		// Game Code - SIXLXQ (45:9a:17:80) - Red - Goggles - Private - 1/10 Players
-		// S->C - 0000   01 00 01 04 00 00 45 9a 17 80                     ......E...
-
-		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x01, 0x04, 0x00, 0x00};
-		byte[] message = getCodeFromList(); // Game Code
-
-		// The client will respond with a packet that triggers handleJoinPrivateGame(DatagramPacket);
-		return PacketHelper.mergeBytes(header, message);
+		// The client will respond with a packet that triggers getNewGameSettings(...);
+		return new byte[] {SendOption.RELIABLE.getByte(), nonce[0], nonce[1],
+				gameCodeSize[0], gameCodeSize[1], hostGame,
+				gameCode[0], gameCode[1], gameCode[2], gameCode[3]};
 	}
 
 	// TODO: Rewrite
+	@API(status = API.Status.EXPERIMENTAL)
 	private static byte[] useCustomCode(byte... code) throws InvalidBytesException {
 		if (code.length != 4)
 			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 4));
 
-		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, 0x01, 0x04, 0x00, 0x00};
+		byte[] header = new byte[] {SendOption.RELIABLE.getByte(), 0x00, 0x01, 0x04, 0x00, 0x00};
 		return PacketHelper.mergeBytes(header, code);
 	}
 
 	@Deprecated
+	@API(status = API.Status.EXPERIMENTAL)
 	private static byte[] getCodeFromList() {
 		try {
 

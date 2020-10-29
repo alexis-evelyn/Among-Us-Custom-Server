@@ -1,6 +1,7 @@
 package me.alexisevelyn.crewmate.enums;
 
 import me.alexisevelyn.crewmate.Main;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,44 +9,36 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public enum Language {
-	ENGLISH(convertToInt(0x00, 0x01)),
-	OTHER(convertToInt(0x01, 0x00)),
-	SPANISH(convertToInt(0x02, 0x00)),
-	KOREAN(convertToInt(0x04, 0x00)),
-	RUSSIAN(convertToInt(0x08, 0x00)),
-	PORTUGUESE(convertToInt(0x10, 0x00)),
-	ARABIC(convertToInt(0x20, 0x00)),
-	FILIPINO(convertToInt(0x40, 0x00)),
-	POLISH(convertToInt(0x80, 0x00));
+	ENGLISH(PacketHelper.getUnsignedIntLE((byte) 0x00, (byte) 0x01)),
+	OTHER(PacketHelper.getUnsignedIntLE((byte) 0x01, (byte) 0x00)),
+	SPANISH(PacketHelper.getUnsignedIntLE((byte) 0x02, (byte) 0x00)),
+	KOREAN(PacketHelper.getUnsignedIntLE((byte) 0x04, (byte) 0x00)),
+	RUSSIAN(PacketHelper.getUnsignedIntLE((byte) 0x08, (byte) 0x00)),
+	PORTUGUESE(PacketHelper.getUnsignedIntLE((byte) 0x10, (byte) 0x00)),
+	ARABIC(PacketHelper.getUnsignedIntLE((byte) 0x20, (byte) 0x00)),
+	FILIPINO(PacketHelper.getUnsignedIntLE((byte) 0x40, (byte) 0x00)),
+	POLISH(PacketHelper.getUnsignedIntLE((byte) 0x80, (byte) 0x00));
 
-	public static int convertToInt(int first, int second) {
-		// https://stackoverflow.com/a/4768950
-		return ((first & 0xff) << 8) | (second & 0xff);
-	}
+	private final long language;
 
-	private final int language;
-
-	Language(int language) {
+	Language(long language) {
 		this.language = language;
 	}
 
-	private static final java.util.Map<Integer, Language> languageSearch = new HashMap<>();
+	private static final java.util.Map<Long, Language> languageSearch = new HashMap<>();
 
-	public int getLanguage() {
+	public long getLong() {
 		return this.language;
 	}
 
 	@Nullable
-	public static Language getLanguage(int languageInteger) {
+	public static Language getLanguage(long languageInteger) {
 		return languageSearch.get(languageInteger);
 	}
 
 	@NotNull
 	public static String getLanguageName(@NotNull Language language) {
 		ResourceBundle translation = Main.getTranslationBundle();
-
-		if (language == null)
-			return translation.getString("unknown");
 
 		switch (language) {
 			case ARABIC:

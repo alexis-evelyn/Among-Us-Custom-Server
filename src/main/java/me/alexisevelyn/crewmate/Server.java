@@ -157,7 +157,7 @@ public class Server extends Thread {
 		this.socket.send(packet);
 
 		// Check If Disconnect and Disconnect From Our End
-		SendOption replyOption = SendOption.getSendOption(replyBuffer[0]);
+		SendOption replyOption = SendOption.getByte(replyBuffer[0]);
 
 		// Sanitization
 		if (replyOption == null)

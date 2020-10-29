@@ -1,14 +1,12 @@
 package me.alexisevelyn.crewmate.packethandler.packets;
 
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
-import me.alexisevelyn.crewmate.enums.ReliablePacketType;
+import me.alexisevelyn.crewmate.enums.GamePacketType;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
-import me.alexisevelyn.crewmate.packethandler.packets.reliable.GameDataPacket;
 import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.JoinLobbyPacket;
 
 import java.io.IOException;
@@ -16,7 +14,7 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class AmongUsPacket {
+public class GamePacket {
 	/**
 	 * Determines type of Reliable Packet and passes it off to responsible handler
 	 *
@@ -30,18 +28,18 @@ public class AmongUsPacket {
 	public static byte[] handleAmongUsPacket(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... payloadBytes) throws InvalidGameCodeException, IOException {
 		// Needs to Be At Least 6 Bytes Long To Be A Valid Reliable Packet
 		if (byteLength < 3)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
 
 		short payloadLength = ByteBuffer.wrap(new byte[] {payloadBytes[0], payloadBytes[1]}).order(ByteOrder.LITTLE_ENDIAN).getShort();
 
 		if (payloadLength > (byteLength - 3))
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("payload_length_too_long"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_payload_length_too_long"));
 
-		ReliablePacketType type = ReliablePacketType.getReliablePacketType(payloadBytes[2]);
+		GamePacketType type = GamePacketType.getByte(payloadBytes[2]);
 
 		// Sanitization Check
 		if (type == null)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("reliable_packet_unknown_type"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_unknown_type"));
 
 		// TODO: Add support for looping through all the payloads
 		byte[] packetData = PacketHelper.extractFirstPartBytes(payloadLength, PacketHelper.extractSecondPartBytes(3, payloadBytes));

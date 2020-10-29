@@ -81,7 +81,7 @@ public class HandshakePacket {
 		}
 
 		// Invalid Packet Received - Close Connection
-		return new byte[] {SendOption.DISCONNECT.getSendOption()};
+		return new byte[] {SendOption.DISCONNECT.getByte()};
 	}
 
 	/**

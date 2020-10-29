@@ -1,6 +1,5 @@
 package me.alexisevelyn.crewmate.packethandler;
 
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
@@ -21,7 +20,7 @@ public class HazelParser {
 	 */
 	@NotNull
 	public static byte[] handlePacket(DatagramPacket packet, Server server) throws InvalidGameCodeException, IOException {
-		SendOption sendOption = SendOption.getSendOption(packet.getData()[0]);
+		SendOption sendOption = SendOption.getByte(packet.getData()[0]);
 
 		// Throw Out Any Unknown Packets
 		// Sanitization Check
@@ -56,11 +55,11 @@ public class HazelParser {
 				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
 				byte[] reliableBytes = PacketHelper.extractSecondPartBytes(3, packet.getData());
 
-				return AmongUsPacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 3), reliableBytes);
+				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 3), reliableBytes);
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
 				byte[] unreliableBytes = PacketHelper.extractSecondPartBytes(1, packet.getData());
 
-				return AmongUsPacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 1), unreliableBytes);
+				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 1), unreliableBytes);
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
 				// Not Implemented Even on Hazel. No Idea What The Packet Structure Would Look Like
 				return FragmentPacket.handleFragmentPacket(packet, server);

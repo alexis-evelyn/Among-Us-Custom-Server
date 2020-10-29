@@ -35,7 +35,7 @@ public enum DisconnectReason {
 
 	private static final java.util.Map<Byte, DisconnectReason> reasonSearch = new HashMap<>();
 
-	public byte getReason() {
+	public byte getByte() {
 		return this.reason;
 	}
 
@@ -47,9 +47,6 @@ public enum DisconnectReason {
 	@NotNull
 	public static String getReasonName(@NotNull DisconnectReason disconnectReason) {
 		ResourceBundle translation = Main.getTranslationBundle();
-
-		if (disconnectReason == null)
-			return translation.getString("unknown");
 
 		switch (disconnectReason) {
 			case NONE:

@@ -75,7 +75,7 @@ public class SyncSettings {
 
 		// Must Equal 01 00 03 (Join Game Via Code) or 01 00 04 (Create Game)
 		// TODO: Toss Check!!!
-		if (!(buffer[0] == SendOption.RELIABLE.getSendOption() && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
+		if (!(buffer[0] == SendOption.RELIABLE.getByte() && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
 			// return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_unknown_join_type"));
 			return new byte[0];
 

@@ -43,7 +43,7 @@ public class AcknowledgementPacket {
 		if (nonceBytes.length != 2)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("nonce_wrong_size"));
 
-		return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), nonceBytes[0], nonceBytes[1], (byte) 0xff};
+		return new byte[] {SendOption.ACKNOWLEDGEMENT.getByte(), nonceBytes[0], nonceBytes[1], (byte) 0xff};
 	}
 
 	/**
