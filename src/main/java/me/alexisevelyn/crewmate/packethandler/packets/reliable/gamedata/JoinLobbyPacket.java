@@ -44,12 +44,6 @@ public class JoinLobbyPacket {
 			byte[] reply = generateJoinLobbyReply(gamecode);
 			LogHelper.printPacketBytes(reply.length, reply);
 
-			// Added Game: SPOONS
-			// +-------------------------------------------------------------------------------------------------------------------------------------------------------+
-			// | Positions | 0  | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 |
-			// | Bytes     | 01 | 00 | 01 | 16 | 00 | 07 | BF | 28 | A2 | 8A | 94 | 04 | 02 | 00 | 94 | 04 | 02 | 00 | 00 | 06 | 00 | 0A | 0C | 0E | 1B | 80 | 01 | 00 |
-			// +-------------------------------------------------------------------------------------------------------------------------------------------------------+
-
 			return reply;
 		} else {
 			return ClosePacket.closeWithMessage(event.getReason());
@@ -100,29 +94,31 @@ public class JoinLobbyPacket {
 	private static byte[] generateJoinLobbyReply(String gameCode) throws InvalidGameCodeException {
 		// 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b
 		// -----------------------------------------------------------------------------------
-		// 01 00 01 16 00 07 41 4c 45 58 94 04 02 00 94 04 02 00 00 06 00 0a 0c 0e 1b 80 01 00
+		// 01 00 02 0d 00 07 fd 65 04 80 9f e4 04 00 9f e4 04 00 00
+		// 01 00 01 10 00 07 32 3a 43 80 92 cd 04 00 86 cd 04 00 01 86 9b 13
 		// -----------------------------------------------------------------------------------
-		// RP NO NO PL PL RC GC GC GC GC CI CI CI CI HI HI HI HI OC UK UK UK UK UK UK UK UK UK
-		// RP = Reliable Packet
-		// NO = Nonce
-		// PL = Packet Length
+		// RP NO NO PL PL RC GC GC GC GC CI CI CI CI HI HI HI HI OC P1 P1 P1 P1 P2 P2 P2 P2 UK
+		// RP = Reliable Packet (1)
+		// NO = Nonce (2 or 5)
+		// PL = Packet Length (13 or 16)
 		// RC = Reliable Packet Type (0x07 for Joined Game) - https://wiki.weewoo.net/wiki/Protocol#7_-_Joined_Game
-		// GC = Game Code (0x41 0x4c 0x45 0x58 For Alex)
-		// CI = Client ID
-		// HI = Host ID
-		// OC = Other Clients (Count)
+		// GC = Game Code (0xfd 0x65 0x04 0x80 For JCBDQQ or 0x32 0x3a 0x43 0x80 for KBGSLQ)
+		// CI = Client ID (UInt-32 LE - 320671 or 314770)
+		// HI = Host ID (UInt-32 LE - 320671 or 314758)
+		// OC = Other Clients (Count - 0 or 1)
+		// P1 = Other Client ID (Packed Int - none or 314758)
+		// P2 = Other Client ID (Packed Int - none)
 		// UK = Unknown
 
-		byte[] nonce = new byte[] {(byte) 0x00, (byte) 0x01};
+		// TODO: Cannot already be used
+		byte[] nonce = new byte[] {(byte) 0x01, (byte) 0x01};
 
-		byte[] clientID = new byte[] {(byte) 0x94, 0x04, 0x02, 0x00}; // 50462976 - Looks to just be adding the numbers together from left to right (according to https://amongus-debugger.vercel.app/)
+		byte[] clientID = new byte[] {(byte) 0x94, 0x04, 0x02, 0x00}; // It's just a UInt-32 LE
 		byte[] hostID = clientID; // Implement
 		byte[] clientCount = new byte[] {0x00};
+		byte[] gameCodeBytes = GameCodeHelper.generateGameCodeBytes(gameCode);
 
-		// ???
-		byte[] wtfKnows = new byte[] {0x06, 0x00, 0x0a, 0x0c, 0x0e, 0x1b, (byte) 0x80, 0x01, 0x00};
-
-		byte[] packetLength = PacketHelper.convertShortToLE((short) (13)); // Length (Basically Where Other Clients Count Is)
+		byte[] packetLength = PacketHelper.convertShortToLE((short) (gameCodeBytes.length + clientID.length + hostID.length + clientCount.length)); // Length (Basically Where Other Clients Count Is)
 
 		// Game Code - TVJUXQ (0c:0e:1b:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 0c 0e 1b 80 07                  ...........
@@ -134,7 +130,7 @@ public class JoinLobbyPacket {
 				nonce,
 				packetLength, // Length (Basically Where Other Clients Count Is)
 				new byte[] {(byte) ReliablePacketType.JOINED_GAME.getReliablePacketType()},
-				GameCodeHelper.generateGameCodeBytes(gameCode), // TODO: Retrieve Game Assigned To Player From GameManager or Wherever
+				gameCodeBytes, // TODO: Retrieve Game Assigned To Player From GameManager or Wherever
 				clientID,
 				hostID,
 				clientCount
