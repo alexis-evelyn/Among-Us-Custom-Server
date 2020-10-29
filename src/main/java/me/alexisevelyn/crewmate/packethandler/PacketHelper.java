@@ -81,6 +81,39 @@ public class PacketHelper {
 	}
 
 	/**
+	 * Helper utility to convert int into a little endian ordered byte array
+	 *
+	 * @param value The int to be converted
+	 * @return The byte array to be used as you wish
+	 */
+	@NotNull
+	public static byte[] convertIntToBE(int value) {
+		return new byte[] {(byte) ((value >> 24) & 0xff), (byte) ((value >> 16) & 0xff), (byte) ((value >> 8) & 0xff), (byte) (value & 0xff)};
+	}
+
+	/**
+	 * Helper utility to convert int into a little endian ordered byte array
+	 *
+	 * @param value The int to be converted
+	 * @return The byte array to be used as you wish
+	 */
+	@NotNull
+	public static byte[] convertIntToLE(int value) {
+		return new byte[] {(byte) (value & 0xff), (byte) ((value >> 8) & 0xff), (byte) ((value >> 16) & 0xff), (byte) ((value >> 24) & 0xff)};
+	}
+
+	/**
+	 * Helper utility to convert short into a big endian ordered byte array
+	 *
+	 * @param value The short to be converted
+	 * @return The byte array to be used as you wish
+	 */
+	@NotNull
+	public static byte[] convertShortToBE(short value) {
+		return new byte[] {(byte) (value >> 8 & 0xff), (byte) ((value) & 0xff)};
+	}
+
+	/**
 	 * Helper utility to convert short into a little endian ordered byte array
 	 *
 	 * @param value The short to be converted
@@ -88,7 +121,7 @@ public class PacketHelper {
 	 */
 	@NotNull
 	public static byte[] convertShortToLE(short value) {
-		return new byte[] {(byte)(value & 0xff), (byte)((value >> 8) & 0xff)};
+		return new byte[] {(byte) (value & 0xff), (byte) ((value >> 8) & 0xff)};
 	}
 
 	/**
@@ -98,7 +131,6 @@ public class PacketHelper {
 	 * @return unsigned short formatted as a signed int
 	 * @throws InvalidBytesException for not providing the correct number of bytes
 	 */
-	@NotNull
 	public static int getUnsignedShortBE(@NotNull byte... shortBytes) throws InvalidBytesException {
 		if (shortBytes == null)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
@@ -131,7 +163,49 @@ public class PacketHelper {
 			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 2));
 
 		// Tutorial: https://stackoverflow.com/a/28580238/6828099
-		return ((shortBytes[0] & 0xff) | ((shortBytes[1] & 0xff) << 8));
+		return (shortBytes[0] & 0xff) | ((shortBytes[1] & 0xff) << 8);
+	}
+
+	/**
+	 * Flips bytes and internally calls {@link #getUnsignedIntLE(byte...)}
+	 *
+	 * @param intBytes 4 byte array in Big Endian form
+	 * @return unsigned int formatted as a signed long
+	 * @throws InvalidBytesException for not providing the correct number of bytes
+	 */
+	public static long getUnsignedIntBE(@NotNull byte... intBytes) throws InvalidBytesException {
+		if (intBytes == null)
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+
+		if (intBytes.length != 4)
+			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 4));
+
+		return getUnsignedIntLE(intBytes[3], intBytes[2], intBytes[1], intBytes[0]);
+	}
+
+	/**
+	 * Retrieves an unsigned int and stores as a signed int.
+	 *
+	 * An int is 4 bytes or is otherwise known as being 32 bit.
+	 *
+	 * Java doesn't have unsigned data types except for char.
+	 *
+	 * See <a href="https://stackoverflow.com/a/6850755/6828099">this Stackoverflow Answer</a> for more details.
+	 * Also see <a href="https://www.darksleep.com/player/JavaAndUnsignedTypes.html">this page</a> for an in depth explanation on handling signed/unsigned data types.
+	 *
+	 * @param intBytes 4 byte array in Little Endian form
+	 * @return unsigned int formatted as a signed long
+	 * @throws InvalidBytesException for not providing the correct number of bytes
+	 */
+	public static long getUnsignedIntLE(@NotNull byte... intBytes) throws InvalidBytesException {
+		if (intBytes == null)
+			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+
+		if (intBytes.length != 4)
+			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 4));
+
+		// Tutorial: https://stackoverflow.com/a/28580238/6828099
+		return (intBytes[0] & 0xff) | ((intBytes[1] & 0xff) << 8) | ((intBytes[2] & 0xff) << 16) | ((intBytes[3] & 0xff) << 24) & (-1L >>> 32);
 	}
 
 	/**

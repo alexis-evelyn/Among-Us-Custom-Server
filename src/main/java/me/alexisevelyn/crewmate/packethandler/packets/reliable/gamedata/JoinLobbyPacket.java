@@ -111,14 +111,18 @@ public class JoinLobbyPacket {
 		// UK = Unknown
 
 		// TODO: Cannot already be used
-		byte[] nonce = new byte[] {(byte) 0x01, (byte) 0x01};
-
-		byte[] clientID = new byte[] {(byte) 0x94, 0x04, 0x02, 0x00}; // It's just a UInt-32 LE
-		byte[] hostID = clientID; // Implement
-		byte[] clientCount = new byte[] {0x00};
+		byte[] nonce = new byte[] {(byte) 0x02, (byte) 0x01};
 		byte[] gameCodeBytes = GameCodeHelper.generateGameCodeBytes(gameCode);
 
-		byte[] packetLength = PacketHelper.convertShortToLE((short) (gameCodeBytes.length + clientID.length + hostID.length + clientCount.length)); // Length (Basically Where Other Clients Count Is)
+		int clientIDInt = 12346;
+		int hostIDInt = clientIDInt;
+		byte[] clientID = PacketHelper.convertIntToLE(clientIDInt); // It's just a UInt-32 LE
+		byte[] hostID = PacketHelper.convertIntToLE(hostIDInt); // It's just a UInt-32 LE
+
+		byte[] packedClients = new byte[0]; // PacketHelper.packInteger(hostIDInt);
+		byte[] clientCount = new byte[] {0x00}; // 0x01
+
+		byte[] packetLength = PacketHelper.convertShortToLE((short) (gameCodeBytes.length + clientID.length + hostID.length + clientCount.length + packedClients.length)); // Length (Basically Where Other Clients Count Is)
 
 		// Game Code - TVJUXQ (0c:0e:1b:80) - Red - Goggles - Private - 1/10 Players
 		// C->S - 0000   01 00 03 05 00 01 0c 0e 1b 80 07                  ...........
@@ -133,7 +137,8 @@ public class JoinLobbyPacket {
 				gameCodeBytes, // TODO: Retrieve Game Assigned To Player From GameManager or Wherever
 				clientID,
 				hostID,
-				clientCount
+				clientCount,
+				packedClients
 		);
 	}
 }
