@@ -12,18 +12,18 @@ import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import java.net.UnknownHostException;
 
 public class GameSearchEvent extends Event {
-    private final Language language;
+    private final Language[] languages;
     private final Map[] maps;
     private final int impostors;
     private byte[] games;
 
-    public GameSearchEvent(Language language, int impostors, Map... maps) {
-        this.language = language;
+    public GameSearchEvent(Language[] languages, int impostors, Map... maps) {
+        this.languages = languages;
         this.maps = maps;
         this.impostors = impostors;
 
         try {
-            this.games = SearchGame.getFakeSearchBytes(impostors, language.getUnsignedInt(), maps);
+            this.games = SearchGame.getFakeSearchBytes(impostors, getLanguage().getUnsignedInt(), maps);
         } catch (UnknownHostException e) {
             LogHelper.printLineErr(Main.getTranslationBundle().getString("search_unknown_host"));
             e.printStackTrace();
@@ -42,7 +42,11 @@ public class GameSearchEvent extends Event {
     }
 
     public Language getLanguage() {
-        return language;
+        return getLanguages()[0];
+    }
+
+    public Language[] getLanguages() {
+        return languages;
     }
 
     public int getImpostors() {

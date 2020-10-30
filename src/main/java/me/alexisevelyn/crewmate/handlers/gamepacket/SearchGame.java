@@ -41,34 +41,22 @@ public class SearchGame {
 		int numberOfImposters = buffer[38];
 
 		// List of Maps Searched For
-		Map[] maps = parseMapsSearch(buffer[14]);
+		Map[] maps = MapSearch.getMapArray(buffer[14]);
 
 		// Language To Search By
-		Language language = Language.getLanguage(PacketHelper.getUnsignedIntLE(buffer[10], buffer[11], buffer[12], buffer[13]));
+		// TODO: Array Languages
+		long languageInt = PacketHelper.getUnsignedIntLE(buffer[10], buffer[11], buffer[12], buffer[13]);
+		Language[] languages = Language.getLanguageArray(languageInt);
 
 		ResourceBundle translation = Main.getTranslationBundle();
 		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
-		LogHelper.printLine(String.format(translation.getString("maps_logged"), getPrintableMapsList(maps)));
-		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getLanguageName(language)));
+		LogHelper.printLine(String.format(translation.getString("maps_logged"), MapSearch.getPrintableMapsList(maps)));
+		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getPrintableLanguagesList(languages)));
 
-		GameSearchEvent event = new GameSearchEvent(language, numberOfImposters, maps);
+		GameSearchEvent event = new GameSearchEvent(languages, numberOfImposters, maps);
 		event.call(server);
 
 		return event.getGames();
-	}
-
-	public static String getPrintableMapsList(Map... maps) {
-		// List of Maps Being Included In Search
-		StringBuilder printableMapsList = new StringBuilder();
-
-		// Append Delimiters (Usually Comma + Space) To List and Then Remove Last Delimiter
-		String delimiter = Main.getTranslationBundle().getString("list_delimiter_logged");
-		for (Map map : maps) {
-			printableMapsList.append(Map.getMapName(map)).append(delimiter);
-		}
-		printableMapsList.delete(printableMapsList.length() - delimiter.length(), printableMapsList.length());
-
-		return printableMapsList.toString();
 	}
 
 	public static byte[] getFakeSearchBytes(int numberOfImposters, long language, Map... maps) throws UnknownHostException {
@@ -213,63 +201,6 @@ public class SearchGame {
 				new byte[] {(byte) mapID},
 				new byte[] {(byte) imposterCount},
 				new byte[] {(byte) maxPlayerCount});
-	}
-
-	public static Map[] parseMapsSearch(byte mapNumber) {
-		// From what I'm hearing, this is a bitfield. https://discordapp.com/channels/750301084202958899/761731747762667560/765242112031064074
-		// This function parses as a bitfield so if say 9 maps exist, then we don't have to have every possible map combination written in code.
-
-		ArrayList<Map> maps = new ArrayList<>();
-		if ((MapSearch.SKELD.getByte() & mapNumber) > 0) {
-			// Skeld
-			maps.add(Map.SKELD);
-		}
-
-		if ((MapSearch.MIRA_HQ.getByte() & mapNumber) > 0) {
-			// Mira-HQ
-			maps.add(Map.MIRA_HQ);
-		}
-
-		if ((MapSearch.POLUS.getByte() & mapNumber) > 0) {
-			// Polus
-			maps.add(Map.POLUS);
-		}
-
-		// As of this writing, these maps have either not been released or created yet.
-		// So, I could not tell you the official names of the maps (especially for the ones that simply don't exist).
-		if ((MapSearch.STICKMIN.getByte() & mapNumber) > 0) {
-			// Stickmin Map
-			maps.add(Map.STICKMIN);
-		}
-
-		if ((MapSearch.MAP_FIVE.getByte() & mapNumber) > 0) {
-			// Fifth Map
-			maps.add(Map.MAP_FIVE);
-		}
-
-		if ((MapSearch.MAP_SIX.getByte() & mapNumber) > 0) {
-			// Sixth Map
-			maps.add(Map.MAP_SIX);
-		}
-
-		if ((MapSearch.MAP_SEVEN.getByte() & mapNumber) > 0) {
-			// Seventh Map
-			maps.add(Map.MAP_SEVEN);
-		}
-
-		if ((MapSearch.MAP_EIGHT.getByte() & mapNumber) > 0) {
-			// Eighth Map
-			maps.add(Map.MAP_EIGHT);
-		}
-
-		if ((MapSearch.MAP_NINE.getByte() & mapNumber) > 0) {
-			// Ninth Map
-			maps.add(Map.MAP_NINE);
-		}
-
-		// https://stackoverflow.com/a/5061692/6828099
-		// Apparently it's supposed to be marked as empty now
-		return maps.toArray(new Map[0]);
 	}
 
 	private enum SearchBytes {

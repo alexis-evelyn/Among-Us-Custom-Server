@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'me.alexisevelyn'
-version '0.0.6-SNAPSHOT'
+version '0.0.7-SNAPSHOT'
 
 // https://discuss.gradle.org/t/sourcecompatibility-targetcompatibility-usage-reasons/25133/4
 // I have no idea how to tell which version is the minimal version that can compile this

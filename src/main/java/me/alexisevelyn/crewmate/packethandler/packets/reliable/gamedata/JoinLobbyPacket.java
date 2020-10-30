@@ -6,6 +6,7 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
+import me.alexisevelyn.crewmate.enums.MapSearch;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.PlayerJoinEvent;
 import me.alexisevelyn.crewmate.events.impl.PlayerJoinLobbyEvent;
@@ -75,7 +76,7 @@ public class JoinLobbyPacket {
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("join_game_invalid_size"));
 
 		byte[] gameCodeBytes = new byte[] {payload[0], payload[1], payload[2], payload[3]};
-		Map[] maps = SearchGame.parseMapsSearch(payload[4]); // Client Owned Maps
+		Map[] maps = MapSearch.getMapArray(payload[4]); // Client Owned Maps
 
 		String gameCode = GameCodeHelper.parseGameCode(gameCodeBytes);
 

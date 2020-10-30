@@ -1,11 +1,10 @@
 package me.alexisevelyn.crewmate.enums;
 
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -68,11 +67,11 @@ public enum Language {
 	 * @return language as unsigned short (UInt-16)
 	 */
 	public long getUnsignedInt() {
-		// getUnsignedIntLE
 		return this.language;
 	}
 
 	@Nullable
+	@Deprecated
 	public static Language getLanguage(long languageLong) {
 		return languageSearch.get(languageLong);
 	}
@@ -151,6 +150,206 @@ public enum Language {
 			default:
 				return translation.getString("unknown");
 		}
+	}
+
+	/**
+	 * Produce a human readable list of the language array
+	 *
+	 * @param languages Array of Languages
+	 * @return String representation of the language array
+	 */
+	public static String getPrintableLanguagesList(Language... languages) {
+		// List of Languages Being Included In Bitfield
+		StringBuilder printableLanguagesList = new StringBuilder();
+
+		// Append Delimiters (Usually Comma + Space) To List and Then Remove Last Delimiter
+		String delimiter = Main.getTranslationBundle().getString("list_delimiter_logged");
+		for (Language language : languages) {
+			printableLanguagesList.append(getLanguageName(language)).append(delimiter);
+		}
+		printableLanguagesList.delete(printableLanguagesList.length() - delimiter.length(), printableLanguagesList.length());
+
+		return printableLanguagesList.toString();
+	}
+
+	/**
+	 * Convert Language bitfield to Language[]
+	 *
+	 * @param languageNumber byte to represent the language bitfield
+	 * @return array of Languages
+	 */
+	@NotNull
+	public static Language[] getLanguageArray(long languageNumber) {
+		ArrayList<Language> languages = new ArrayList<>();
+		// Not a Bitwise Operation
+		if (UNSPECIFIED.getUnsignedInt() == languageNumber) {
+			// Unspecified Language
+			languages.add(UNSPECIFIED);
+		}
+
+		if ((OTHER.getUnsignedInt() & languageNumber) > 0) {
+			// Other Language (In Search Means Any Language?)
+			languages.add(OTHER);
+		}
+
+		if ((SPANISH.getUnsignedInt() & languageNumber) > 0) {
+			// Spanish Language
+			languages.add(SPANISH);
+		}
+
+		if ((KOREAN.getUnsignedInt() & languageNumber) > 0) {
+			// Korean Language
+			languages.add(KOREAN);
+		}
+
+		if ((RUSSIAN.getUnsignedInt() & languageNumber) > 0) {
+			// Russian Language
+			languages.add(RUSSIAN);
+		}
+
+		if ((PORTUGUESE.getUnsignedInt() & languageNumber) > 0) {
+			// Portuguese Language
+			languages.add(PORTUGUESE);
+		}
+
+		if ((ARABIC.getUnsignedInt() & languageNumber) > 0) {
+			// Arabic Language
+			languages.add(ARABIC);
+		}
+
+		if ((FILIPINO.getUnsignedInt() & languageNumber) > 0) {
+			// Filipino Language
+			languages.add(FILIPINO);
+		}
+
+		if ((POLISH.getUnsignedInt() & languageNumber) > 0) {
+			// Polish Language
+			languages.add(POLISH);
+		}
+
+		if ((ENGLISH.getUnsignedInt() & languageNumber) > 0) {
+			// English Language
+			languages.add(ENGLISH);
+		}
+
+		if ((LANGUAGE_TEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TEN);
+		}
+
+		if ((LANGUAGE_ELEVEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_ELEVEN);
+		}
+
+		if ((LANGUAGE_TWELVE.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWELVE);
+		}
+
+		if ((LANGUAGE_THIRTEEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_THIRTEEN);
+		}
+
+		if ((LANGUAGE_FOURTEEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_FOURTEEN);
+		}
+
+		if ((LANGUAGE_FIFTEEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_FIFTEEN);
+		}
+
+		if ((LANGUAGE_SIXTEEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_SIXTEEN);
+		}
+
+		if ((LANGUAGE_SEVENTEEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_SEVENTEEN);
+		}
+
+		if ((LANGUAGE_EIGHTEEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_EIGHTEEN);
+		}
+
+		if ((LANGUAGE_NINETEEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_NINETEEN);
+		}
+
+		if ((LANGUAGE_TWENTY.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY);
+		}
+
+		if ((LANGUAGE_TWENTY_ONE.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_ONE);
+		}
+
+		if ((LANGUAGE_TWENTY_TWO.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_TWO);
+		}
+
+		if ((LANGUAGE_TWENTY_THREE.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_THREE);
+		}
+
+		if ((LANGUAGE_TWENTY_FOUR.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_FOUR);
+		}
+
+		if ((LANGUAGE_TWENTY_FIVE.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_FIVE);
+		}
+
+		if ((LANGUAGE_TWENTY_SIX.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_SIX);
+		}
+
+		if ((LANGUAGE_TWENTY_SEVEN.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_SEVEN);
+		}
+
+		if ((LANGUAGE_TWENTY_EIGHT.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_EIGHT);
+		}
+
+		if ((LANGUAGE_TWENTY_NINE.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_TWENTY_NINE);
+		}
+
+		if ((LANGUAGE_THIRTY.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_THIRTY);
+		}
+
+		if ((LANGUAGE_THIRTY_ONE.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_THIRTY_ONE);
+		}
+
+		if ((LANGUAGE_THIRTY_TWO.getUnsignedInt() & languageNumber) > 0) {
+			// Undefined Language
+			languages.add(LANGUAGE_THIRTY_TWO);
+		}
+
+		// https://stackoverflow.com/a/5061692/6828099
+		// Apparently it's supposed to be marked as empty now
+		return languages.toArray(new Language[0]);
 	}
 
 	static {

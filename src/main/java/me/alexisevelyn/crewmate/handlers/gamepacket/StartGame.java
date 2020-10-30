@@ -59,22 +59,23 @@ public class StartGame {
 		byte map = reliableBytes[7];
 		int imposterCount = reliableBytes[31];
 
-		Language language = Language.getLanguage(PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4], reliableBytes[5], reliableBytes[6]));
+		long languageInt = PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4], reliableBytes[5], reliableBytes[6]);
+		Language[] languages = Language.getLanguageArray(languageInt);
 
 		String mapName = Map.getMapName(Map.getMap(map));
-		String languageName = Language.getLanguageName(language);
 
 		ResourceBundle translation = Main.getTranslationBundle();
 		String extraData = String.format(translation.getString("max_player_logged"), maxPlayers) + "\n" +
 				String.format(translation.getString("map_logged"), mapName) + "\n" +
 				String.format(translation.getString("imposter_count_logged"), imposterCount) + "\n" +
-				String.format(translation.getString("language_logged"), languageName);
+				String.format(translation.getString("languages_logged"), Language.getPrintableLanguagesList(languages));
 
 		LogHelper.printLine(extraData);
 
 		try {
 			// TODO: Double Check For "InvalidBytesException: Game Code Bytes Needs To Be 4 Bytes Long!!!" on Below Line
-			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap(map), language);
+			// TODO: Validate Languages[] is not empty
+			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap(map), languages[0]);
 			event.call(server);
 			byte[] newCode = GameCodeHelper.generateGameCodeBytes(event.getGameCode());
 
