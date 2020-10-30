@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.net.DatagramPacket;
 
-public class HazelParser {
+public class HazelPacket {
 	/**
 	 * Handles Packets Received By The Server
 	 *

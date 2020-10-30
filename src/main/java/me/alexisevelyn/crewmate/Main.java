@@ -1,10 +1,5 @@
 package me.alexisevelyn.crewmate;
 
-import me.alexisevelyn.crewmate.enums.Map;
-import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
