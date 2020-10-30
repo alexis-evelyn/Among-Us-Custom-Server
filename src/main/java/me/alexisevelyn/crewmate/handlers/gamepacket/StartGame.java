@@ -59,9 +59,7 @@ public class StartGame {
 		byte map = reliableBytes[7];
 		int imposterCount = reliableBytes[31];
 
-		LogHelper.printLine("Test");
 		Language language = Language.getLanguage(PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4], reliableBytes[5], reliableBytes[6]));
-		LogHelper.printLine("Test 2");
 
 		String mapName = Map.getMapName(Map.getMap(map));
 		String languageName = Language.getLanguageName(language);

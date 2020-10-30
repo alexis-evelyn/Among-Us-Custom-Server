@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate.enums;
 
+import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +50,7 @@ public enum Language {
 	@Deprecated LANGUAGE_TWENTY_NINE( 0b10000000000000000000000000000), // 268,435,456
 	@Deprecated LANGUAGE_THIRTY(      0b100000000000000000000000000000), // 536,870,912
 	@Deprecated LANGUAGE_THIRTY_ONE(  0b1000000000000000000000000000000), // 1,073,741,824
-	@Deprecated LANGUAGE_THIRTY_TWO(  0b10000000000000000000000000000000); // 2,147,483,648
+	@Deprecated LANGUAGE_THIRTY_TWO(  0b10000000000000000000000000000000L); // 2,147,483,648 - Has to be explicitly a long or it will not work.
 
 	// Max Language Value - 0b10000000000000000000000000000000
 
@@ -67,6 +68,7 @@ public enum Language {
 	 * @return language as unsigned short (UInt-16)
 	 */
 	public long getUnsignedInt() {
+		// getUnsignedIntLE
 		return this.language;
 	}
 
