@@ -4,7 +4,6 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.events.Event;
-import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 
 public class HostGameEvent extends Event {
     private String gameCode;

@@ -23,10 +23,13 @@ public class SearchGame {
 
 	public static byte[] handleSearchPublicGame(DatagramPacket packet, Server server) {
 		// Request Search
-		// 0000   01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 01 00   ...,...*........
-		// 0010   00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01   ..?...?...?..pA.
-		// 0020   01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00   ............x...
-		// 0030   01 0f                                             ..
+		// 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31
+		// -----------------------------------------------------------------------------------------------------------------------------------------------------
+		// 01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 01 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
+		// -----------------------------------------------------------------------------------------------------------------------------------------------------
+		// UK UK UK UK UK UK UK UK UK UK LA LA LA LA UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK
+		// UK = Unknown
+		// LA = Language
 
 		if (packet.getLength() != 50)
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_request_invalid_size"));
@@ -40,7 +43,7 @@ public class SearchGame {
 		Map[] maps = parseMapsSearch(buffer[14]);
 
 		// Language To Search By
-		Language language = Language.getLanguage(PacketHelper.getUnsignedShortLE(buffer[10], buffer[11]));
+		Language language = Language.getLanguage(PacketHelper.getUnsignedIntLE(buffer[10], buffer[11], buffer[12], buffer[13]));
 
 		ResourceBundle translation = Main.getTranslationBundle();
 		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
@@ -67,7 +70,7 @@ public class SearchGame {
 		return printableMapsList.toString();
 	}
 
-	public static byte[] getFakeSearchBytes(int numberOfImposters, int language, Map... maps) throws UnknownHostException {
+	public static byte[] getFakeSearchBytes(int numberOfImposters, long language, Map... maps) throws UnknownHostException {
 		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u
 		// 0010   07 56 e6 71 31 80 08 73 75 73 68 69 69 69 69 03   .V.q1..sushiiii.

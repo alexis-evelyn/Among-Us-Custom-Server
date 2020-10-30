@@ -22,26 +22,26 @@ public enum Language {
 	POLISH(128),
 	ENGLISH(256);
 
-	private final int language;
+	private final long language;
 
-	Language(int language) {
+	Language(long language) {
 		this.language = language;
 	}
 
-	private static final java.util.Map<Integer, Language> languageSearch = new HashMap<>();
+	private static final java.util.Map<Long, Language> languageSearch = new HashMap<>();
 
 	/**
 	 * Supposedly a UInt-32 according to <a href="https://wiki.weewoo.net/wiki/Languages">the wiki</a>. but I've only seen a UInt-16 LE.
 	 *
 	 * @return language as unsigned short (UInt-16)
 	 */
-	public int getUnsignedShort() {
+	public long getUnsignedInt() {
 		return this.language;
 	}
 
 	@Nullable
-	public static Language getLanguage(int languageInt) {
-		return languageSearch.get(languageInt);
+	public static Language getLanguage(long languageLong) {
+		return languageSearch.get(languageLong);
 	}
 
 	@NotNull

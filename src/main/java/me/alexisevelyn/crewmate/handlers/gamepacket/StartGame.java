@@ -42,9 +42,12 @@ public class StartGame {
 		// 2a 02 07 00 01 00 00 02 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 34 42 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
 		// --------------------------------------------------------------------------------------------------------------------------------
 		// TODO: Add Full Decipher of Payload Bytes - https://wiki.weewoo.net/wiki/Game_Options_Data
-		// UK UK MP UK UK UK UK CM UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK IC UK UK UK UK UK UK UK UK UK UK UK
-		// UK = Unknown
+		// PL GV MP LA LA LA LA CM UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK IC UK UK UK UK UK UK UK UK UK UK UK
+		// PL = Payload Length As Packed Int
+		// GV = Game Options Version
 		// MP = Max Players
+		// LA = Language
+		// UK = Unknown
 		// CM = Chosen Map
 		// IC = Imposter Count
 
@@ -56,7 +59,9 @@ public class StartGame {
 		byte map = reliableBytes[7];
 		int imposterCount = reliableBytes[31];
 
-		Language language = Language.getLanguage(PacketHelper.getUnsignedShortLE(reliableBytes[3], reliableBytes[4]));
+		LogHelper.printLine("Test");
+		Language language = Language.getLanguage(PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4], reliableBytes[5], reliableBytes[6]));
+		LogHelper.printLine("Test 2");
 
 		String mapName = Map.getMapName(Map.getMap(map));
 		String languageName = Language.getLanguageName(language);
@@ -71,7 +76,7 @@ public class StartGame {
 
 		try {
 			// TODO: Double Check For "InvalidBytesException: Game Code Bytes Needs To Be 4 Bytes Long!!!" on Below Line
-			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap((byte) map), language);
+			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap(map), language);
 			event.call(server);
 			byte[] newCode = GameCodeHelper.generateGameCodeBytes(event.getGameCode());
 
