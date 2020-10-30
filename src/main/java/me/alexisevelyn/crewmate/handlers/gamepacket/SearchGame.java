@@ -215,7 +215,7 @@ public class SearchGame {
 				new byte[] {(byte) maxPlayerCount});
 	}
 
-	public static Map[] parseMapsSearch(int mapNumber) {
+	public static Map[] parseMapsSearch(byte mapNumber) {
 		// From what I'm hearing, this is a bitfield. https://discordapp.com/channels/750301084202958899/761731747762667560/765242112031064074
 		// This function parses as a bitfield so if say 9 maps exist, then we don't have to have every possible map combination written in code.
 

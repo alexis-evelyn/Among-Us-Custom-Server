@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
  */
 public enum Language {
 	// Not A Language
-	@Deprecated UNKNOWN(0b0), // 0
+	@Deprecated UNSPECIFIED(0b0), // 0
 
 	// Existing Languages
 	OTHER(     0b1), // 1
@@ -144,7 +144,8 @@ public enum Language {
 				return translation.getString("language_thirty_one");
 			case LANGUAGE_THIRTY_TWO:
 				return translation.getString("language_thirty_two");
-			case UNKNOWN:
+			case UNSPECIFIED:
+				return translation.getString("unspecified");
 			default:
 				return translation.getString("unknown");
 		}
