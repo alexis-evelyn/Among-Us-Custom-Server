@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import org.slf4j.Logger;

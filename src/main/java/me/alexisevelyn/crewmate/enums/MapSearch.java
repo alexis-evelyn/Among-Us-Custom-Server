@@ -8,17 +8,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public enum MapSearch {
-	SKELD((byte)   0b0), // 0
-	MIRA_HQ((byte) 0b1), // 1
-	POLUS((byte)   0b10), // 2
+	// Not A Map
+	@Deprecated UNSPECIFIED((byte) 0b0), // 0
+
+	// Existing Maps
+	SKELD((byte)   0b1), // 1
+	MIRA_HQ((byte) 0b10), // 2
+	POLUS((byte)   0b100), // 4
 
 	// These are deprecated, because I will use the map's proper name on map release.
-	@Deprecated STICKMIN((byte)  0b100), // 4
-	@Deprecated MAP_FIVE((byte)  0b1000), // 8
-	@Deprecated MAP_SIX((byte)   0b10000), // 16
-	@Deprecated MAP_SEVEN((byte) 0b100000), // 32
-	@Deprecated MAP_EIGHT((byte) 0b1000000), // 64
-	@Deprecated MAP_NINE((byte)  0b10000000); // 128
+	// Not Implemented Maps
+	@Deprecated STICKMIN((byte)  0b1000), // 8
+	@Deprecated MAP_FIVE((byte)  0b10000), // 16
+	@Deprecated MAP_SIX((byte)   0b100000), // 32
+	@Deprecated MAP_SEVEN((byte) 0b1000000), // 64
+	@Deprecated MAP_EIGHT((byte) 0b10000000); // 128
 
 	private final byte map;
 
@@ -69,6 +73,12 @@ public enum MapSearch {
 		// This function parses as a bitfield so if say 9 maps exist, then we don't have to have every possible map combination written in code.
 
 		ArrayList<Map> maps = new ArrayList<>();
+		// Not a Bitwise Operation
+		if (UNSPECIFIED.getByte() == mapByte) {
+			// Unspecified Map
+			maps.add(Map.UNSPECIFIED);
+		}
+
 		if ((SKELD.getByte() & mapByte) > 0) {
 			// Skeld
 			maps.add(Map.SKELD);
@@ -109,11 +119,6 @@ public enum MapSearch {
 		if ((MAP_EIGHT.getByte() & mapByte) > 0) {
 			// Eighth Map
 			maps.add(Map.MAP_EIGHT);
-		}
-
-		if ((MAP_NINE.getByte() & mapByte) > 0) {
-			// Ninth Map
-			maps.add(Map.MAP_NINE);
 		}
 
 		// https://stackoverflow.com/a/5061692/6828099

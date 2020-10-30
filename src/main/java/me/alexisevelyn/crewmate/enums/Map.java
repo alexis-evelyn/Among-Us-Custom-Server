@@ -8,6 +8,13 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public enum Map {
+	// Not A Map (-1 == 255)
+	// It is unlikely that the map count will reach 127 (much less 255) before a protocol rewrite.
+	// That means we don't know if the byte is supposed to be signed or not.
+	// https://wiki.weewoo.net/wiki/Enums#Map
+	@Deprecated UNSPECIFIED((byte) -1),
+
+	// Existing Maps
 	SKELD((byte) 0),
 	MIRA_HQ((byte) 1),
 	POLUS((byte) 2),
@@ -17,8 +24,7 @@ public enum Map {
 	@Deprecated MAP_FIVE((byte) 4),
 	@Deprecated MAP_SIX((byte) 5),
 	@Deprecated MAP_SEVEN((byte) 6),
-	@Deprecated MAP_EIGHT((byte) 7),
-	@Deprecated MAP_NINE((byte) 8);
+	@Deprecated MAP_EIGHT((byte) 7);
 
 	private final byte map;
 
@@ -58,8 +64,8 @@ public enum Map {
 				return translation.getString("map_seven");
 			case MAP_EIGHT:
 				return translation.getString("map_eight");
-			case MAP_NINE:
-				return translation.getString("map_nine");
+			case UNSPECIFIED:
+				return translation.getString("unspecified");
 			default:
 				return translation.getString("unknown");
 		}
