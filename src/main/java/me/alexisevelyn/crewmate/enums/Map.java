@@ -17,7 +17,8 @@ public enum Map {
 	@Deprecated MAP_FIVE((byte) 4),
 	@Deprecated MAP_SIX((byte) 5),
 	@Deprecated MAP_SEVEN((byte) 6),
-	@Deprecated MAP_EIGHT((byte) 7);
+	@Deprecated MAP_EIGHT((byte) 7),
+	@Deprecated MAP_NINE((byte) 8);
 
 	private final byte map;
 
@@ -32,8 +33,8 @@ public enum Map {
 	}
 
 	@Nullable
-	public static Map getMap(byte mapInteger) {
-		return mapSearch.get(mapInteger);
+	public static Map getMap(byte mapByte) {
+		return mapSearch.get(mapByte);
 	}
 
 	@NotNull
@@ -57,6 +58,8 @@ public enum Map {
 				return translation.getString("map_seven");
 			case MAP_EIGHT:
 				return translation.getString("map_eight");
+			case MAP_NINE:
+				return translation.getString("map_nine");
 			default:
 				return translation.getString("unknown");
 		}

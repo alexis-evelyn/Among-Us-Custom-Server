@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
+import me.alexisevelyn.crewmate.enums.MapSearch;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.Language;
@@ -216,98 +217,54 @@ public class SearchGame {
 
 	public static Map[] parseMapsSearch(int mapNumber) {
 		// From what I'm hearing, this is a bitfield. https://discordapp.com/channels/750301084202958899/761731747762667560/765242112031064074
-		// This function parses as a bitfield so if say 8 maps exist, then we don't have to have every possible map combination written in code.
-
-		/*
-		 * Math (Prior To Bitfield Knowledge)
-		 *
-		 *             1 (Skeld)
-		 *             2 (Mira)
-		 *     1 + 2 = 3 (Skeld + Mira)
-		 *             4 (Polus)
-		 *     1 + 4 = 5 (Skeld + Polus)
-		 *     2 + 4 = 6 (Mira + Polus)
-		 * 1 + 2 + 4 = 7 (All)
-		 */
-
-		/*
-		 * Bitfield
-		 *
-		 *     ABC
-		 * 1 = 001
-		 * 2 = 010
-		 * 3 = 011
-		 * 4 = 100
-		 * 5 = 101
-		 * 6 = 110
-		 * 7 = 111
-		 *
-		 * A = Polus
-		 * B = Mira-HQ
-		 * C = Skeld
-		 */
-
-		// What the full bytes would look like
-		// 00000001 = Skeld
-		// 00000010 = Mira-HQ
-		// 00000100 = Polus
-
-//		LogHelper.printLine("Skeld: " + (1 & mapNumber));
-//		LogHelper.printLine("Mira-HQ: " + (2 & mapNumber));
-//		LogHelper.printLine("Polus: " + (4 & mapNumber));
-
-		int skeldBit = 0b1;
-		int miraBit = 0b10;
-		int polusBit = 0b100;
-
-		// Will Be Renamed To Map Names On Map Release
-		int stickminBit = 0b1000;
-		int fiveBit = 0b10000;
-		int sixBit = 0b100000;
-		int sevenBit = 0b1000000;
-		int eightBit = 0b10000000;
+		// This function parses as a bitfield so if say 9 maps exist, then we don't have to have every possible map combination written in code.
 
 		ArrayList<Map> maps = new ArrayList<>();
-		if ((skeldBit & mapNumber) > 0) {
+		if ((MapSearch.SKELD.getByte() & mapNumber) > 0) {
 			// Skeld
 			maps.add(Map.SKELD);
 		}
 
-		if ((miraBit & mapNumber) > 0) {
+		if ((MapSearch.MIRA_HQ.getByte() & mapNumber) > 0) {
 			// Mira-HQ
 			maps.add(Map.MIRA_HQ);
 		}
 
-		if ((polusBit & mapNumber) > 0) {
+		if ((MapSearch.POLUS.getByte() & mapNumber) > 0) {
 			// Polus
 			maps.add(Map.POLUS);
 		}
 
 		// As of this writing, these maps have either not been released or created yet.
 		// So, I could not tell you the official names of the maps (especially for the ones that simply don't exist).
-		if ((stickminBit & mapNumber) > 0) {
+		if ((MapSearch.STICKMIN.getByte() & mapNumber) > 0) {
 			// Stickmin Map
 			maps.add(Map.STICKMIN);
 		}
 
-		if ((fiveBit & mapNumber) > 0) {
+		if ((MapSearch.MAP_FIVE.getByte() & mapNumber) > 0) {
 			// Fifth Map
 			maps.add(Map.MAP_FIVE);
 		}
 
-		if ((sixBit & mapNumber) > 0) {
+		if ((MapSearch.MAP_SIX.getByte() & mapNumber) > 0) {
 			// Sixth Map
 			maps.add(Map.MAP_SIX);
 		}
 
-		if ((sevenBit & mapNumber) > 0) {
+		if ((MapSearch.MAP_SEVEN.getByte() & mapNumber) > 0) {
 			// Seventh Map
 			maps.add(Map.MAP_SEVEN);
 		}
 
-		if ((eightBit & mapNumber) > 0) {
+		if ((MapSearch.MAP_EIGHT.getByte() & mapNumber) > 0) {
 			// Eighth Map
 			maps.add(Map.MAP_EIGHT);
+		}
+
+		if ((MapSearch.MAP_NINE.getByte() & mapNumber) > 0) {
+			// Ninth Map
+			maps.add(Map.MAP_NINE);
 		}
 
 		// https://stackoverflow.com/a/5061692/6828099
