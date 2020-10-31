@@ -54,7 +54,7 @@ public class StartGame {
 
 		// Ensure Minimum Size (TODO: What is True Minimum Size)
 		if (reliableBytes.length < 32 || (byteLength != reliableBytes.length))
-			ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
 
 		// Data
 		int maxPlayers = reliableBytes[2];
