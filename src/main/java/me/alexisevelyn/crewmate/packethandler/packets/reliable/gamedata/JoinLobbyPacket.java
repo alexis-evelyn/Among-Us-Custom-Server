@@ -4,8 +4,8 @@ import me.alexisevelyn.crewmate.GameCodeHelper;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
-import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
+import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.MapSearch;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.PlayerJoinEvent;
@@ -14,7 +14,6 @@ import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.handlers.GameManager;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
-import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
@@ -31,23 +30,29 @@ public class JoinLobbyPacket {
 	 * @param clientAddress Client's IP Address
 	 * @param clientPort Client's Port
 	 * @param payload Data to be parsed
-	 * @return
-	 * @throws InvalidGameCodeException Invalid Game Code Bytes Provided in payload
+	 * @return data to send back to client
 	 */
-	public static byte[] handleJoinLobby(Server server, InetAddress clientAddress, int clientPort, byte... payload) throws InvalidGameCodeException {
+	public static byte[] handleJoinLobby(Server server, InetAddress clientAddress, int clientPort, byte... payload) {
 		PlayerJoinLobbyEvent event = new PlayerJoinLobbyEvent(clientAddress, clientPort);
 		event.call(server);
 
-		if (!event.isCancelled()) {
-			String gamecode = addClientToLobby(server, clientAddress, clientPort, payload);
+		try {
+			if (!event.isCancelled()) {
+				String gamecode = addClientToLobby(server, clientAddress, clientPort, payload);
 
-			// TODO: Debug
-			byte[] reply = generateJoinLobbyReply(gamecode);
-			LogHelper.printPacketBytes(reply.length, reply);
+				// TODO: Debug
+				byte[] reply = generateJoinLobbyReply(gamecode);
+				LogHelper.printPacketBytes(reply.length, reply);
 
-			return reply;
-		} else {
-			return ClosePacket.closeWithMessage(event.getReason());
+				return reply;
+			} else {
+				return ClosePacket.closeWithMessage(event.getReason());
+			}
+		} catch (InvalidGameCodeException | InvalidBytesException exception) {
+			// LogHelper.printLineErr(exception.getMessage());
+			// exception.printStackTrace();
+
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 		}
 	}
 
@@ -56,14 +61,13 @@ public class JoinLobbyPacket {
 	 *
 	 * Not supposed to return gamecode or null. Supposed to be void.
 	 *
-	 * @param server
-	 * @param clientAddress
-	 * @param clientPort
-	 * @param payload
-	 * @throws InvalidGameCodeException
+	 * @param server Server Instance
+	 * @param clientAddress Client's IP Address
+	 * @param clientPort Client's Port
+	 * @param payload payload bytes
 	 */
 	@Deprecated
-	private static String addClientToLobby(Server server, InetAddress clientAddress, int clientPort, byte... payload) throws InvalidGameCodeException, InvalidBytesException {
+	private static String addClientToLobby(Server server, InetAddress clientAddress, int clientPort, byte... payload) throws InvalidGameCodeException {
 		// 00 01 02 03 04
 		// --------------
 		// A2 26 8E 83 07

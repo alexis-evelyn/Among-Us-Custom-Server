@@ -18,6 +18,8 @@ import java.util.ResourceBundle;
 public class HandshakePacket {
 	@SuppressWarnings("SpellCheckingInspection") // I mean, I appreciate the IDE wanting to make sure I don't make a typo, but please, the whole alphabet doesn't even look like a word
 	private static final char[] revisionLetters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+	private static final String NAME_CHECK_ONE = "([A-Za-z0-9 ])+";
+	private static final String NAME_CHECK_TWO = "([ ])+";
 
 	/**
 	 * Parse out handshake packet and register player
@@ -72,6 +74,9 @@ public class HandshakePacket {
 			// Copy Name Out Of Handshake
 			System.arraycopy(handshakeBytes, 6, nameBytes, 0, displayNameLength);
 			String name = new String(nameBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
+
+			if (!name.matches(NAME_CHECK_ONE) || name.matches(NAME_CHECK_TWO))
+				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("invalid_name_close_connection"));
 
 			// Register Player On Server
 			PlayerManager.addPlayer(new Player(name, clientAddress, clientPort, hazelVersion, clientVersionRaw, server));

@@ -140,6 +140,10 @@ public class Server extends Thread {
 		} catch (Exception exception) {
 			// Generic Catch All For Uncaught Exceptions
 			replyBuffer = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+
+			// Log Uncaught Exception
+			LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("uncaught_server_side_exception"), exception.getMessage()));
+			exception.printStackTrace();
 		}
 
 		// Don't Send Packet if No Data To Send

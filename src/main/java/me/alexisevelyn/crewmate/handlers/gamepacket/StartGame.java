@@ -36,7 +36,7 @@ public class StartGame {
 	 * @throws InvalidBytesException
 	 */
 	@API(status = API.Status.EXPERIMENTAL)
-	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) throws InvalidGameCodeException, InvalidBytesException {
+	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) {
 		// 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a
 		// --------------------------------------------------------------------------------------------------------------------------------
 		// 2a 02 07 00 01 00 00 02 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 34 42 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
@@ -62,7 +62,12 @@ public class StartGame {
 		long languageInt = PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4], reliableBytes[5], reliableBytes[6]);
 		Language[] languages = Language.getLanguageArray(languageInt);
 
-		String mapName = Map.getMapName(Map.getMap(map));
+		Map hostMap = Map.getMap(map);
+
+		if (hostMap == null)
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unknown_map"));
+
+		String mapName = Map.getMapName(hostMap);
 
 		ResourceBundle translation = Main.getTranslationBundle();
 		String extraData = String.format(translation.getString("max_player_logged"), maxPlayers) + "\n" +
@@ -72,24 +77,23 @@ public class StartGame {
 
 		LogHelper.printLine(extraData);
 
+		byte[] gameCodeBytes = getCodeFromList();
 		try {
 			// TODO: Double Check For "InvalidBytesException: Game Code Bytes Needs To Be 4 Bytes Long!!!" on Below Line
 			// TODO: Validate Languages[] is not empty
-			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(getCodeFromList()), maxPlayers, imposterCount, Map.getMap(map), languages[0]);
+			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(gameCodeBytes), maxPlayers, imposterCount, Map.getMap(map), languages);
 			event.call(server);
+
 			byte[] newCode = GameCodeHelper.generateGameCodeBytes(event.getGameCode());
 
-			if (newCode.length != 0) {
-				GameManager.addGame(new Game(newCode));
-				return useCustomCode(newCode);
-			}
+			GameManager.addGame(new Game(newCode));
+			return useCustomCode(newCode);
 		} catch (InvalidBytesException | InvalidGameCodeException e) {
+			LogHelper.printLineErr(e.getMessage());
 			e.printStackTrace();
-		}
 
-		byte[] randomCode = getCodeFromList();
-		GameManager.addGame(new Game(randomCode));
-		return useCustomCode(randomCode);
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+		}
 	}
 
 	// For S->C

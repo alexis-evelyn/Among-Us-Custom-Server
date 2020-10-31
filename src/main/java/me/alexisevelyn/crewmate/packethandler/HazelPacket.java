@@ -7,7 +7,6 @@ import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.packethandler.packets.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 
 public class HazelPacket {
@@ -17,9 +16,10 @@ public class HazelPacket {
 	 * @param packet UDP Packet
 	 * @param server Instance of Server
 	 * @return packet bytes to send to client or empty byte array to skip sending
+	 * @throws InvalidGameCodeException
 	 */
 	@NotNull
-	public static byte[] handlePacket(DatagramPacket packet, Server server) throws InvalidGameCodeException, IOException {
+	public static byte[] handlePacket(DatagramPacket packet, Server server) {
 		SendOption sendOption = SendOption.getByte(packet.getData()[0]);
 
 		// Throw Out Any Unknown Packets
@@ -62,7 +62,9 @@ public class HazelPacket {
 				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 1), unreliableBytes);
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
 				// Not Implemented Even on Hazel. No Idea What The Packet Structure Would Look Like
-				return FragmentPacket.handleFragmentPacket(packet, server);
+				byte[] fragmentBytes = PacketHelper.extractSecondPartBytes(1, packet.getData());
+
+				return FragmentPacket.handleFragmentPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 1), fragmentBytes);
 		}
 
 		return new byte[0];

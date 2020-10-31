@@ -74,6 +74,9 @@ public class PacketHelper {
 		if (bytes == null)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
 
+		if (pos <= 0)
+			return bytes;
+
 		if (bytes.length <= pos)
 			return bytes;
 

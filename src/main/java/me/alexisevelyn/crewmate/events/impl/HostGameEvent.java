@@ -10,14 +10,14 @@ public class HostGameEvent extends Event {
     private final int maxPlayers;
     private final int impostorCount;
     private final Map map;
-    private final Language language;
+    private final Language[] languages;
 
-    public HostGameEvent(String gameCode, int maxPlayers, int impostorCount, Map map, Language language) {
+    public HostGameEvent(String gameCode, int maxPlayers, int impostorCount, Map map, Language[] languages) {
         this.gameCode = gameCode;
         this.maxPlayers = maxPlayers;
         this.impostorCount = impostorCount;
         this.map = map;
-        this.language = language;
+        this.languages = languages;
     }
 
     public void setGameCode(String gameCode) throws IllegalArgumentException {
@@ -43,8 +43,11 @@ public class HostGameEvent extends Event {
         return maxPlayers;
     }
 
-    public Language getLanguage() {
-        return language;
+    public Language[] getLanguages() {
+        return languages;
     }
 
+    public Language getLanguage() {
+        return getLanguages()[0];
+    }
 }

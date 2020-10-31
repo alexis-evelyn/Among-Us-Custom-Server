@@ -6,11 +6,10 @@ import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.events.bus.EventHandler;
 import me.alexisevelyn.crewmate.events.impl.*;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import org.junit.jupiter.api.Test;
 
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
-
-import org.junit.jupiter.api.Test;
 
 public class TestEventListener {
     Server server;
@@ -29,7 +28,7 @@ public class TestEventListener {
 
         // TODO: Figure Out Best Testing Practices For Event Handlers
         // Test Host
-        HostGameEvent hostGameEvent = new HostGameEvent("CODE", 20, 6, Map.STICKMIN, Language.ENGLISH);
+        HostGameEvent hostGameEvent = new HostGameEvent("CODE", 20, 6, Map.STICKMIN, new Language[] {Language.ENGLISH});
         this.onHostGame(hostGameEvent);
     }
 

@@ -2,8 +2,8 @@ package me.alexisevelyn.crewmate;
 
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
+import org.jetbrains.annotations.NotNull;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -69,6 +69,7 @@ public class GameCodeHelper {
 	}
 
 	// Convert String to GameCode Bytes
+	@NotNull
 	public static byte[] generateGameCodeBytes(String gameCode) throws InvalidGameCodeException {
 		// Game Codes Can Be 4 or 6 Capital Letters Long
 		// Technically the client allows numbers in the game code, but it results in an integer 0.

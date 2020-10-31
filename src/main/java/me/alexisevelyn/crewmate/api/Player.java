@@ -25,9 +25,11 @@ public class Player extends Entity {
         super(4);
         this.name = name;
         int id = rnd.nextInt(server.getMaxPlayers());
+
         while (PlayerManager.existsWithID(id)) {
             id = rnd.nextInt(server.getMaxPlayers());
         }
+
         this.id = id;
         this.address = address;
         this.port = port;
