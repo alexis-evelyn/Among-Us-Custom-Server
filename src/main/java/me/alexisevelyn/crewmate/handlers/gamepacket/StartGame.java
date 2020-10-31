@@ -89,8 +89,8 @@ public class StartGame {
 			GameManager.addGame(new Game(newCode));
 			return useCustomCode(newCode);
 		} catch (InvalidBytesException | InvalidGameCodeException e) {
-			LogHelper.printLineErr(e.getMessage());
-			e.printStackTrace();
+			// LogHelper.printLineErr(e.getMessage());
+			// e.printStackTrace();
 
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
 		}
