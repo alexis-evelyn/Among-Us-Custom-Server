@@ -32,8 +32,6 @@ public class StartGame {
 	 * @param byteLength
 	 * @param reliableBytes
 	 * @return
-	 * @throws InvalidGameCodeException
-	 * @throws InvalidBytesException
 	 */
 	@API(status = API.Status.EXPERIMENTAL)
 	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) {
@@ -53,6 +51,10 @@ public class StartGame {
 
 		// Useful For Verifying Bytes
 		// LogHelper.printPacketBytes(byteLength, reliableBytes);
+
+		// Ensure Minimum Size (TODO: What is True Minimum Size)
+		if (reliableBytes.length < 32 || (byteLength != reliableBytes.length))
+			ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
 
 		// Data
 		int maxPlayers = reliableBytes[2];
