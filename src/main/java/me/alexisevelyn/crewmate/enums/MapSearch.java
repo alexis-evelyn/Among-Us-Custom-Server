@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public enum MapSearch {
 	// Not A Map
-	@Deprecated UNSPECIFIED((byte) 0b0), // 0
+	UNSPECIFIED((byte) 0b0), // 0
 
 	// Existing Maps
 	SKELD((byte)   0b1), // 1

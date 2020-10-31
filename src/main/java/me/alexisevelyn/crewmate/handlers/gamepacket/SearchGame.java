@@ -2,13 +2,13 @@ package me.alexisevelyn.crewmate.handlers.gamepacket;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.enums.MapSearch;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
+import me.alexisevelyn.crewmate.enums.MapSearch;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.GameSearchEvent;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
 import java.net.DatagramPacket;
@@ -16,7 +16,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class SearchGame {
@@ -43,10 +42,16 @@ public class SearchGame {
 		// List of Maps Searched For
 		Map[] maps = MapSearch.getMapArray(buffer[14]);
 
+		if (maps.length <= 0 || maps[0].equals(Map.UNSPECIFIED))
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unspecified_map"));
+
 		// Language To Search By
 		// TODO: Array Languages
 		long languageInt = PacketHelper.getUnsignedIntLE(buffer[10], buffer[11], buffer[12], buffer[13]);
 		Language[] languages = Language.getLanguageArray(languageInt);
+
+		if (languages.length <= 0 || languages[0].equals(Language.UNSPECIFIED))
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unspecified_language"));
 
 		ResourceBundle translation = Main.getTranslationBundle();
 		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));

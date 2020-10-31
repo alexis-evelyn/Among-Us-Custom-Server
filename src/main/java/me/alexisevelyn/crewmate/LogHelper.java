@@ -84,13 +84,18 @@ public class LogHelper {
 		String positionHeader = Main.getTranslationBundle().getString("positions_header");
 		String bytesHeader = Main.getTranslationBundle().getString("bytes_header");
 
-		int positionHeaderFormatSize = (positionHeader.getBytes().length + 1);
-		String headerSize = "| %-" + positionHeaderFormatSize + "s";
+		int headerFormatSize;
+		if (positionHeader.getBytes().length > bytesHeader.getBytes().length)
+			headerFormatSize = (positionHeader.getBytes().length + 1);
+		else
+			headerFormatSize = (bytesHeader.getBytes().length + 1);
+
+		String headerSize = "| %-" + headerFormatSize + "s";
 		String columnSize = "| %-3s";
 
 		// Print Top Header
 		print("+");
-		for (int i = 0; i < ((length * 5) + positionHeaderFormatSize + 1); i++) {
+		for (int i = 0; i < ((length * 5) + headerFormatSize + 1); i++) {
 			print("-");
 		}
 		printLine("+");
@@ -117,7 +122,7 @@ public class LogHelper {
 
 		// Print Bottom Footer
 		print("+");
-		for (int i = 0; i < ((length * 5) + positionHeaderFormatSize + 1); i++) {
+		for (int i = 0; i < ((length * 5) + headerFormatSize + 1); i++) {
 			print("-");
 		}
 		printLine("+");

@@ -12,7 +12,7 @@ public enum Map {
 	// It is unlikely that the map count will reach 127 (much less 255) before a protocol rewrite.
 	// That means we don't know if the byte is supposed to be signed or not.
 	// https://wiki.weewoo.net/wiki/Enums#Map
-	@Deprecated UNSPECIFIED((byte) -1),
+	UNSPECIFIED((byte) -1),
 
 	// Existing Maps
 	SKELD((byte) 0),

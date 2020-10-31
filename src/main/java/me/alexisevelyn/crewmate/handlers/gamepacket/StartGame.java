@@ -59,12 +59,23 @@ public class StartGame {
 		byte map = reliableBytes[7];
 		int imposterCount = reliableBytes[31];
 
+		// TODO: Make this changeable without recompile
+		if (maxPlayers < 0 || maxPlayers > 15)
+			return ClosePacket.closeWithMessage(String.format(Main.getTranslationBundle().getString("invalid_max_players"), 0, 15, maxPlayers));
+
+		// TODO: Make this changeable without recompile
+		if (imposterCount < 0 || imposterCount > 3)
+			return ClosePacket.closeWithMessage(String.format(Main.getTranslationBundle().getString("invalid_imposter_count"), 0, 15, imposterCount));
+
 		long languageInt = PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4], reliableBytes[5], reliableBytes[6]);
 		Language[] languages = Language.getLanguageArray(languageInt);
 
+		if (languages.length <= 0 || languages[0].equals(Language.UNSPECIFIED))
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unspecified_language"));
+
 		Map hostMap = Map.getMap(map);
 
-		if (hostMap == null)
+		if (hostMap == null || hostMap.equals(Map.UNSPECIFIED))
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unknown_map"));
 
 		String mapName = Map.getMapName(hostMap);

@@ -4,6 +4,7 @@ import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Terminal;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,14 +14,27 @@ import java.net.UnknownHostException;
 
 public class RegionFileGenerator implements Command {
 	public void execute(String command, Terminal terminal) {
+		// TODO: Take Input From Server Owner/Administrator
 		String ipAddressRaw = "127.0.0.1";
 		int port = 22023;
 
-		String displayName = Main.getTranslationBundle().getString("region_file_generator_command_default_display_name");
-		String masterServerName = "Crewmate-Master-1";
+		this.createRegionFile(ipAddressRaw, port);
+	}
 
+	private void createRegionFile(@NotNull String ipAddressRaw, int port) {
+		String displayName = Main.getTranslationBundle().getString("region_file_generator_command_default_display_name");
+
+		this.createRegionFile(ipAddressRaw, port, displayName);
+	}
+
+	private void createRegionFile(@NotNull String ipAddressRaw, int port, @NotNull String displayName) {
+		String masterServerName = "Crewmate-Master-1";
 		File outFile = new File("regionInfo.dat");
 
+		this.createRegionFile(ipAddressRaw, port, displayName, masterServerName, outFile);
+	}
+
+	private void createRegionFile(@NotNull String ipAddressRaw, int port, @NotNull String displayName, @NotNull String masterServerName, @NotNull File outFile) {
 		try {
 			InetAddress ipAddress = InetAddress.getByName(ipAddressRaw);
 

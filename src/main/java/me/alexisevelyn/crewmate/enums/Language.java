@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
  */
 public enum Language {
 	// Not A Language
-	@Deprecated UNSPECIFIED(0b0), // 0
+	UNSPECIFIED(0b0), // 0
 
 	// Existing Languages
 	OTHER(     0b1), // 1
