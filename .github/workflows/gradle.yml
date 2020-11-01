@@ -46,7 +46,7 @@ jobs:
       if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
       with:
         path: |
-          .gradle
+          ~/.gradle
         key: ${{ runner.os }}-setup-cache-${{ hashFiles('**/*.gradle*') }}
         restore-keys: ${{ runner.os }}-setup-cache-
 
@@ -64,13 +64,13 @@ jobs:
 
     - name: Build Only
       if: ${{ !startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled') }}
-      run: ./gradlew shadowJar -g build/.gradle
+      run: ./gradlew shadowJar
       env:
         IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
 
     - name: Build And Publish To Sonatype
       if: startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
-      run: ./gradlew clean shadowJar publish -g build/.gradle
+      run: ./gradlew clean shadowJar publish
       env:
         SONATYPE_GPG_KEY: ${{ secrets.SONATYPE_GPG_KEY }}
         SONATYPE_GPG_PASSWORD: ${{ secrets.SONATYPE_GPG_PASSWORD }}
@@ -127,7 +127,7 @@ jobs:
 
     - name: Attempt Close/Release
       if: startsWith(env.RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
-      run: ./gradlew closeAndReleaseRepository -g build/.gradle
+      run: ./gradlew closeAndReleaseRepository
       env: # https://oss.sonatype.org/#profile;User%20Token
         SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
