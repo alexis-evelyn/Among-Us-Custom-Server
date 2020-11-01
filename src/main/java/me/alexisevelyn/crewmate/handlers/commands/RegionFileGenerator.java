@@ -2,8 +2,8 @@ package me.alexisevelyn.crewmate.handlers.commands;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Terminal;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -11,14 +11,66 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ResourceBundle;
 
 public class RegionFileGenerator implements Command {
 	public void execute(String command, Terminal terminal) {
 		// TODO: Take Input From Server Owner/Administrator
+		String[] arguments = command.trim().split("\\s+");
+
+		// TODO: Replace With Better Argument Parser
+		if (arguments.length <= 3)
+			this.simpleRegionFileSettings(arguments);
+		else
+			this.simpleNamedRegionFileSettings(arguments);
+	}
+
+	private void simpleRegionFileSettings(String... arguments) {
+		ResourceBundle translation = Main.getTranslationBundle();
+
+		// Defaults
 		String ipAddressRaw = "127.0.0.1";
 		int port = 22023;
 
+		// Default Arguments
+		if (arguments.length == 2) {
+			ipAddressRaw = arguments[1];
+		} else if (arguments.length >= 3) {
+			ipAddressRaw = arguments[1];
+
+			try {
+				port = Integer.parseInt(arguments[2]);
+			} catch (NumberFormatException e) {
+				LogHelper.printLineErr(translation.getString("region_file_generator_command_invalid_port"));
+			}
+		}
+
+		LogHelper.printLine(String.format(translation.getString("region_file_generator_command_settings_simple"), ipAddressRaw, port));
 		this.createRegionFile(ipAddressRaw, port);
+	}
+
+	private void simpleNamedRegionFileSettings(String... arguments) {
+		ResourceBundle translation = Main.getTranslationBundle();
+		String displayName;
+		String ipAddressRaw;
+		int port;
+
+		// Set IP Address
+		ipAddressRaw = arguments[1];
+
+		// Set Port
+		try {
+			port = Integer.parseInt(arguments[2]);
+		} catch (NumberFormatException e) {
+			LogHelper.printLineErr(translation.getString("region_file_generator_command_invalid_port"));
+			return;
+		}
+
+		// Set Display Name
+		displayName = arguments[3];
+
+		LogHelper.printLine(String.format(translation.getString("region_file_generator_command_settings_simple_named"), displayName, ipAddressRaw, port));
+		this.createRegionFile(ipAddressRaw, port, displayName);
 	}
 
 	private void createRegionFile(@NotNull String ipAddressRaw, int port) {
