@@ -133,6 +133,21 @@ jobs:
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
 
+    - name: Spotbugs Analysis
+      uses: codacy/codacy-analysis-cli-action@master
+      with:
+        tool: spotbugs
+        allow-network: true
+        upload: true
+        verbose: true
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
+    - name: Coverage Report Upload
+      run: |
+        echo Not Implemented...
+        # https://docs.codacy.com/coverage-reporter/adding-coverage-to-your-repository/
+        # bash <(curl -Ls https://coverage.codacy.com/get.sh) report
+
     - name: Alert Discord to New Crewmate Release # Alternate Options are 4915330 and 139. I like 4915330 better, so I may switch at a future point
       if: startsWith(env.SERVER_RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
       continue-on-error: true
