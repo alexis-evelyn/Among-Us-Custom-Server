@@ -5,7 +5,6 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
