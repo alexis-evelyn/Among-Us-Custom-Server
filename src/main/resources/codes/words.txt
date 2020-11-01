@@ -38,7 +38,7 @@ file
 gene
 test
 exit
-start
+starts
 hand
 foot
 fetish
@@ -327,7 +327,7 @@ tracer
 lump
 listen
 cigs
-spike
+spikes
 droids
 canine
 tome
@@ -383,7 +383,7 @@ wheels
 barrow
 metals
 medals
-salad
+salads
 toss
 spot
 find
@@ -441,7 +441,7 @@ swords
 pick
 axes
 shovel
-screw
+screws
 driver
 loot
 lick
@@ -702,3 +702,4 @@ porn
 slurps
 actors
 holy
+banned
