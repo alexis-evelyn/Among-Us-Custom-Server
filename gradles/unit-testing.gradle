@@ -12,6 +12,9 @@ dependencies {
 
 	// For Spotbugs Plugin
     spotbugs group: "com.github.spotbugs", name: "spotbugs", version: "${spotbugs.toolVersion.get()}", ext: "pom"
+
+    // JSR For Spotbugs
+    compile group: "com.google.code.findbugs", name: "jsr305", version: "${project.spotbugs_jsr_version}"
 }
 
 test {
