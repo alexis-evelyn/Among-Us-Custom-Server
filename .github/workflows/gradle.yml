@@ -82,31 +82,24 @@ jobs:
     - name: Setup Vars For Release Booleans and Version Info
       run: |
         # For Setting Up Independent Release Booleans
-        strings gradle.properties | grep mod_version | cut -d' ' -f3 | grep -q SNAPSHOT && echo ::set-env name=RANDOMTECH_RELEASE::false || echo ::set-env name=RANDOMTECH_RELEASE::true
-        strings api/gradle.properties | grep mod_version | cut -d' ' -f3 | grep -q SNAPSHOT && echo ::set-env name=API_RELEASE::false || echo ::set-env name=API_RELEASE::true
+        strings gradle.properties | grep mod_version | cut -d' ' -f3 | grep -q SNAPSHOT && echo ::set-env name=SERVER_RELEASE::false || echo ::set-env name=SERVER_RELEASE::true
 
         # For Setting Up Independent Version Vars
-        echo ::set-env name=RANDOMTECH_VERSION::$( strings gradle.properties | grep mod_version | cut -d' ' -f3 )
-        echo ::set-env name=API_VERSION::$( strings api/gradle.properties | grep mod_version | cut -d' ' -f3 )
-
-        # For Setting Up MC Version Vars
-        echo ::set-env name=RANDOMTECH_MC_VERSION::$( strings gradle.properties | grep minecraft_version | cut -d' ' -f3 )
-        echo ::set-env name=API_MC_VERSION::$( strings api/gradle.properties | grep minecraft_version | cut -d' ' -f3 )
+        echo ::set-env name=SERVER_VERSION::$( strings gradle.properties | grep server_version | cut -d' ' -f3 )
 
     - name: Setup Vars For Main Release Boolean and Version Info
       run: |
         # For Setting Up Main Release Boolean
         echo ::set-env name=RELEASE::false
-        test "$API_RELEASE" = "true" && echo ::set-env name=RELEASE::true
-        test "$RANDOMTECH_RELEASE" = "true" && echo ::set-env name=RELEASE::true
+        test "$SERVER_RELEASE" = "true" && echo ::set-env name=RELEASE::true
 
-        # For Setting Up Main Version Var - Currently Assuming That RandomTech Version is Desired Version Number
-        echo ::set-env name=VERSION::$( echo $RANDOMTECH_VERSION )
+        # For Setting Up Main Version Var
+        echo ::set-env name=VERSION::$( echo $SERVER_VERSION )
 
     - name: Test Result Vars (For Debugging)
       run: |
-        echo "Release: '$RELEASE' - API: '$API_RELEASE' - RandomTech: '$RANDOMTECH_RELEASE'"
-        echo "Version: '$VERSION' - API: '$API_VERSION' - RandomTech: '$RANDOMTECH_VERSION'"
+        echo "Release: '$RELEASE' - Server: '$SERVER_RELEASE'"
+        echo "Version: '$VERSION' - Server: '$SERVER_VERSION'"
 
     - name: Upload Compiled Mods to Github Actions For Review
       uses: actions/upload-artifact@v2
@@ -115,7 +108,6 @@ jobs:
         name: Compiled-Mods
         path: |
           build/libs/*
-          api/build/libs/*
 
     - name: Setup Git Credentials For Tagging
       uses: oleksiyrudenko/gha-git-credentials@v1
@@ -141,27 +133,27 @@ jobs:
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
 
-    - name: Alert Discord to New RandomTech Release
-      if: startsWith(env.RANDOMTECH_RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
+    - name: Alert Discord to New RandomTech Release # Alternate Options are 4915330 and 139. I like 4915330 better, so I may switch at a future point
+      if: startsWith(env.SERVER_RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
       continue-on-error: true
       run: |
         # Useful Links:
         # https://discord.com/developers/docs/resources/webhook
         # https://discord.com/developers/docs/resources/channel#embed-object
 
-        # For Sending RandomTech Download Webhook to Discord
+        # For Sending Crewmate Download Webhook to Discord
         curl \
         -H 'Content-Type: application/json' ${{ secrets.DISCORD_RELEASES_WEBHOOK_URL }} \
         --data-binary @- << EOF
         {
-          "content": "RandomTech Download: [v$RANDOMTECH_VERSION](https://www.curseforge.com/minecraft/mc-mods/randomtech/files/$RANDOMTECH_FILE_ID)",
-          "avatar_url": "https://raw.githubusercontent.com/alexis-evelyn/RandomTech/master/src/main/resources/pack.png",
+          "content": "Crewmate Download: [v$SERVER_VERSION](https://mvnrepository.com/artifact/me.alexisevelyn/crewmate/$SERVER_VERSION)",
+          "avatar_url": "https://raw.githubusercontent.com/alexis-evelyn/Crewmate/master/src/main/resources/icon.png",
           "embeds": [
             {
-              "title": "RandomTech v$RANDOMTECH_VERSION",
-              "description": "For $RANDOMTECH_MC_VERSION",
-              "url": "https://www.curseforge.com/minecraft/mc-mods/randomtech/files/$RANDOMTECH_FILE_ID",
-              "color": 11540510
+              "title": "Crewmate v$SERVER_VERSION",
+              "description": "Java Implementation of a Custom Among Us Server",
+              "url": "https://mvnrepository.com/artifact/me.alexisevelyn/crewmate/$SERVER_VERSION",
+              "color": 4620980
             }
           ]
         }

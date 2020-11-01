@@ -14,7 +14,7 @@ plugins {
 }
 
 group 'me.alexisevelyn'
-version '0.0.7-SNAPSHOT'
+version "${project.server_version}"
 
 repositories {
     mavenCentral()
