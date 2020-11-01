@@ -44,6 +44,18 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
+// Pull Java Source Files For Javadocs
+task javadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+}
+
+// Package Javadocs Into Jar
+task javadocsJar(type: Jar, dependsOn: javadocs) {
+    classifier = "javadoc"
+    javadocs.failOnError false
+    from javadocs.destinationDir
+}
+
 // Other Build Gradles
 apply from: "gradles/dependencies.gradle" // Compile Dependencies
 apply from: "gradles/unit-testing.gradle" // Unit Testing Dependencies/Setup
