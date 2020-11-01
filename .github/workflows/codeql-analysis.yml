@@ -89,7 +89,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build Mod
+    - name: Build Server
       run: ./gradlew build
       env:
         IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
