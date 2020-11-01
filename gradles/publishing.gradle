@@ -28,7 +28,7 @@ publishing {
             }
 
             artifact javadocsJar
-            groupId = project.maven_group
+            groupId = project.group
             artifactId = 'crewmate'
             version = project.version
 
