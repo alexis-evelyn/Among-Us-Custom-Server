@@ -135,6 +135,7 @@ jobs:
 
     - name: Spotbugs Analysis
       uses: codacy/codacy-analysis-cli-action@master
+      continue-on-error: true
       with:
         tool: spotbugs
         allow-network: true
