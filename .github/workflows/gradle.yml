@@ -30,12 +30,17 @@ jobs:
       run: |
         apt-get update
         apt-get install zstd
+
     - name: Checkout Repo
       uses: actions/checkout@v2
+
     - name: Set up JDK 1.11
       uses: actions/setup-java@v1
       with:
-        java-version: 1.11
+        java-version: 1.11 # The JDK version to make available on the path. - https://static.azul.com/zulu/bin/
+        java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+        architecture: x64 # (x64 or x86) - defaults to x64
+
     - name: Gradle Setup Cache
       uses: actions/cache@v2
       if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
@@ -44,6 +49,7 @@ jobs:
           .gradle
         key: ${{ runner.os }}-setup-cache-${{ hashFiles('**/*.gradle*') }}
         restore-keys: ${{ runner.os }}-setup-cache-
+
     - name: Gradle Build Cache
       uses: actions/cache@v2
       if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
@@ -55,11 +61,13 @@ jobs:
         restore-keys: ${{ runner.os }}-build-cache-
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
     - name: Build Only
       if: ${{ !startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled') }}
       run: ./gradlew build -g build/.gradle
       env:
         IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
+
     - name: Build And Publish To Sonatype
       if: startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
       run: ./gradlew publish -g build/.gradle
@@ -70,6 +78,7 @@ jobs:
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
       continue-on-error: false
+
     - name: Setup Vars For Release Booleans and Version Info
       run: |
         # For Setting Up Independent Release Booleans
@@ -83,6 +92,7 @@ jobs:
         # For Setting Up MC Version Vars
         echo ::set-env name=RANDOMTECH_MC_VERSION::$( strings gradle.properties | grep minecraft_version | cut -d' ' -f3 )
         echo ::set-env name=API_MC_VERSION::$( strings api/gradle.properties | grep minecraft_version | cut -d' ' -f3 )
+
     - name: Setup Vars For Main Release Boolean and Version Info
       run: |
         # For Setting Up Main Release Boolean
@@ -92,11 +102,12 @@ jobs:
 
         # For Setting Up Main Version Var - Currently Assuming That RandomTech Version is Desired Version Number
         echo ::set-env name=VERSION::$( echo $RANDOMTECH_VERSION )
+
     - name: Test Result Vars (For Debugging)
       run: |
         echo "Release: '$RELEASE' - API: '$API_RELEASE' - RandomTech: '$RANDOMTECH_RELEASE'"
         echo "Version: '$VERSION' - API: '$API_VERSION' - RandomTech: '$RANDOMTECH_VERSION'"
-        echo "API MC Version: '$API_MC_VERSION' - RandomTech MC Version: '$RANDOMTECH_MC_VERSION'"
+
     - name: Upload Compiled Mods to Github Actions For Review
       uses: actions/upload-artifact@v2
       if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
@@ -105,6 +116,7 @@ jobs:
         path: |
           build/libs/*
           api/build/libs/*
+
     - name: Setup Git Credentials For Tagging
       uses: oleksiyrudenko/gha-git-credentials@v1
       if: startsWith(env.RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
@@ -113,12 +125,14 @@ jobs:
         email: 'automated-tag@alexisevelyn.me'
         actor: ${{ github.actor }}
         token: ${{ secrets.TOKEN_AUTOTAG_CREATOR }}
+
     - name: Update Tag If Release
       if: startsWith(env.RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
       run: |
         # Causes Incorrect Version Info (If Pushing Snapshot Before This Is Ran) - git pull --ff-only
         git tag -a v${{ env.VERSION }} -m "Automatically Generated Tag For Release v${{ env.VERSION }}" $GITHUB_SHA
         git push origin v${{ env.VERSION }}
+
     - name: Attempt Close/Release
       if: startsWith(env.RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
       run: ./gradlew closeAndReleaseRepository -g build/.gradle
@@ -126,59 +140,7 @@ jobs:
         SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
-    - name: Generate Changelog
-      uses: heinrichreimer/github-changelog-generator-action@v2.1.1
-      with: # https://github.com/heinrichreimer/action-github-changelog-generator/blob/master/README.md and https://github.com/github-changelog-generator/github-changelog-generator/blob/master/README.md
-        token: ${{ secrets.GITHUB_TOKEN }}
-        stripGeneratorNotice: "true"
-        stripHeaders: "false"
-        onlyLastTag: "false"
-        verbose: "true"
-        # releaseUrl: "https://github.com/alexis-evelyn/RandomTech/tree/v${{ env.VERSION }}"
-        unreleased: "true"
-        issueLineLabels: "ALL"
-    - name: Upload Generated Changelog For Review
-      uses: actions/upload-artifact@v2
-      if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
-      with:
-        name: Generated-Changelog
-        path: ${{ github.workspace }}/CHANGELOG.md
-    - name: Upload RandomTech to Curseforge
-      if: startsWith(env.RANDOMTECH_RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
-      # :publishCurseforge as opposed to publishCurseforge is intentional to only run the task for root
-      run: ./gradlew :publishCurseforge -g build/.gradle
-      env:
-        CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
-        GITHUB_WORKSPACE: ${{ github.workspace }}
-        IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
-    - name: Upload API to Curseforge
-      if: startsWith(env.API_RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
-      run: ./gradlew :api:publishCurseforge -g build/.gradle
-      env:
-        CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
-        GITHUB_WORKSPACE: ${{ github.workspace }}
-        IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
-    - name: Alert Discord to New API Release
-      if: startsWith(env.API_RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
-      continue-on-error: true
-      run: |
-        # For Sending API Download Webhook to Discord
-        curl \
-        -H 'Content-Type: application/json' ${{ secrets.DISCORD_RELEASES_WEBHOOK_URL }} \
-        --data-binary @- << EOF
-        {
-          "content": "API Download: [v$API_VERSION](https://www.curseforge.com/minecraft/mc-mods/randomtech-api/files/$API_FILE_ID)",
-          "avatar_url": "https://raw.githubusercontent.com/alexis-evelyn/RandomTech/master/api/src/main/resources/pack.png",
-          "embeds": [
-            {
-              "title": "API v$API_VERSION",
-              "description": "For $API_MC_VERSION",
-              "url": "https://www.curseforge.com/minecraft/mc-mods/randomtech-api/files/$API_FILE_ID",
-              "color": 1522491
-            }
-          ]
-        }
-        EOF
+
     - name: Alert Discord to New RandomTech Release
       if: startsWith(env.RANDOMTECH_RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
       continue-on-error: true
