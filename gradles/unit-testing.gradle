@@ -8,10 +8,10 @@ dependencies {
     testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: "${project.junit_version}"
 
     // For Spotbugs Annotations
-	compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
+    providedCompile group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugs.toolVersion.get()}"
 
 	// For Spotbugs Plugin
-	spotbugs "com.github.spotbugs:spotbugs:${spotbugs.toolVersion.get()}"
+    spotbugs group: "com.github.spotbugs", name: "spotbugs", version: "${spotbugs.toolVersion.get()}", ext: "pom"
 }
 
 test {
