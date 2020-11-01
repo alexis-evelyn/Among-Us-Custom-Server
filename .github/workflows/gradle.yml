@@ -82,7 +82,7 @@ jobs:
     - name: Setup Vars For Release Booleans and Version Info
       run: |
         # For Setting Up Independent Release Booleans
-        strings gradle.properties | grep mod_version | cut -d' ' -f3 | grep -q SNAPSHOT && echo ::set-env name=SERVER_RELEASE::false || echo ::set-env name=SERVER_RELEASE::true
+        strings gradle.properties | grep server_version | cut -d' ' -f3 | grep -q SNAPSHOT && echo ::set-env name=SERVER_RELEASE::false || echo ::set-env name=SERVER_RELEASE::true
 
         # For Setting Up Independent Version Vars
         echo ::set-env name=SERVER_VERSION::$( strings gradle.properties | grep server_version | cut -d' ' -f3 )
@@ -101,11 +101,11 @@ jobs:
         echo "Release: '$RELEASE' - Server: '$SERVER_RELEASE'"
         echo "Version: '$VERSION' - Server: '$SERVER_VERSION'"
 
-    - name: Upload Compiled Mods to Github Actions For Review
+    - name: Upload Server to Github Actions For Review
       uses: actions/upload-artifact@v2
       if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
       with:
-        name: Compiled-Mods
+        name: Crewmate
         path: |
           build/libs/*
 
