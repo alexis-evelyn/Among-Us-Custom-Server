@@ -1,0 +1,43 @@
+// Embedded Libraries
+dependencies {
+    // License Compatibility - https://opensource.stackexchange.com/a/7908/9726
+    // License (Dual Licensed Under EPL v1.0 and LGPL 2.1) - https://logback.qos.ch/license.html
+    implementation "ch.qos.logback:logback-core:${project.logback_version}"
+    shadow "ch.qos.logback:logback-core:${project.logback_version}"
+
+    // License (Dual Licensed Under EPL v1.0 and LGPL 2.1) - https://logback.qos.ch/license.html
+    implementation "ch.qos.logback:logback-classic:${project.logback_version}"
+    shadow "ch.qos.logback:logback-classic:${project.logback_version}"
+
+    // License (Identical to MIT) - http://slf4j.org/license.html
+    implementation "org.slf4j:slf4j-api:${project.slf4j_api_version}"
+    shadow "org.slf4j:slf4j-api:${project.slf4j_api_version}"
+
+    // License (MIT) - https://github.com/luaj/luaj/blob/master/LICENSE
+    implementation "org.luaj:luaj-jse:${project.luaj_version}"
+    shadow "org.luaj:luaj-jse:${project.luaj_version}"
+
+    // License (Apache 2.0) - https://github.com/apache/mina-sshd/blob/master/LICENSE.txt
+    // Compatible With MIT According To https://www.quora.com/Is-the-MIT-license-compatible-with-the-Apache-License-Version-2-APLv2
+    // Modules - https://github.com/apache/mina-sshd/blob/master/README.md#basic-artifacts-structure
+    implementation "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
+    shadow "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
+
+    // License (Crockford MIT - aka the no evil license) - https://github.com/stleary/JSON-java/blob/master/LICENSE
+    implementation "org.json:json:${project.json_version}"
+    shadow "org.json:json:${project.json_version}"
+
+    // License (BSD-3) - https://github.com/jline/jline3/blob/master/LICENSE.txt
+    // Requires License In Binary Distribution - Can Be Found in `META-INF/licenses/jline3-license.txt`
+    implementation "org.jline:jline:${project.jline_version}"
+    shadow "org.jline:jline:${project.jline_version}"
+}
+
+// Annotations
+dependencies {
+    // License (Apache 2.0) - https://github.com/JetBrains/java-annotations/blob/master/LICENSE.txt
+    implementation "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
+
+    // License (Apache 2.0) - https://github.com/apiguardian-team/apiguardian/blob/master/LICENSE
+    implementation "org.apiguardian:apiguardian-api:${project.api_guardian_version}"
+}

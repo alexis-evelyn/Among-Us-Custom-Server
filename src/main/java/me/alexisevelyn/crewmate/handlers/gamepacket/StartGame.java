@@ -35,43 +35,46 @@ public class StartGame {
 	 */
 	@API(status = API.Status.EXPERIMENTAL)
 	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) {
-		// 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e
-		// --------------------------------------------------------------------------------------------------------------------------------------------
-		// 2a 02 07 00 01 00 00 02 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 34 42 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
-		// --------------------------------------------------------------------------------------------------------------------------------------------
-		// PL GV MP LA LA LA LA CM PS PS PS PS CL CL CL CL IL IL IL IL KC KC KC KC CT LT ST EM EM EM EM IC KD DT DT DT DT VT VT VT VT DS EC CE VI AV TU
-		// PL = Payload Length As Packed Int (Supposed to be uint-32?)
-		// GV = Game Options Version
-		// MP = Max Players
-		// LA = Language
-		// PS = Player Speed Modifier (Float 32)
-		// CL = Crew Light Modifier (Float 32)
-		// IL = Imposter Light Modifier (Float 32)
-		// KC = Kill Cooldown (Float 32)
-		// CT = Common Tasks (Count)
-		// LT = Long Tasks (Count)
-		// ST = Short Tasks (Count)
-		// EM = Emergencies (Int-32)
-		// CM = Chosen Map
-		// IC = Imposter Count
-		// KD = Kill Distance (Unknown Units)
-		// DT = Discussion Time (Int-32)
-		// VT = Voting Time (Int-32)
-		// DS = Default Settings
-		// EC = Emergency Cooldown (Version 2+)
+    /*
+	     00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e
+	     --------------------------------------------------------------------------------------------------------------------------------------------
+	     2a 02 07 00 01 00 00 02 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 34 42 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
+	     --------------------------------------------------------------------------------------------------------------------------------------------
+	     PL GV MP LA LA LA LA CM PS PS PS PS CL CL CL CL IL IL IL IL KC KC KC KC CT LT ST EM EM EM EM IC KD DT DT DT DT VT VT VT VT DS EC CE VI AV TU
+	     PL = Payload Length As Packed Int (Supposed to be uint-32?)
+	     GV = Game Options Version
+	     MP = Max Players
+	     LA = Language
+	     PS = Player Speed Modifier (Float 32)
+	     CL = Crew Light Modifier (Float 32)
+	     IL = Imposter Light Modifier (Float 32)
+	     KC = Kill Cooldown (Float 32)
+	     CT = Common Tasks (Count)
+	     LT = Long Tasks (Count)
+	     ST = Short Tasks (Count)
+	     EM = Emergencies (Int-32)
+	     CM = Chosen Map
+	     IC = Imposter Count
+	     KD = Kill Distance (Unknown Units)
+	     DT = Discussion Time (Int-32)
+	     VT = Voting Time (Int-32)
+	     DS = Default Settings
+	     EC = Emergency Cooldown (Version 2+)
 
-		// The game doesn't send these at all when starting a lobby for hosting the game
-		// CE = Confirm Ejects (Version 3+)
-		// VI = Visual Tasks (Version 3+)
-		// AV = Anonymous Voting (Version 4+)
-		// TU = Task Bar Updates (Version 4+)
+	     The game doesn't send these at all when starting a lobby for hosting the game
+	     CE = Confirm Ejects (Version 3+)
+	     VI = Visual Tasks (Version 3+)
+	     AV = Anonymous Voting (Version 4+)
+	     TU = Task Bar Updates (Version 4+)
+    */
 
-		// Useful For Verifying Bytes
-		// LogHelper.printPacketBytes(byteLength, reliableBytes);
+    // Useful For Verifying Bytes
+    // LogHelper.printPacketBytes(byteLength, reliableBytes);
 
-		// Ensure Minimum Size
-		if (reliableBytes.length < 0x29 || (byteLength != reliableBytes.length))
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
+    // Ensure Minimum Size
+    if (reliableBytes.length < 0x29 || (byteLength != reliableBytes.length))
+      return ClosePacket.closeWithMessage(
+          Main.getTranslationBundle().getString("game_packet_invalid_size"));
 
 		// Data
 		int payloadLength = PacketHelper.unpackInteger(reliableBytes[0]); // Currently Always 42 (on Beta)

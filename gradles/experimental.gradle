@@ -1,0 +1,29 @@
+// https://discuss.gradle.org/t/sourcecompatibility-targetcompatibility-usage-reasons/25133/4
+// I have no idea how to tell which version is the minimal version that can compile this
+//sourceCompatibility = 1.8
+//targetCompatibility = 1.11
+
+// Configure Auto Relocation
+//import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
+//shadowJar {
+//    archiveBaseName.set('shadow')
+//    archiveClassifier.set('')
+//    archiveVersion.set('')
+//}
+
+// This is to prevent dependency conflicts (causes too many problems right now, will deal with later)
+// https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
+//task relocateShadowJar(type: ConfigureShadowRelocation) {
+//    target = tasks.shadowJar
+//    prefix = "shadow.crewmate" // Default value is "shadow"
+//}
+
+//tasks.shadowJar.dependsOn tasks.relocateShadowJar
+
+// Currently None of the libraries appear to use a standard for machine license reading
+// https://github.com/vlsi/vlsi-release-plugins#license-gather-plugin
+tasks.register('generateLicense', com.github.vlsi.gradle.license.GatherLicenseTask.class) {
+    configurations.add(project.configurations.runtime)
+    licenseDir.set(file("$buildDir/third-party-licenses"))
+}
