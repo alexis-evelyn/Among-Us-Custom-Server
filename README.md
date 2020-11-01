@@ -8,9 +8,8 @@
 <br>
 [![Github Actions Link][github-actions-badge]][github-actions-link]
 [![Codacy Link][codacy-badge]][codacy-link]
+[![Crowdin Link][crowdin-badge]][crowdin-link]
 [![Javadocs][javadocs-badge]][javadocs-link]
-
-<!--[![Crowdin Link][crowdin-badge]][crowdin-link]--> <!-- Temporarily Disabled Until Approved -->
 
 This will be a custom server which will support custom game modes and mini-games as well as improving the security of games by validating if certain actions are possible (e.g. killing if you are not the imposter and enforcing the kill cool down). This server will also be able to support modded clients and be able to be modded itself in order to add custom features which are not possible with a vanilla client.
 

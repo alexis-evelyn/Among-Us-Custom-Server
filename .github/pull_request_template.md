@@ -42,7 +42,7 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 Basically, the parameters in code would not work with the translation for that locale without changes to the code.
 Please update the English/US translation files if applicable. Crowdin's setup to import the English/US files for translation.
 4. Use Jetbrain's annotations over JavaX. The PR will be modified/denied unless the annotation cannot be performed with Jetbrains (and can be performed with JavaX).
-5. If this is just a simple translation which doesn't modify code, then submit the translation through [Crowdin][crowdin-link] instead. Note: I'm still awaiting the request to go through to create the Crowdin project under an open source license, so the project does not currently exist.
+5. If this is just a simple translation which doesn't modify code, then submit the translation through [Crowdin][crowdin-link] instead.
 
 [crowdin-link]: <https://crwd.in/crewmate> "Crowdin Link"
 [contributing-file]: <../CONTRIBUTING.md> "Contributing File"
