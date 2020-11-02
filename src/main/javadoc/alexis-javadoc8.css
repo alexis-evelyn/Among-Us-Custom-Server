@@ -1,4 +1,10 @@
 /*
+    Heavily Modified Version of Dracula Javadocs Theme
+    https://draculatheme.com/javadoc
+    Editor: Alexis Evelyn
+
+    MIT License - https://github.com/dracula/javadoc/blob/master/LICENSE
+
     Javadoc Dracula Style Sheet
 
     Authors: Allan Im
@@ -692,26 +698,21 @@ input[type=text], .ui-autocomplete-category, .ui-menu-item-wrapper {
     color: #f8f8f2;
 }
 
-/* .ui-state-active, .ui-state-default, .ui-state-focus, .ui-state-highlight, .ui-state-hover */
-/* .ui-state-active, .ui-state-default, .ui-state-focus, .ui-state-highlight, .ui-state-hover {
-    background-color: red !important;
-    color: green !important;
-}*/
-
-/* TODO: Theme This - Pulled From JQuery CSS. PITA To Find */
 .ui-state-active,
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active,
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-    border: 1px solid #491533 !important;
-    background: #ff5555 !important;
-    font-weight: normal;
-    color: #212121;
+    background: #160085 !important;
+    color: #f8f8f2 !important;
+
+    border: 1px solid #000 !important;
+    <!-- font-weight: normal; -->
 }
 
 .resultHighlight {
     /* Used For Styling The Highlighted Keywords In Search */
+    background-color: #82275c !important;
 }
 

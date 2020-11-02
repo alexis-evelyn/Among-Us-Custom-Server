@@ -47,11 +47,11 @@ tasks.withType(JavaCompile) {
 
 // Pull Java Source Files For Javadocs
 javadoc {
-    options.stylesheetFile = new File(projectDir, "src/main/resources/dracula-javadoc8.css")
+    options.stylesheetFile = new File(projectDir, "src/main/javadoc/alexis-javadoc8.css")
 }
 
 // Package Javadocs Into Jar
-task javadocsJar(type: Jar, dependsOn: javadoc) {
+task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveClassifier.set("javadoc")
 
     javadoc.failOnError false
