@@ -3,7 +3,6 @@ package me.alexisevelyn.crewmate.packethandler;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
-import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 import me.alexisevelyn.crewmate.packethandler.packets.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,6 @@ public class HazelPacket {
 	 * @param packet UDP Packet
 	 * @param server Instance of Server
 	 * @return packet bytes to send to client or empty byte array to skip sending
-	 * @throws InvalidGameCodeException
 	 */
 	@NotNull
 	public static byte[] handlePacket(DatagramPacket packet, Server server) {

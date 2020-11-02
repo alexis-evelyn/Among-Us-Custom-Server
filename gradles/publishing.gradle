@@ -23,41 +23,47 @@ publishing {
     publications {
         publishServer(MavenPublication) {
             // add all the jars that should be included when publishing to maven
+            // Server Jar
             artifact(shadowJar) {
                 builtBy shadowJar
             }
 
+            // Javadoc Jar
             artifact javadocsJar
+
+            // Sources Jar
+            artifact sourcesJar
+
             groupId = project.group
-            artifactId = 'crewmate'
+            artifactId = 'crewmate' as Publication
             version = project.version
 
             pom {
-                name = 'Crewmate'
-                packaging = 'jar'
+                name = 'Crewmate' as Publication
+                packaging = 'jar' as Publication
                 // optionally artifactId can be defined here
-                description = 'An open-source implementation of a custom Among Us server written in Java. Also supports anti-cheat, plugins, and modding!'
-                url = 'https://github.com/alexis-evelyn/Crewmate/blob/master/README.md'
+                description = 'An open-source implementation of a custom Among Us server written in Java. Also supports anti-cheat, plugins, and modding!' as Publication
+                url = 'https://github.com/alexis-evelyn/Crewmate/blob/master/README.md' as Publication
                 // logo = 'https://raw.githubusercontent.com/alexis-evelyn/Crewmate/master/src/main/resources/icon.png' // My attempt at getting a logo to show up in mvnrepository.com
 
                 scm {
-                    connection = 'git@github.com:alexis-evelyn/Crewmate.git'
-                    developerConnection = 'git@github.com:alexis-evelyn/Crewmate.git'
-                    url = 'https://github.com/alexis-evelyn/Crewmate'
+                    connection = 'git@github.com:alexis-evelyn/Crewmate.git' as Publication
+                    developerConnection = 'git@github.com:alexis-evelyn/Crewmate.git' as Publication
+                    url = 'https://github.com/alexis-evelyn/Crewmate' as Publication
                 }
 
                 licenses {
                     license {
-                        name = 'MIT'
-                        url = 'https://github.com/alexis-evelyn/Crewmate/blob/master/LICENSE.md'
+                        name = 'MIT' as Publication
+                        url = 'https://github.com/alexis-evelyn/Crewmate/blob/master/LICENSE.md' as Publication
                     }
                 }
 
                 developers {
                     developer {
-                        id = 'alexis-evelyn'
-                        name = 'Alexis Evelyn'
-                        email = 'alexis.a.evelyn@gmail.com'
+                        id = 'alexis-evelyn' as Publication
+                        name = 'Alexis Evelyn' as Publication
+                        email = 'alexis.a.evelyn@gmail.com' as Publication
                     }
                 }
             }
@@ -112,5 +118,5 @@ signing {
     }
 
     useInMemoryPgpKeys(signingKey as String, signingPassword as String)
-    sign publishing.publications.publishServer
+    sign publishing.publications.publishServer as Publication
 }

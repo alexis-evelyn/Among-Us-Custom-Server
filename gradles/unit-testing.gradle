@@ -8,13 +8,13 @@ dependencies {
     testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: "${project.junit_version}"
 
     // For Spotbugs Annotations
-    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugs.toolVersion.get()}"
+    // testImplementation group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugs.toolVersion.get()}"
 
 	// For Spotbugs Plugin
-    spotbugs group: "com.github.spotbugs", name: "spotbugs", version: "${spotbugs.toolVersion.get()}", ext: "pom"
+    // spotbugs group: "com.github.spotbugs", name: "spotbugs", version: "${spotbugs.toolVersion.get()}", ext: "pom"
 
-    // JSR For Spotbugs
-    compile group: "com.google.code.findbugs", name: "jsr305", version: "${project.spotbugs_jsr_version}"
+    // Contains All SpotBugs detectors
+    // spotbugsPlugins group: "com.h3xstream.findsecbugs", name: "findsecbugs-plugin", version: "${project.spotbugs_detectors_version}"
 }
 
 test {
@@ -25,5 +25,6 @@ test {
 
 spotbugs {
     // TODO: Disable When Everything Fixed
-	ignoreFailures = true
+    ignoreFailures.set(true)
+    // toolVersion = "4.1.4"
 }

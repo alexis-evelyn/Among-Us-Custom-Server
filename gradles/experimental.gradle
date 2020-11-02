@@ -23,7 +23,8 @@
 
 // Currently None of the libraries appear to use a standard for machine license reading
 // https://github.com/vlsi/vlsi-release-plugins#license-gather-plugin
-tasks.register('generateLicense', com.github.vlsi.gradle.license.GatherLicenseTask.class) {
-    configurations.add(project.configurations.runtime)
-    licenseDir.set(file("$buildDir/third-party-licenses"))
-}
+//import com.github.vlsi.gradle.license.*
+//tasks.register('generateLicense', (Class) GatherLicenseTask.class) {
+//    configurations.add(project.configurations.runtime)
+//    licenseDir.set(file("$buildDir/third-party-licenses"))
+//}

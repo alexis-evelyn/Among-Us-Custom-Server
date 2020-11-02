@@ -7,10 +7,11 @@ plugins {
     id "io.codearte.nexus-staging" version "0.22.0" // ./gradlew closeAndReleaseRepository - For releasing uploaded releases to the public - https://plugins.gradle.org/plugin/io.codearte.nexus-staging
 
     // For Unit-Testing.gradle
-    id "com.github.spotbugs" version "4.5.1" // https://plugins.gradle.org/plugin/com.github.spotbugs
+    // id "com.github.spotbugs" version "4.5.1" // https://plugins.gradle.org/plugin/com.github.spotbugs
+    id "com.github.spotbugs-base" version "4.5.1" // https://plugins.gradle.org/plugin/com.github.spotbugs-base
 
     // For Experimental.gradle
-    id "com.github.vlsi.license-gather" version "1.7.0" // ./gradlew generateLicense - https://plugins.gradle.org/plugin/com.github.vlsi.license-gather
+//    id "com.github.vlsi.license-gather" version "1.7.0" // ./gradlew generateLicense - https://plugins.gradle.org/plugin/com.github.vlsi.license-gather
 }
 
 group 'me.alexisevelyn'
@@ -31,7 +32,7 @@ jar {
 
 // This is so build time properties like the server version are saved in the jar
 // https://stackoverflow.com/a/54006518/6828099
-processResources {
+tasks.processResources {
     filesMatching('compileTime.properties') {
         expand([build_version: version])
     }
@@ -45,18 +46,31 @@ tasks.withType(JavaCompile) {
 }
 
 // Pull Java Source Files For Javadocs
-task javadocs(type: Javadoc) {
-    source = sourceSets.main.allJava
+javadoc {
+    options.stylesheetFile = new File(projectDir, "src/main/resources/dracula-javadoc8.css")
 }
 
 // Package Javadocs Into Jar
-task javadocsJar(type: Jar, dependsOn: javadocs) {
-    classifier = "javadoc"
-    javadocs.failOnError false
-    from javadocs.destinationDir
+task javadocsJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set("javadoc")
+
+    javadoc.failOnError false
+    from javadoc.destinationDir
 }
 
-// Other Build Gradles
+// If you remove this task, sources will not be generated.
+task sourcesJar(type: Jar, dependsOn: classes) {
+    // For some reason, depending on processResources does nothing, so I have to copy the code
+    filesMatching('compileTime.properties') {
+        expand([build_version: getArchiveVersion()])
+    }
+
+    archiveClassifier.set("sources")
+
+    from sourceSets.main.allSource
+}
+
+// Other Build Gradle Files
 apply from: "gradles/dependencies.gradle" // Compile Dependencies
 apply from: "gradles/unit-testing.gradle" // Unit Testing Dependencies/Setup
 apply from: "gradles/plugins.gradle" // Example/Testing/Demo Plugins
