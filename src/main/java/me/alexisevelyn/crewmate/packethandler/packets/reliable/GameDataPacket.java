@@ -4,13 +4,8 @@ import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.RPC;
-import me.alexisevelyn.crewmate.handlers.gamepacket.Lobby;
-import me.alexisevelyn.crewmate.handlers.gamepacket.StartGame;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
-import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.ChatPacket;
-import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.CosmeticPacket;
 
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

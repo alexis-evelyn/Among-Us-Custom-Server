@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public enum AlterGame {
-	CHANGE_PRIVACY((byte) 0x0a); // 0x0a = 10
+	CHANGE_PRIVACY((byte) 0x01); // 0x01 = 1
 
 	private final byte alterGameFlag;
 

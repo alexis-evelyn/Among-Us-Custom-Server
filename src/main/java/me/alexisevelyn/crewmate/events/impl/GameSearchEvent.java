@@ -2,11 +2,10 @@ package me.alexisevelyn.crewmate.events.impl;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.events.Event;
-import me.alexisevelyn.crewmate.handlers.gamepacket.SearchGame;
+import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.SearchGamePacket;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
 import java.net.UnknownHostException;
@@ -23,7 +22,7 @@ public class GameSearchEvent extends Event {
         this.impostors = impostors;
 
         try {
-            this.games = SearchGame.getFakeSearchBytes(impostors, getLanguage().getUnsignedInt(), maps);
+            this.games = SearchGamePacket.getFakeSearchBytes(impostors, getLanguage().getUnsignedInt(), maps);
         } catch (UnknownHostException e) {
             LogHelper.printLineErr(Main.getTranslationBundle().getString("search_unknown_host"));
             e.printStackTrace();

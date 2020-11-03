@@ -1,4 +1,4 @@
-package me.alexisevelyn.crewmate.handlers.gamepacket;
+package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
@@ -18,7 +18,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ResourceBundle;
 
-public class SearchGame {
+public class SearchGamePacket {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
 
 	public static byte[] handleSearchPublicGame(DatagramPacket packet, Server server) {
