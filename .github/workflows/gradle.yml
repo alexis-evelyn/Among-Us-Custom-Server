@@ -79,6 +79,10 @@ jobs:
         IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
       continue-on-error: false
 
+    - name: Run Unit Tests
+      run: ./gradlew test
+      continue-on-error: true
+
     - name: Setup Vars For Release Booleans and Version Info
       run: |
         # For Setting Up Independent Release Booleans

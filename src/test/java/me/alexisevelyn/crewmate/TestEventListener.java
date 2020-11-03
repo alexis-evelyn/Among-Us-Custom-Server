@@ -8,6 +8,7 @@ import me.alexisevelyn.crewmate.events.impl.*;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 
@@ -17,7 +18,13 @@ public class TestEventListener {
     @Test
     public void testEventListener() {
         try {
-            this.server = new Server(new Config());
+            Config config = new Config();
+            File testDirectory = new File(System.getProperty("java.io.tmpdir"), "Crewmate-Event-Listener-Test");
+            System.out.printf("Location: %s%n", testDirectory.getAbsolutePath());
+
+            config.setRootDir(testDirectory); // Temporary Directory
+
+            this.server = new Server(config);
         } catch (SocketException | AccessDeniedException exception) {
             System.err.println(exception.getMessage());
 

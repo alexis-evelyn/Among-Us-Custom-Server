@@ -23,7 +23,7 @@ To connect to this server, you can either use the scripts [redirect-to-localhost
 
 # Contributing
 
-For consistency's sake, I'll be writing a coding standard for the server soon. For now, just keep the code in the style that already exists.
+See [CONTRIBUTING.md][contributing-file] for more info.
 
 ### Me:
 
@@ -104,3 +104,6 @@ My goals are:
 <!-- Sonatype Badges -->
 [sonatype-release-badge]: <https://img.shields.io/nexus/r/me.alexisevelyn/crewmate.svg?server=https%3A%2F%2Foss.sonatype.org&style=flat&color=brightgreen&label=Crewmate%20Release> "Sonatype Release Badge"
 [sonatype-snapshot-badge]: <https://img.shields.io/nexus/s/me.alexisevelyn/crewmate.svg?server=https%3A%2F%2Foss.sonatype.org&style=flat&color=brightgreen&label=Crewmate%20Snapshot> "Sonatype Snapshot Badge"
+
+<!-- Other Internal Files -->
+[contributing-file]: CONTRIBUTING.md
