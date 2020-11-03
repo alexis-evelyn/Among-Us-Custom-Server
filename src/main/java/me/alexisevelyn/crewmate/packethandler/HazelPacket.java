@@ -51,13 +51,13 @@ public class HazelPacket {
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
 				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
-				byte[] reliableBytes = PacketHelper.extractSecondPartBytes(3, packet.getData());
+				byte[] payloadBytes = PacketHelper.extractSecondPartBytes(3, packet.getData());
 
-				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 3), reliableBytes);
+				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 3), payloadBytes);
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
-				byte[] unreliableBytes = PacketHelper.extractSecondPartBytes(1, packet.getData());
+				byte[] unpayloadBytes = PacketHelper.extractSecondPartBytes(1, packet.getData());
 
-				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 1), unreliableBytes);
+				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 1), unpayloadBytes);
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
 				// Not Implemented Even on Hazel. No Idea What The Packet Structure Would Look Like
 				byte[] fragmentBytes = PacketHelper.extractSecondPartBytes(1, packet.getData());

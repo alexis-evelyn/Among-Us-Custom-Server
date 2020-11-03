@@ -158,26 +158,32 @@ public class Server extends Thread {
 		packet = this.createSendPacket(address, port, replyBuffer.length, replyBuffer);
 
 		// Send Reply Back
-		this.socket.send(packet);
-
-		// Check If Disconnect and Disconnect From Our End
-		SendOption replyOption = SendOption.getByte(replyBuffer[0]);
-
-		// Sanitization
-		if (replyOption == null)
-			return;
-
-		// Disconnect Client From Server End
-		if (replyOption.equals(SendOption.DISCONNECT)) {
-			// TODO: Figure out how to close one client's connection
-			// LogHelper.printLine("Closing Connection!!!");
-			// this.socket.disconnect();
-		}
+		this.sendPacket(packet);
 	}
 
 	public void sendPacket(DatagramPacket packet) {
 		try {
 			this.socket.send(packet);
+
+			byte[] packetData = packet.getData();
+
+			// Don't Send Packet if No Data To Send
+			if (packetData.length == 0)
+				return;
+
+			// Check If Disconnect and Disconnect From Our End
+			SendOption replyOption = SendOption.getByte(packetData[0]);
+
+			// Sanitization
+			if (replyOption == null)
+				return;
+
+			// Disconnect Client From Server End
+			if (replyOption.equals(SendOption.DISCONNECT)) {
+				// TODO: Figure out how to close one client's connection
+				// LogHelper.printLine("Closing Connection!!!");
+				// this.socket.disconnect();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -217,7 +223,7 @@ public class Server extends Thread {
 	}
 
 	private void setupShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> Main.getServer().exit()));
+		Runtime.getRuntime().addShutdownHook(new Thread(this::exit));
 	}
 
 	public InetAddress getBoundIP() {

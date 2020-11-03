@@ -30,6 +30,7 @@ public class HandshakePacket {
 	 */
 	public static byte[] handleHandshake(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... handshakeBytes) {
 		/*
+	                  V---- Starts Here (Subtract 3)
 			00 01 02 03 04 05 06 07 08 09 10 11 12 13 14
 			--------------------------------------------
 			08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73
@@ -42,10 +43,6 @@ public class HandshakePacket {
 			NL = Name Length
 			NT = Name Text
 		 */
-
-		// Starts at 3
-		// 00 01 02 03 04 05
-		// HV CV CV CV CV NL
 
 		if (handshakeBytes.length > 6) {
 			int displayNameLength = handshakeBytes[5];
@@ -91,6 +88,9 @@ public class HandshakePacket {
 
 	/**
 	 * Logs Client Version to Console For Debugging
+	 *
+	 * <br><br>
+	 * Will be replaced by an Object to represent the client version
 	 *
 	 * @param raw Client Version as Int-32 LE Integer
 	 */

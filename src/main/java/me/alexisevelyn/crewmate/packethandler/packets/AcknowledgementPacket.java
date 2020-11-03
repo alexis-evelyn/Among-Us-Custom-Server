@@ -38,7 +38,7 @@ public class AcknowledgementPacket {
 	 * @param nonceBytes 2 byte array of the nonce data to return to client
 	 * @return bytes to send to client in the form of a Hazel acknowledgment packet
 	 */
-	public static byte[] getAcknowledgement(byte... nonceBytes) throws InvalidBytesException {
+	private static byte[] getAcknowledgement(byte... nonceBytes) throws InvalidBytesException {
 		if (nonceBytes.length != 2)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("nonce_wrong_size"));
 
@@ -60,9 +60,19 @@ public class AcknowledgementPacket {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
-		// Verify Packet Length
-		if (length < 3)
-			return;
+	    // Verify Packet Length
+	    if (length < 3) {
+		    byte[] exception = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
+
+		    // Packet to Send Back to Client
+		    packet = server.createSendPacket(address, port, exception.length, exception);
+
+		    // Send Reply Back
+		    server.sendPacket(packet);
+
+		    // Return
+		    return;
+	    }
 
 		// Get Nonce
 		byte[] nonce = new byte[] {buffer[1], buffer[2]};

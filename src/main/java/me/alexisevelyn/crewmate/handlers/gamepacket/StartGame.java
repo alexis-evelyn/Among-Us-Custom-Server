@@ -24,17 +24,20 @@ import java.util.ResourceBundle;
 
 public class StartGame {
 	/**
-	 * TODO: Missing A Lot Of Information
+	 * Retrieves the game settings from the client on game join as host.
 	 *
-	 * @param server
-	 * @param clientAddress
-	 * @param clientPort
-	 * @param byteLength
-	 * @param reliableBytes
-	 * @return
+	 * <br><br>
+	 * Refer to NOT-IMPLEMENTED for the game settings that are set in the lobby.
+	 *
+	 * @param server Server Instance
+	 * @param clientAddress Client's IP Address
+	 * @param clientPort Client's Port
+	 * @param byteLength count of payload bytes
+	 * @param payloadBytes payload bytes
+	 * @return Joined Game Packet With List of Other Clients If Any Or Close Packet If Exception
 	 */
 	@API(status = API.Status.EXPERIMENTAL)
-	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... reliableBytes) {
+	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... payloadBytes) {
     /*
 	     00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e
 	     --------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,48 +72,48 @@ public class StartGame {
     */
 
     // Useful For Verifying Bytes
-    // LogHelper.printPacketBytes(byteLength, reliableBytes);
+    // LogHelper.printPacketBytes(byteLength, payloadBytes);
 
     // Ensure Minimum Size
-    if (reliableBytes.length < 0x29 || (byteLength != reliableBytes.length))
+    if (payloadBytes.length < 0x29 || (byteLength != payloadBytes.length))
       return ClosePacket.closeWithMessage(
           Main.getTranslationBundle().getString("game_packet_invalid_size"));
 
 		// Data
-		int payloadLength = PacketHelper.unpackInteger(reliableBytes[0]); // Currently Always 42 (on Beta)
-		int gameOptionsVersion = reliableBytes[1];
-		int maxPlayers = reliableBytes[2];
-		long languageInt = PacketHelper.getUnsignedIntLE(reliableBytes[3], reliableBytes[4], reliableBytes[5], reliableBytes[6]);
-		byte map = reliableBytes[7];
+		int payloadLength = PacketHelper.unpackInteger(payloadBytes[0]); // Currently Always 42 (on Beta)
+		int gameOptionsVersion = payloadBytes[1];
+		int maxPlayers = payloadBytes[2];
+		long languageInt = PacketHelper.getUnsignedIntLE(payloadBytes[3], payloadBytes[4], payloadBytes[5], payloadBytes[6]);
+		byte map = payloadBytes[7];
 
 		// Floats - TODO: Implement
-//		float playerSpeedModifier = PacketHelper.getUnsignedIntLE(reliableBytes[8], reliableBytes[9], reliableBytes[10], reliableBytes[11]);
-//		float crewLightModifier = PacketHelper.getUnsignedIntLE(reliableBytes[12], reliableBytes[13], reliableBytes[14], reliableBytes[15]);
-//		float imposterLightModifier = PacketHelper.getUnsignedIntLE(reliableBytes[16], reliableBytes[17], reliableBytes[18], reliableBytes[19]);
-//		float killCooldown = PacketHelper.getUnsignedIntLE(reliableBytes[20], reliableBytes[21], reliableBytes[22], reliableBytes[23]);
+		float playerSpeedModifier = PacketHelper.getUnsignedFloatLE(payloadBytes[8], payloadBytes[9], payloadBytes[10], payloadBytes[11]);
+		float crewLightModifier = PacketHelper.getUnsignedFloatLE(payloadBytes[12], payloadBytes[13], payloadBytes[14], payloadBytes[15]);
+		float imposterLightModifier = PacketHelper.getUnsignedFloatLE(payloadBytes[16], payloadBytes[17], payloadBytes[18], payloadBytes[19]);
+		float killCooldown = PacketHelper.getUnsignedFloatLE(payloadBytes[20], payloadBytes[21], payloadBytes[22], payloadBytes[23]);
 
 		// Counts
-		int commonTaskCount = reliableBytes[24];
-		int longTaskCount = reliableBytes[25];
-		int shortTaskCount = reliableBytes[26];
-		int emergencyMeetingCount = (int) PacketHelper.getUnsignedIntLE(reliableBytes[27], reliableBytes[28], reliableBytes[29], reliableBytes[30]);
-		int imposterCount = reliableBytes[31];
+		int commonTaskCount = payloadBytes[24];
+		int longTaskCount = payloadBytes[25];
+		int shortTaskCount = payloadBytes[26];
+		int emergencyMeetingCount = (int) PacketHelper.getUnsignedIntLE(payloadBytes[27], payloadBytes[28], payloadBytes[29], payloadBytes[30]);
+		int imposterCount = payloadBytes[31];
 
 		// Distance
-		int killDistance = reliableBytes[32];
+		int killDistance = payloadBytes[32];
 
 		// Time
-		int discussionTime = (int) PacketHelper.getUnsignedIntLE(reliableBytes[33], reliableBytes[34], reliableBytes[35], reliableBytes[36]);
-		int voteTime = (int) PacketHelper.getUnsignedIntLE(reliableBytes[37], reliableBytes[38], reliableBytes[39], reliableBytes[40]);
+		int discussionTime = (int) PacketHelper.getUnsignedIntLE(payloadBytes[33], payloadBytes[34], payloadBytes[35], payloadBytes[36]);
+		int voteTime = (int) PacketHelper.getUnsignedIntLE(payloadBytes[37], payloadBytes[38], payloadBytes[39], payloadBytes[40]);
 
 		// Default Settings
-		byte defaultSettings = reliableBytes[41]; // TODO: Convert To Boolean
+		byte defaultSettings = payloadBytes[41]; // TODO: Convert To Boolean
 
-		byte emergencyCooldown = reliableBytes[42];
-//		byte confirmEjects = reliableBytes[43]; // TODO: Convert To Boolean
-//		byte visualTasks = reliableBytes[44]; // TODO: Convert To Boolean
-//		byte anonymousVoting = reliableBytes[45]; // TODO: Convert To Boolean
-//		byte taskBarUpdates = reliableBytes[46];
+		byte emergencyCooldown = payloadBytes[42];
+//		byte confirmEjects = payloadBytes[43]; // TODO: Convert To Boolean
+//		byte visualTasks = payloadBytes[44]; // TODO: Convert To Boolean
+//		byte anonymousVoting = payloadBytes[45]; // TODO: Convert To Boolean
+//		byte taskBarUpdates = payloadBytes[46];
 
 		// TODO: Make this changeable without recompile
 		if (maxPlayers < 0 || maxPlayers > 15)
@@ -157,10 +160,10 @@ public class StartGame {
 		LogHelper.printLine(String.format(translation.getString("default_settings_logged"), defaultSettings));
 
 		// Floats
-//		LogHelper.printLine(String.format(translation.getString("player_speed_modifier_logged"), playerSpeedModifier));
-//		LogHelper.printLine(String.format(translation.getString("crewmate_light_modifier_logged"), crewLightModifier));
-//		LogHelper.printLine(String.format(translation.getString("imposter_light_modifier_logged"), imposterLightModifier));
-//		LogHelper.printLine(String.format(translation.getString("kill_cooldown_logged"), killCooldown));
+		LogHelper.printLine(String.format(translation.getString("player_speed_modifier_logged"), playerSpeedModifier));
+		LogHelper.printLine(String.format(translation.getString("crewmate_light_modifier_logged"), crewLightModifier));
+		LogHelper.printLine(String.format(translation.getString("imposter_light_modifier_logged"), imposterLightModifier));
+		LogHelper.printLine(String.format(translation.getString("kill_cooldown_logged"), killCooldown));
 
 
 		byte[] gameCodeBytes = getCodeFromList();

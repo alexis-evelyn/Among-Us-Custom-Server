@@ -283,4 +283,26 @@ public class PacketHelper {
 
 		return value;
 	}
+
+	/**
+	 * Just a wrapper that internally calls {@link #getUnsignedIntLE(byte...)}
+	 *
+	 * @param floatBytes 4 byte array in Little Endian form
+	 * @return unsigned float formatted as a signed long
+	 * @throws InvalidBytesException for not providing the correct number of bytes
+	 */
+	public static long getUnsignedFloatLE(@NotNull byte... floatBytes) throws InvalidBytesException {
+		return getUnsignedIntLE(floatBytes);
+	}
+
+	/**
+	 * Just a wrapper that internally calls {@link #getUnsignedIntBE(byte...)}
+	 *
+	 * @param floatBytes 4 byte array in Big Endian form
+	 * @return unsigned float formatted as a signed long
+	 * @throws InvalidBytesException for not providing the correct number of bytes
+	 */
+	public static long getUnsignedFloatBE(@NotNull byte... floatBytes) throws InvalidBytesException {
+		return getUnsignedIntBE(floatBytes);
+	}
 }
