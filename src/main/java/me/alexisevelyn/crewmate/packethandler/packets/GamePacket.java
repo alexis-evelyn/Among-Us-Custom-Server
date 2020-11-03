@@ -4,10 +4,11 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.AlterGamePacket;
 import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.GameSettingsPacket;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.JoinLobbyPacket;
+import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.SearchGamePacket;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -57,8 +58,8 @@ public class GamePacket {
 			case ALTER_GAME: // 0x0a
 				return AlterGamePacket.alterGame(server, clientAddress, clientPort, payloadLength, packetData); // 12 Bytes Total
 			case SEARCH_PUBLIC_GAME: // 0x10
-				// return SearchGame.handleSearchPublicGame(server, clientAddress, clientPort, payloadLength, packetData); // 50 Bytes Total
-				return new byte[0];
+				return SearchGamePacket.handleSearchPublicGame(server, clientAddress, clientPort, payloadLength, packetData); // 50 Bytes Total
+				// return new byte[0];
 			case START_GAME: // 0x02
 			case REMOVE_GAME: // 0x03
 				// TODO: Get code from data and remove game after verifying game host of game.

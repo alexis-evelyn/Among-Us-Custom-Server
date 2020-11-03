@@ -22,7 +22,7 @@ public enum GamePacketType {
 	ALTER_GAME((byte) 0x0a),
 	REDIRECT_GAME((byte) 0x0d),
 
-	SEARCH_PUBLIC_GAME((byte) 0x10);
+	SEARCH_PUBLIC_GAME((byte) 0x10); // 16 - Missing From https://wiki.weewoo.net/wiki/Protocol
 
 	private final byte gamePacketType;
 

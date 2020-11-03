@@ -5,63 +5,74 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
-import me.alexisevelyn.crewmate.enums.MapSearch;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
-import me.alexisevelyn.crewmate.events.impl.GameSearchEvent;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ResourceBundle;
 
 public class SearchGamePacket {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
 
-	public static byte[] handleSearchPublicGame(DatagramPacket packet, Server server) {
-		// Request Search
-		// 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31
-		// -----------------------------------------------------------------------------------------------------------------------------------------------------
-		// 01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 01 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
-		// -----------------------------------------------------------------------------------------------------------------------------------------------------
-		// UK UK UK UK UK UK UK UK UK UK LA LA LA LA UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK
-		// UK = Unknown
-		// LA = Language
+	public static byte[] handleSearchPublicGame(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... payloadBytes) {
+	    // Request Search
+	    // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31
+	    // -----------------------------------------------------------------------------------------------------------------------------------------------------
+		//                   00 2A 02 0A 00 01 00 00 07 00 00 80 3F 00 00 80 3F 00 00 C0 3F 00 00 70 41 01 01 02 01 00 00 00 00 01 0F 00 00 00 78 00 00 00 01 0F
+	    // 01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 01 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
+	    // -----------------------------------------------------------------------------------------------------------------------------------------------------
+	    // RP NO NO PL PL PT UK UK UK UK LA LA LA LA UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK UK
+		// RP = Reliable Packet
+		// NO = Nonce
+		// PL = Payload Length
+		// PT = Payload Type (0x10 for Search Game)
+	    // UK = Unknown
+	    // LA = Language
 
-		if (packet.getLength() != 50)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_request_invalid_size"));
+	    LogHelper.printPacketBytes(payloadBytes);
+		try {
+			return getFakeSearchBytes(2, Language.ENGLISH.getUnsignedInt(), Map.SKELD, Map.POLUS, Map.MIRA_HQ);
+		} catch (UnknownHostException exception) {
+			LogHelper.printLineErr(exception.getMessage());
+			exception.printStackTrace();
 
-		byte[] buffer = packet.getData();
+			return new byte[0];
+		}
 
-		// 0 Means Any
-		int numberOfImposters = buffer[38];
-
-		// List of Maps Searched For
-		Map[] maps = MapSearch.getMapArray(buffer[14]);
-
-		if (maps.length <= 0 || maps[0].equals(Map.UNSPECIFIED))
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unspecified_map"));
-
-		// Language To Search By
-		// TODO: Array Languages
-		long languageInt = PacketHelper.getUnsignedIntLE(buffer[10], buffer[11], buffer[12], buffer[13]);
-		Language[] languages = Language.getLanguageArray(languageInt);
-
-		if (languages.length <= 0 || languages[0].equals(Language.UNSPECIFIED))
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unspecified_language"));
-
-		ResourceBundle translation = Main.getTranslationBundle();
-		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
-		LogHelper.printLine(String.format(translation.getString("maps_logged"), MapSearch.getPrintableMapsList(maps)));
-		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getPrintableLanguagesList(languages)));
-
-		GameSearchEvent event = new GameSearchEvent(languages, numberOfImposters, maps);
-		event.call(server);
-
-		return event.getGames();
+//		if (packet.getLength() != 50)
+//			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_request_invalid_size"));
+//
+//		byte[] buffer = packet.getData();
+//
+//		// 0 Means Any
+//		int numberOfImposters = buffer[38];
+//
+//		// List of Maps Searched For
+//		Map[] maps = MapSearch.getMapArray(buffer[14]);
+//
+//		if (maps.length <= 0 || maps[0].equals(Map.UNSPECIFIED))
+//			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unspecified_map"));
+//
+//		// Language To Search By
+//		// TODO: Array Languages
+//		long languageInt = PacketHelper.getUnsignedIntLE(buffer[10], buffer[11], buffer[12], buffer[13]);
+//		Language[] languages = Language.getLanguageArray(languageInt);
+//
+//		if (languages.length <= 0 || languages[0].equals(Language.UNSPECIFIED))
+//			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unspecified_language"));
+//
+//		ResourceBundle translation = Main.getTranslationBundle();
+//		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
+//		LogHelper.printLine(String.format(translation.getString("maps_logged"), MapSearch.getPrintableMapsList(maps)));
+//		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getPrintableLanguagesList(languages)));
+//
+//		GameSearchEvent event = new GameSearchEvent(languages, numberOfImposters, maps);
+//		event.call(server);
+//
+//		return event.getGames();
 	}
 
 	public static byte[] getFakeSearchBytes(int numberOfImposters, long language, Map... maps) throws UnknownHostException {
