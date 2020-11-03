@@ -38,6 +38,13 @@ public class ValidateWordLists {
 	}
 
 	@Test
+	public void testUltraBannedList() {
+		URL list = Main.class.getClassLoader().getResource("codes/ultrabanned.txt");
+
+		this.validateList(list);
+	}
+
+	@Test
 	public void testOtherList() {
 		URL list = Main.class.getClassLoader().getResource("codes/other.txt");
 
