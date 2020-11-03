@@ -4,6 +4,7 @@ package me.alexisevelyn.crewmate;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;
+import org.apiguardian.api.API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Log Helping Class. Will be revamped when Logback is implemented.
+ */
+@Deprecated
+@API(status = API.Status.DEPRECATED)
 public class LogHelper {
 	// Terminal Logger
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
@@ -25,10 +31,14 @@ public class LogHelper {
 	private static boolean twentyFourHour = true;
 	private static boolean simpleDateTime = true;
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	public static void printLine() {
 		System.out.println();
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	public static void printLine(Object line) {
 		setCurrentThread();
 
@@ -41,30 +51,55 @@ public class LogHelper {
 		}
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	public static void print(Object line) {
 		setCurrentThread();
 
 		System.out.print(line);
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	public static void printFormatted(String line, Object... args) {
 		setCurrentThread();
 
 		System.out.format(line, args);
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	public static void printLineErr(Object line) {
 		setCurrentThread();
 
 		System.err.println(line);
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	public static void printErr(Object line) {
 		setCurrentThread();
 
 		System.err.print(line);
 	}
 
+	/**
+	 * Prints bytes in hex form with positions
+	 *
+	 * @param bytes byte[] to print
+	 */
+	@API(status = API.Status.MAINTAINED)
+	public static void printPacketBytes(byte... bytes) {
+		printPacketBytes(bytes.length, bytes);
+	}
+
+	/**
+	 * Prints bytes in hex form with positions
+	 *
+	 * @param length Length to Cut Off Printing At
+	 * @param bytes byte[] to print
+	 */
+	@API(status = API.Status.MAINTAINED)
 	public static void printPacketBytes(int length, byte... bytes) {
 		// https://stackoverflow.com/a/15215434/6828099
 		if (bytes.length < length)
@@ -74,6 +109,13 @@ public class LogHelper {
 		printPacketBytesHorizontal(length, bytes);
 	}
 
+	/**
+	 * Prints bytes in hex form horizontally with positions
+	 *
+	 * @param length Length to Cut Off Printing At
+	 * @param bytes byte[] to print
+	 */
+	@API(status = API.Status.MAINTAINED)
 	public static void printPacketBytesHorizontal(int length, byte... bytes) {
 		// https://stackoverflow.com/a/15215434/6828099
 		if (bytes.length < length)
@@ -128,7 +170,14 @@ public class LogHelper {
 		printLine("+");
 	}
 
+	/**
+	 * Prints bytes in hex form vertically with positions
+	 *
+	 * @param length Length to Cut Off Printing At
+	 * @param bytes byte[] to print
+	 */
 	@SuppressWarnings("unused")
+	@API(status = API.Status.EXPERIMENTAL)
 	public static void printPacketBytesVertical(int length, byte... bytes) {
 		// https://stackoverflow.com/a/15215434/6828099
 		if (bytes.length < length)
@@ -150,28 +199,45 @@ public class LogHelper {
 		printFormatted("+-----------------+-------+%n");
 	}
 
+	/**
+	 * Convert byte to hex form as {@link String}
+	 *
+	 * @param bite byte to represent as hex
+	 * @return hex form of byte as {@link String}
+	 */
+	@API(status = API.Status.EXPERIMENTAL)
 	public static String convertByteToHexString(byte bite) {
 		return String.format("0x%02X", (0xFF & bite));
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	private static boolean wasLastThreadTerminalThread() {
 		return isTerminalThread;
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	private static void setCurrentThread() {
 		// This should help with tracking lines in terminal and whether or not to overwrite them.
 
 		isTerminalThread = Thread.currentThread().equals(Main.getTerminal());
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	private static void setShowTimestamp(boolean shouldShowTimestamp) {
 		showTimestamp = shouldShowTimestamp;
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	private static boolean shouldShowTimestamp() {
 		return showTimestamp;
 	}
 
+	@Deprecated
+	@API(status = API.Status.DEPRECATED)
 	private static String createLogTimestamp(ZonedDateTime dateTime, boolean twentyFourHour, boolean simpleDateTime) {
 		ResourceBundle translation = Main.getTranslationBundle();
 
@@ -234,6 +300,16 @@ public class LogHelper {
 		return formatNamed(untranslatedDateTime, parameters);
 	}
 
+	/**
+	 * Alternative method to {@link String#format(String, Object...)} which can be used to fill in position independent values in a {@link String}
+	 * <br><br>
+	 * Useful for translation Strings which may have the values in any order. Also has the benefit of silently ignoring values that are not in the {@link String}
+	 *
+	 * @param format {@link String} with values to fill in
+	 * @param values {@link Map} of values to replace in {@link String}
+	 * @return formatted String
+	 */
+	@API(status = API.Status.MAINTAINED)
 	public static String formatNamed(String format, Map<String, Object> values) {
 		// https://stackoverflow.com/a/27815924/6828099
 		StringBuilder formatter = new StringBuilder(format);
@@ -256,6 +332,11 @@ public class LogHelper {
 		return String.format(formatter.toString(), valueList.toArray());
 	}
 
+	/**
+	 * Used for printing Logback Internal Messages
+	 */
+	@API(status = API.Status.INTERNAL)
+	@SuppressWarnings("unused")
 	private static void printLogbackInternal() {
 		// https://logback.qos.ch/manual/configuration.html
 		// assume SLF4J is bound to logback in the current environment
