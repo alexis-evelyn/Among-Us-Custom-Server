@@ -27,19 +27,60 @@ public class PacketHelper {
 			if (byteArray == null)
 				continue;
 
-			for (byte bite : byteArray) {
+			for (byte bite : byteArray)
 				byteList.add(bite);
-			}
 		}
 
 		Byte[] mergedBytes = byteList.toArray(new Byte[0]);
 		byte[] mergedBytesPrimitive = new byte[mergedBytes.length];
 
-		for (int i = 0; i < mergedBytesPrimitive.length; i++) {
+		// Sadly, native auto-unboxing Byte[] to byte[] does not seem to exist. Could be wrong though.
+		for (int i = 0; i < mergedBytesPrimitive.length; i++)
 			mergedBytesPrimitive[i] = mergedBytes[i]; // Apparently Unboxing Is Automatic
-		}
 
 		return mergedBytesPrimitive;
+	}
+
+  /**
+   * Helper utility to merge byte arrays together without having to manually create a new byte[] for
+   * single byte values. Unsupported data will just be dropped silently.
+   * <br><br>
+   *
+   * This method internally creates a new byte[][] and then calls {@link #mergeBytes(byte[]...)}.
+   * <br><br>
+   *
+   * Example 1:
+   * <br>
+   * {@code
+   * PacketHelper.mergeBytes(new byte[] {-1, -2, -3, 0}, (byte) 1, new byte[] {2, 3, 4, 5});
+   * }
+   * <br><br>
+   *
+   * Example 2:
+   * <br>
+   * {@code
+   * byte[] test = PacketHelper.mergeBytes(new byte[] {-1, -2, -3, 0}, new Byte((byte) 1), new byte[] {2, 3, 4, 5});
+   * }
+   *
+   * @param bytes byte[] (Not Byte[]) and or byte of values to merge together into one giant byte[].
+   * @return merged values in a byte[]
+   */
+  @NotNull
+  public static byte[] mergeBytes(@NotNull Object... bytes) {
+		// Separate Out Bytes From Byte Arrays And Convert Bytes To Byte Arrays
+		ArrayList<byte[]> byteList = new ArrayList<>();
+		for (Object bite : bytes) {
+			// If Byte or byte (Is autoboxed as Byte if originally a byte), then create new byte[] and add to ArrayList
+			if (bite instanceof Byte)
+				byteList.add(new byte[] {(byte) bite});
+
+			// If byte[], then just simply add to ArrayList
+			else if (bite instanceof byte[])
+				byteList.add((byte[]) bite);
+		}
+
+		// Convert byte[] ArrayList to byte[][] for further processing
+		return mergeBytes(byteList.toArray(new byte[0][0]));
 	}
 
 	/**

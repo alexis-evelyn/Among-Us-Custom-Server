@@ -1,7 +1,6 @@
 package me.alexisevelyn.crewmate.api;
 
 public class Entity {
-
     private final int entityID;
 
     public Entity(int id) {
@@ -11,5 +10,4 @@ public class Entity {
     public int getEntityID() {
         return entityID;
     }
-
 }

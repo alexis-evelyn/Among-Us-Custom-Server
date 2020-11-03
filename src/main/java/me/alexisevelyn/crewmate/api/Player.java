@@ -9,7 +9,6 @@ import java.net.InetAddress;
 import java.util.Random;
 
 public class Player extends Entity {
-
     private final String name;
     private final int id;
     private final InetAddress address;
@@ -149,7 +148,6 @@ public class Player extends Entity {
         public String getVersionFull() {
             return versionFull;
         }
-
     }
 
     /*
@@ -157,5 +155,4 @@ public class Player extends Entity {
         byte[] header = new byte[] {SendOption.NONE.getByte(), 0x00, 0x02, 0x0d, 0x00, 0x07};
 	    return PacketHelper.mergeBytes(header, new byte[]{(byte) RPC.SNAP_TO.getRPC(), 5, 5});
      */
-
 }
