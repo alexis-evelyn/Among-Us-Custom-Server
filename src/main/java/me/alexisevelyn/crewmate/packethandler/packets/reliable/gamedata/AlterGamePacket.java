@@ -11,7 +11,7 @@ import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import java.net.InetAddress;
 
 public class AlterGamePacket {
-	public static byte[] alterGame(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... payloadBytes) {
+	public static byte[] alterGame(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
 		// 00 01 02 03 04 05
 		// -----------------
 		// 5a 5c ff 89 01 01
@@ -22,7 +22,7 @@ public class AlterGamePacket {
 		// PD = Payload Data
 
 		// Should Change to 5?
-    	if (byteLength < 6)
+    	if (payloadBytes.length < 6)
     		return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_invalid_size"));
 
         AlterGame alterGameFlag = AlterGame.getAlterGameFlag(payloadBytes[4]);

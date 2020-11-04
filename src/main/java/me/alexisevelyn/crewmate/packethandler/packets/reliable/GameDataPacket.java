@@ -17,11 +17,10 @@ public class GameDataPacket {
 	 * @param server
 	 * @param clientAddress
 	 * @param clientPort
-	 * @param byteLength
 	 * @param payload
 	 * @return
 	 */
-	public static byte[] parseGameData(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... payload) {
+	public static byte[] parseGameData(Server server, InetAddress clientAddress, int clientPort, byte... payload) {
 		// 00 01 02 03 04
 		// --------------
 		// A2 26 8E 83 07
@@ -29,7 +28,7 @@ public class GameDataPacket {
 		// GC = Game Code (LE INT-32)
 		// OM = Owned Maps Bitfield (0x07 For Skeld, Mira, and Polus)
 
-		// LogHelper.printPacketBytes(byteLength, payload);
+		// LogHelper.printPacketBytes(payload);
 
 		// TODO: Create a Game Data Enum and Put 0x02 As The RPC Game Data Type
 		int length = 0;

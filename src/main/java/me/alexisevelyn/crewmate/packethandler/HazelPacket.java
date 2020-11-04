@@ -30,9 +30,9 @@ public class HazelPacket {
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
 				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
-				byte[] handshakeBytes = PacketHelper.extractSecondPartBytes(3, packet.getData());
+				byte[] handshakeBytes = PacketHelper.extractFirstPartBytes(packet.getLength() - 3, PacketHelper.extractSecondPartBytes(3, packet.getData()));
 
-				return HandshakePacket.handleHandshake(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 3), handshakeBytes);
+				return HandshakePacket.handleHandshake(server, packet.getAddress(), packet.getPort(), handshakeBytes);
 			case ACKNOWLEDGEMENT: // Acknowledgement of Received Data From Client
 				if (packet.getLength() < 4)
 					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
@@ -51,18 +51,18 @@ public class HazelPacket {
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
 				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
-				byte[] payloadBytes = PacketHelper.extractSecondPartBytes(3, packet.getData());
+				byte[] payloadBytes = PacketHelper.extractFirstPartBytes(packet.getLength() - 3, PacketHelper.extractSecondPartBytes(3, packet.getData()));
 
-				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 3), payloadBytes);
+				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), payloadBytes);
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
-				byte[] unpayloadBytes = PacketHelper.extractSecondPartBytes(1, packet.getData());
+				byte[] unPayloadBytes = PacketHelper.extractFirstPartBytes(packet.getLength() - 1, PacketHelper.extractSecondPartBytes(1, packet.getData()));
 
-				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 1), unpayloadBytes);
+				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), unPayloadBytes);
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
 				// Not Implemented Even on Hazel. No Idea What The Packet Structure Would Look Like
-				byte[] fragmentBytes = PacketHelper.extractSecondPartBytes(1, packet.getData());
+				byte[] fragmentBytes = PacketHelper.extractFirstPartBytes(packet.getLength() - 1, PacketHelper.extractSecondPartBytes(1, packet.getData()));
 
-				return FragmentPacket.handleFragmentPacket(server, packet.getAddress(), packet.getPort(), (packet.getLength() - 1), fragmentBytes);
+				return FragmentPacket.handleFragmentPacket(server, packet.getAddress(), packet.getPort(), fragmentBytes);
 		}
 
 		return new byte[0];

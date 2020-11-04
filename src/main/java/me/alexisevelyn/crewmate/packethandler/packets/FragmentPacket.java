@@ -17,14 +17,13 @@ public class FragmentPacket {
 	 * @param server Server Instance
 	 * @param clientAddress Client's IP Address
 	 * @param clientPort Client's Port
-	 * @param byteLength count of payload bytes
 	 * @param payloadBytes payload bytes
 	 * @return data to send back to client
 	 */
-	public static byte[] handleFragmentPacket(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... payloadBytes) {
+	public static byte[] handleFragmentPacket(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
 		// This will be added back once I get proper logging. That way the information would be invisible unless using debug level or something
 //		LogHelper.printLine(Main.getTranslationBundle().getString("fragment_packet"));
-//		LogHelper.printPacketBytes(byteLength, payloadBytes);
+//		LogHelper.printPacketBytes(payloadBytes);
 
 		return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("fragment_packet_not_supported"));
 	}

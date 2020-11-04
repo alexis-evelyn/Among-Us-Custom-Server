@@ -28,7 +28,7 @@ public class HandshakePacket {
 	 * @param server Server instance
 	 * @return Masters list or empty byte array
 	 */
-	public static byte[] handleHandshake(Server server, InetAddress clientAddress, int clientPort, int byteLength, byte... handshakeBytes) {
+	public static byte[] handleHandshake(Server server, InetAddress clientAddress, int clientPort, byte... handshakeBytes) {
 		/*
 	                  V---- Starts Here (Subtract 3)
 			00 01 02 03 04 05 06 07 08 09 10 11 12 13 14
@@ -48,7 +48,7 @@ public class HandshakePacket {
 			int displayNameLength = handshakeBytes[5];
 
 			// If either the name is missing or the name length is bigger than the what the rest of the buffer has, close connection
-			if (displayNameLength <= 0 || (byteLength - 6) < displayNameLength)
+			if (displayNameLength <= 0 || (handshakeBytes.length - 6) < displayNameLength)
 				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("missing_display_name_handshake"));
 
 			// Client only allows up to 10 characters, we are enforcing that server side
