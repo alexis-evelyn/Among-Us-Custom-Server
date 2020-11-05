@@ -1,14 +1,11 @@
 package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata;
 
 import me.alexisevelyn.crewmate.GameCodeHelper;
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.api.Game;
 import me.alexisevelyn.crewmate.api.GameSettings;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
-import me.alexisevelyn.crewmate.enums.Language;
-import me.alexisevelyn.crewmate.enums.MapSearch;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.HostGameEvent;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
@@ -47,16 +44,10 @@ public class GameSettingsPacket {
 		// PL = Packet Length (43)
 		// RC = Reliable Packet Type (0x00 for Host Game)
 
-		GameSettings gameSettings = new GameSettings(payloadBytes);
-
-		LogHelper.printLine("Imposter Count: " + gameSettings.getImposterCount());
-		LogHelper.printLine("Max Player Count: " + gameSettings.getMaxPlayers());
-		LogHelper.printLine("Language: " + Language.getPrintableLanguagesList(gameSettings.getLanguages()));
-		LogHelper.printLine("Chosen Map: " + MapSearch.getPrintableMapsList(gameSettings.getMaps()));
-
 		byte[] gameCodeBytes = getCodeFromList();
 		try {
-			// TODO: Double Check For "InvalidBytesException: Game Code Bytes Needs To Be 4 Bytes Long!!!" on Below Line
+			GameSettings gameSettings = new GameSettings(payloadBytes);
+
 			HostGameEvent event = new HostGameEvent(GameCodeHelper.parseGameCode(gameCodeBytes), gameSettings.getMaxPlayers(), gameSettings.getImposterCount(), gameSettings.getMaps()[0], gameSettings.getLanguages());
 			event.call(server);
 
@@ -64,11 +55,13 @@ public class GameSettingsPacket {
 
 			GameManager.addGame(new Game(newCode));
 			return useCustomCode(newCode);
-		} catch (InvalidBytesException | InvalidGameCodeException e) {
+		} catch (InvalidGameCodeException e) {
 			// LogHelper.printLineErr(e.getMessage());
 			// e.printStackTrace();
 
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+		} catch(InvalidBytesException exception) {
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
 		}
 	}
 

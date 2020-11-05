@@ -1,14 +1,13 @@
 package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata;
 
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.api.GameSettings;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
-import me.alexisevelyn.crewmate.enums.MapSearch;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.GameSearchEvent;
+import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
@@ -16,7 +15,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ResourceBundle;
 
 public class SearchGamePacket {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
@@ -32,16 +30,16 @@ public class SearchGamePacket {
 
 		byte[] searchSettingsBytes = PacketHelper.extractSecondPartBytes(1, payloadBytes);
 
-		GameSettings searchSettings = new GameSettings(true, searchSettingsBytes);
+		GameSettings searchSettings;
+		try {
+			searchSettings = new GameSettings(true, searchSettingsBytes);
+		} catch (InvalidBytesException exception) {
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
+		}
 
 		int numberOfImposters = searchSettings.getImposterCount();
-		Map[] maps = searchSettings.getMaps(); // new Map[] {Map.UNSPECIFIED};
+		Map[] maps = searchSettings.getMaps();
 		Language[] languages = searchSettings.getLanguages();
-
-		ResourceBundle translation = Main.getTranslationBundle();
-		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
-		LogHelper.printLine(String.format(translation.getString("maps_logged"), MapSearch.getPrintableMapsList(maps))); // TODO: Check For Null
-		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getPrintableLanguagesList(languages)));
 
 		GameSearchEvent event = new GameSearchEvent(languages, numberOfImposters, maps);
 		event.call(server);
