@@ -6,6 +6,7 @@ import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
+import org.apiguardian.api.API;
 import org.jetbrains.annotations.Nullable;
 
 public class GameSettings {
@@ -84,8 +85,8 @@ public class GameSettings {
 		// LogHelper.printPacketBytes(payloadBytes);
 
 		// Ensure Minimum Size
-		if (payloadBytes.length < 2)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"));
+		if (payloadBytes.length < 43)
+			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 43));
 
 		// Data
 		payloadLength = PacketHelper.unpackInteger(payloadBytes[0]); // Currently Always 42 (on Beta)
@@ -102,9 +103,15 @@ public class GameSettings {
 				parseGameSettingsV2(search, gameSettingsBytes);
 				break;
 			case 3:
+				if (payloadLength < 43)
+					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 43));
+
 				parseGameSettingsV3(search, gameSettingsBytes);
 				break;
 			case 4:
+				if (payloadLength < 45)
+					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 45));
+
 				parseGameSettingsV4(search, gameSettingsBytes);
 		}
 	}
@@ -215,6 +222,15 @@ public class GameSettings {
 
 	public void setTaskBarUpdates(byte visualTasks) {
 		// I believe it's 0, 1, 2
+	}
+
+	@API(status = API.Status.INTERNAL)
+	public int getPayloadLength() {
+		return this.payloadLength;
+	}
+
+	public int getGameSettingsVersion() {
+		return this.gameSettingsVersion;
 	}
 
 	public int getMaxPlayers() {
@@ -329,10 +345,10 @@ public class GameSettings {
 		setVoteTime(PacketHelper.getUnsignedIntLE(payloadBytes[35], payloadBytes[36], payloadBytes[37], payloadBytes[38]));
 
 		// Default Settings
-		// setDefaultSettings(payloadBytes[39]);
+		setDefaultSettings(payloadBytes[39]);
 
 		// V2
-		// setEmergencyCooldown(payloadBytes[40]);
+		setEmergencyCooldown(payloadBytes[40]);
 	}
 
 	private void parseGameSettingsV3(boolean search, byte... payloadBytes) {
