@@ -103,13 +103,13 @@ public class GameSettings {
 				parseGameSettingsV2(search, gameSettingsBytes);
 				break;
 			case 3:
-				if (payloadLength < 43)
+				if (gameSettingsBytes.length < 43)
 					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 43));
 
 				parseGameSettingsV3(search, gameSettingsBytes);
 				break;
 			case 4:
-				if (payloadLength < 45)
+				if (gameSettingsBytes.length < 45)
 					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 45));
 
 				parseGameSettingsV4(search, gameSettingsBytes);
