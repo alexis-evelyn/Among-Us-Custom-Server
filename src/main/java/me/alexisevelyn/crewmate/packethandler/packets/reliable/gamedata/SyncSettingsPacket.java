@@ -8,7 +8,7 @@ import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import java.net.DatagramPacket;
 import java.nio.charset.StandardCharsets;
 
-public class SyncSettings {
+public class SyncSettingsPacket {
 	public static byte[] getLobbyGameSettings(DatagramPacket packet) {
 		// TODO: Figure out what this packet is for!!!
 

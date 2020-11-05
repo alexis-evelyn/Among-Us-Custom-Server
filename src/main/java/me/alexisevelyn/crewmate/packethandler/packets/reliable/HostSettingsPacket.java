@@ -1,4 +1,4 @@
-package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata;
+package me.alexisevelyn.crewmate.packethandler.packets.reliable;
 
 import me.alexisevelyn.crewmate.GameCodeHelper;
 import me.alexisevelyn.crewmate.Main;
@@ -22,7 +22,7 @@ import java.io.RandomAccessFile;
 import java.net.InetAddress;
 import java.net.URL;
 
-public class GameSettingsPacket {
+public class HostSettingsPacket {
 	/**
 	 * Retrieves the game settings from the client on game join as host.
 	 *

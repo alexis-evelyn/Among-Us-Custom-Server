@@ -1,4 +1,4 @@
-package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata;
+package me.alexisevelyn.crewmate.packethandler.packets.reliable;
 
 import me.alexisevelyn.crewmate.GameCodeHelper;
 import me.alexisevelyn.crewmate.LogHelper;
@@ -41,6 +41,7 @@ public class JoinLobbyPacket {
 				String gamecode = addClientToLobby(server, clientAddress, clientPort, payload);
 
 				// TODO: Debug
+				LogHelper.printLine("DEBUG: Joined Lobby Bytes");
 				byte[] reply = generateJoinLobbyReply(gamecode);
 				LogHelper.printPacketBytes(reply.length, reply);
 

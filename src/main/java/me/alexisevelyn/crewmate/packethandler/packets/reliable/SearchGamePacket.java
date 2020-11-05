@@ -1,4 +1,4 @@
-package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata;
+package me.alexisevelyn.crewmate.packethandler.packets.reliable;
 
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;

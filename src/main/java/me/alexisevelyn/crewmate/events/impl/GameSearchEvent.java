@@ -5,7 +5,7 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.events.Event;
-import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.SearchGamePacket;
+import me.alexisevelyn.crewmate.packethandler.packets.reliable.SearchGamePacket;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 
 import java.net.UnknownHostException;

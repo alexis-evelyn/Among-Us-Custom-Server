@@ -5,10 +5,10 @@ import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
-import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.AlterGamePacket;
-import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.GameSettingsPacket;
-import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.JoinLobbyPacket;
-import me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.SearchGamePacket;
+import me.alexisevelyn.crewmate.packethandler.packets.reliable.AlterGamePacket;
+import me.alexisevelyn.crewmate.packethandler.packets.reliable.HostSettingsPacket;
+import me.alexisevelyn.crewmate.packethandler.packets.reliable.JoinLobbyPacket;
+import me.alexisevelyn.crewmate.packethandler.packets.reliable.SearchGamePacket;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -45,7 +45,7 @@ public class GamePacket {
 
 		switch (type) {
 			case HOST_SETTINGS: // 0x00
-				return GameSettingsPacket.getNewGameSettings(server, clientAddress, clientPort, packetData); // 49 Bytes Total
+				return HostSettingsPacket.getNewGameSettings(server, clientAddress, clientPort, packetData); // 49 Bytes Total
 			case JOIN_LOBBY: // 0x01
 				return JoinLobbyPacket.handleJoinLobby(server, clientAddress, clientPort, packetData); // 11 Bytes Total
 			case GAME_DATA: // 0x05 - TODO: Movement Falls Under Here
