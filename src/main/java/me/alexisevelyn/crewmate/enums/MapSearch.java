@@ -47,7 +47,7 @@ public enum MapSearch {
 	 * @param maps Array of Maps
 	 * @return String representation of the map array
 	 */
-	public static String getPrintableMapsList(Map... maps) {
+	public static String getPrintableMapsList(@NotNull Map... maps) {
 		// List of Maps Being Included In Search
 		StringBuilder printableMapsList = new StringBuilder();
 

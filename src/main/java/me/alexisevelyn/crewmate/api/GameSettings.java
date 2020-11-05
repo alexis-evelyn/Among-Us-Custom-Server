@@ -1,13 +1,13 @@
 package me.alexisevelyn.crewmate.api;
 
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
+import me.alexisevelyn.crewmate.enums.MapSearch;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import org.apiguardian.api.API;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class GameSettings {
 	private int payloadLength;
@@ -32,6 +32,7 @@ public class GameSettings {
 	private boolean confirmEjects;
 	private boolean visualTasks;
 	private boolean anonymousVoting;
+	private TaskbarUpdates taskbarUpdates;
 
 	public GameSettings(byte... settingsBytes) {
 		this(false, settingsBytes);
@@ -45,8 +46,6 @@ public class GameSettings {
 		/*
 	     00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e
 	     --------------------------------------------------------------------------------------------------------------------------------------------
-	     TODO: Figure out where the 2 bytes were lost at!!! Also check packet length before trying to pull bytes out of it!!!
-	     2A 02 0A 00 01 00 00 07 00 00 80 3F 00 00 80 3F 00 00 C0 3F 00 00 70 41 01 01 02 01 00 00 00 02 01 0F 00 00 00 78 00 00 00 <-- Two bytes went missing at the end (Search)
 	     2A 02 0A 00 01 00 00 07 00 00 80 3F 00 00 80 3F 00 00 C0 3F 00 00 70 41 01 01 02 01 00 00 00 02 01 0F 00 00 00 78 00 00 00 01 0F - Search Packet
 		 2A 02 09 02 00 00 00 01 00 00 C0 3F 00 00 00 3F 00 00 80 3F 00 00 F0 41 02 02 03 01 00 00 00 03 00 0F 00 00 00 78 00 00 00 00 0F - Host Game Packet
 	     --------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,18 +77,12 @@ public class GameSettings {
 	     TU = Task Bar Updates (Version 4+)
     */
 
-		// Useful For Verifying Bytes
-		// LogHelper.printPacketBytes(payloadBytes);
-
-		// TODO: Debug
-		// LogHelper.printPacketBytes(payloadBytes);
-
 		// Ensure Minimum Size
-		if (payloadBytes.length < 43)
+		if (payloadBytes.length < 42)
 			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 43));
 
 		// Data
-		payloadLength = PacketHelper.unpackInteger(payloadBytes[0]); // Currently Always 42 (on Beta)
+		payloadLength = PacketHelper.unpackInteger(payloadBytes[0]);
 		gameSettingsVersion = payloadBytes[1];
 
 		if (payloadLength > payloadBytes.length)
@@ -99,25 +92,36 @@ public class GameSettings {
 
 		// LogHelper.printLine("Game Settings Version: " + gameSettingsVersion);
 		switch (gameSettingsVersion) {
+			case 1:
+				parseGameSettingsV1(search, gameSettingsBytes);
+				break;
 			case 2:
+				if (payloadLength < 41)
+					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 41));
+
 				parseGameSettingsV2(search, gameSettingsBytes);
 				break;
 			case 3:
-				if (gameSettingsBytes.length < 43)
+				if (payloadLength < 43)
 					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 43));
 
 				parseGameSettingsV3(search, gameSettingsBytes);
 				break;
 			case 4:
-				if (gameSettingsBytes.length < 45)
+				if (payloadLength < 45)
 					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 45));
 
 				parseGameSettingsV4(search, gameSettingsBytes);
+			default:
+				// throw new InvalidBytesException(Main.getTranslationBundle().getString("unsupported_game_settings_version")); // Should this be an exception?
+				parseGameSettingsV1(search, gameSettingsBytes);
 		}
 	}
 
 	public void setMaxPlayers(int maxPlayers) {
-		// TODO: Enforce Between 0 and 15 (Configurable For 15)
+		maxPlayers = Math.max(0, maxPlayers);
+		maxPlayers = Math.min(15, maxPlayers); // TODO: Make this configurable
+
 		this.maxPlayers = maxPlayers;
 	}
 
@@ -125,13 +129,19 @@ public class GameSettings {
 		this.languages = Language.getLanguageArray(language);
 	}
 
-	public void setMaps(byte map) {
-		// Confirm Detection of Value Type
-		// this.maps = Map
+	public void setMaps(boolean search, byte map) {
+		if (search)
+			setMapsSearch(map);
+		else
+			setMapsHost(map);
+	}
 
-		LogHelper.printLine(String.format("Set Map: %s", map));
+	public void setMapsSearch(byte map) {
+		this.maps = MapSearch.getMapArray(map);
+	}
 
-		this.maps = new Map[] {Map.UNSPECIFIED};
+	public void setMapsHost(byte map) {
+		this.maps = new Map[] {Map.getMap(map)};
 	}
 
 	public void setPlayerSpeedModifier(float playerSpeedModifier) {
@@ -167,7 +177,8 @@ public class GameSettings {
 	}
 
 	public void setImposterCount(int imposterCount) {
-		// TODO: Enforce Between 0 and 3 (Configurable For 3)
+		imposterCount = Math.max(0, imposterCount);
+		imposterCount = Math.min(3, imposterCount); // TODO: Make this configurable
 
 		this.imposterCount = imposterCount;
 	}
@@ -186,9 +197,9 @@ public class GameSettings {
 
 	public void setDefaultSettings(byte defaultSettings) {
 		// Boolean
-		if (defaultSettings == 0x00)
+		if (defaultSettings == BooleanByte.FALSE.getBooleanByte())
 			this.defaultSettings = false;
-		else if (defaultSettings == 0x01)
+		else if (defaultSettings == BooleanByte.TRUE.getBooleanByte())
 			this.defaultSettings = true;
 	}
 
@@ -198,30 +209,37 @@ public class GameSettings {
 
 	public void setConfirmEjects(byte confirmEjects) {
 		// Boolean
-		if (confirmEjects == 0x00)
+		if (confirmEjects == BooleanByte.FALSE.getBooleanByte())
 			this.confirmEjects = false;
-		else if (confirmEjects == 0x01)
+		else if (confirmEjects == BooleanByte.TRUE.getBooleanByte())
 			this.confirmEjects = true;
 	}
 
 	public void setVisualTasks(byte visualTasks) {
 		// Boolean
-		if (visualTasks == 0x00)
+		if (visualTasks == BooleanByte.FALSE.getBooleanByte())
 			this.visualTasks = false;
-		else if (visualTasks == 0x01)
+		else if (visualTasks == BooleanByte.TRUE.getBooleanByte())
 			this.visualTasks = true;
 	}
 
 	public void setAnonymousVoting(byte anonymousVoting) {
 		// Boolean
-		if (anonymousVoting == 0x00)
+		if (anonymousVoting == BooleanByte.FALSE.getBooleanByte())
 			this.anonymousVoting = false;
-		else if (anonymousVoting == 0x01)
+		else if (anonymousVoting == BooleanByte.TRUE.getBooleanByte())
 			this.anonymousVoting = true;
 	}
 
-	public void setTaskBarUpdates(byte visualTasks) {
-		// I believe it's 0, 1, 2
+	public void setTaskBarUpdates(byte taskBarUpdates) {
+		if (taskBarUpdates == TaskbarUpdates.TASKBAR_ALWAYS.getTaskbarStateByte()) // Taskbar Always
+			taskbarUpdates = TaskbarUpdates.TASKBAR_ALWAYS;
+
+		else if (taskBarUpdates == TaskbarUpdates.TASKBAR_MEETINGS.getTaskbarStateByte()) // Taskbar Meetings
+			taskbarUpdates = TaskbarUpdates.TASKBAR_MEETINGS;
+
+		else if (taskBarUpdates == TaskbarUpdates.TASKBAR_NEVER.getTaskbarStateByte()) // Taskbar Never
+			taskbarUpdates = TaskbarUpdates.TASKBAR_NEVER;
 	}
 
 	@API(status = API.Status.INTERNAL)
@@ -237,7 +255,7 @@ public class GameSettings {
 		return this.maxPlayers;
 	}
 
-	@Nullable
+	@NotNull
 	public Language[] getLanguages() {
 		if (languages == null || languages.length <= 0 || languages[0].equals(Language.UNSPECIFIED))
 			return new Language[] {Language.OTHER};
@@ -277,7 +295,12 @@ public class GameSettings {
 		return this.emergencyMeetingCount;
 	}
 
+	@NotNull
 	public Map[] getMaps() {
+		// Should I Specify A Default Map?
+		if (maps == null || maps.length <= 0 || maps[0].equals(Map.UNSPECIFIED))
+			return new Map[] {Map.SKELD};
+
 		return this.maps;
 	}
 
@@ -317,12 +340,19 @@ public class GameSettings {
 		return this.anonymousVoting;
 	}
 
-	private void parseGameSettingsV2(boolean search, byte... payloadBytes) {
-		// TODO: Validate Size
+	@NotNull
+	public TaskbarUpdates getTaskBarUpdates() {
+		// Should I Specify A Default Value
+		if (taskbarUpdates == null)
+			return TaskbarUpdates.TASKBAR_ALWAYS;
 
+		return this.taskbarUpdates;
+	}
+
+	private void parseGameSettingsV1(boolean search, byte... payloadBytes) {
 		setMaxPlayers(payloadBytes[0]);
 		setLanguages(PacketHelper.getUnsignedIntLE(payloadBytes[1], payloadBytes[2], payloadBytes[3], payloadBytes[4]));
-		setMaps(payloadBytes[5]);
+		setMaps(search, payloadBytes[5]);
 
 		// Floats
 		setPlayerSpeedModifier(PacketHelper.getUnsignedFloatLE(payloadBytes[6], payloadBytes[7], payloadBytes[8], payloadBytes[9]));
@@ -346,14 +376,16 @@ public class GameSettings {
 
 		// Default Settings
 		setDefaultSettings(payloadBytes[39]);
+	}
+
+	private void parseGameSettingsV2(boolean search, byte... payloadBytes) {
+		parseGameSettingsV1(search, payloadBytes);
 
 		// V2
 		setEmergencyCooldown(payloadBytes[40]);
 	}
 
 	private void parseGameSettingsV3(boolean search, byte... payloadBytes) {
-		// TODO: Validate Size
-
 		parseGameSettingsV2(search, payloadBytes);
 
 		setConfirmEjects(payloadBytes[41]);
@@ -361,11 +393,40 @@ public class GameSettings {
 	}
 
 	private void parseGameSettingsV4(boolean search, byte... payloadBytes) {
-		// TODO: Validate Size
-
 		parseGameSettingsV3(search, payloadBytes);
 
 		setAnonymousVoting(payloadBytes[43]);
 		setTaskBarUpdates(payloadBytes[44]);
+	}
+
+	public enum TaskbarUpdates {
+		TASKBAR_ALWAYS((byte) 0x00),
+		TASKBAR_MEETINGS((byte) 0x01),
+		TASKBAR_NEVER((byte) 0x02);
+
+		private final byte taskbarState;
+
+		public byte getTaskbarStateByte() {
+			return this.taskbarState;
+		}
+
+		TaskbarUpdates(byte bite) {
+			this.taskbarState = bite;
+		}
+	}
+
+	private enum BooleanByte {
+		FALSE((byte) 0x00),
+		TRUE((byte) 0x01);
+
+		private final byte booleanByte;
+
+		public byte getBooleanByte() {
+			return this.booleanByte;
+		}
+
+		BooleanByte(byte bite) {
+			this.booleanByte = bite;
+		}
 	}
 }

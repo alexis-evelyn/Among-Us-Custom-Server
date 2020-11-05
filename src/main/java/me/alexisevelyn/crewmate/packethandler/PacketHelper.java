@@ -99,7 +99,7 @@ public class PacketHelper {
 		if (bytes.length <= pos)
 			return bytes;
 
-		return Arrays.copyOfRange(bytes, pos, bytes.length - 1);
+		return Arrays.copyOfRange(bytes, pos, bytes.length);
 	}
 
 	/**

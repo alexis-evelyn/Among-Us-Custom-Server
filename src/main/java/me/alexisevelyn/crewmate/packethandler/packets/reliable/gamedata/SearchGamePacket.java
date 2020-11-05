@@ -32,9 +32,6 @@ public class SearchGamePacket {
 
 		byte[] searchSettingsBytes = PacketHelper.extractSecondPartBytes(1, payloadBytes);
 
-		LogHelper.printLine("Search Bytes: ");
-		LogHelper.printPacketBytes(searchSettingsBytes);
-
 		GameSettings searchSettings = new GameSettings(true, searchSettingsBytes);
 
 		int numberOfImposters = searchSettings.getImposterCount();
