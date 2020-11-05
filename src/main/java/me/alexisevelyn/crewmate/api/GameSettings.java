@@ -33,34 +33,41 @@ public class GameSettings {
 	private boolean anonymousVoting;
 
 	public GameSettings(byte... settingsBytes) {
-		this.parseGameSettings(settingsBytes);
+		this(false, settingsBytes);
 	}
 
-	private void parseGameSettings(byte... payloadBytes) {
+	public GameSettings(boolean search, byte... settingsBytes) {
+		this.parseGameSettings(search, settingsBytes);
+	}
+
+	private void parseGameSettings(boolean search, byte... payloadBytes) {
 		/*
 	     00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e
 	     --------------------------------------------------------------------------------------------------------------------------------------------
-	     2a 02 07 00 01 00 00 02 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 34 42 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
+	     TODO: Figure out where the 2 bytes were lost at!!! Also check packet length before trying to pull bytes out of it!!!
+	     2A 02 0A 00 01 00 00 07 00 00 80 3F 00 00 80 3F 00 00 C0 3F 00 00 70 41 01 01 02 01 00 00 00 02 01 0F 00 00 00 78 00 00 00 <-- Two bytes went missing at the end (Search)
+	     2A 02 0A 00 01 00 00 07 00 00 80 3F 00 00 80 3F 00 00 C0 3F 00 00 70 41 01 01 02 01 00 00 00 02 01 0F 00 00 00 78 00 00 00 01 0F - Search Packet
+		 2A 02 09 02 00 00 00 01 00 00 C0 3F 00 00 00 3F 00 00 80 3F 00 00 F0 41 02 02 03 01 00 00 00 03 00 0F 00 00 00 78 00 00 00 00 0F - Host Game Packet
 	     --------------------------------------------------------------------------------------------------------------------------------------------
 	     PL GV MP LA LA LA LA CM PS PS PS PS CL CL CL CL IL IL IL IL KC KC KC KC CT LT ST EM EM EM EM IC KD DT DT DT DT VT VT VT VT DS EC CE VI AV TU
-	     PL = Payload Length As Packed Int (Supposed to be uint-32?)
-	     GV = Game Options Version
-	     MP = Max Players
-	     LA = Language
+	     PL = Payload Length As Packed Int (Supposed to be uint-32?) (Length 42)
+	     GV = Game Options Version (Version 2)
+	     MP = Max Players (10 or 9)
+	     LA = Language (English or Spanish)
+	     CM = Chosen Map (Skeld, Mira, Polus as Bitwise or Mira)
 	     PS = Player Speed Modifier (Float 32)
 	     CL = Crew Light Modifier (Float 32)
 	     IL = Imposter Light Modifier (Float 32)
 	     KC = Kill Cooldown (Float 32)
-	     CT = Common Tasks (Count)
-	     LT = Long Tasks (Count)
-	     ST = Short Tasks (Count)
+	     CT = Common Tasks (Count) (1 or 2)
+	     LT = Long Tasks (Count) (1 or 2)
+	     ST = Short Tasks (Count) (2 or 3)
 	     EM = Emergencies (Int-32)
-	     CM = Chosen Map
-	     IC = Imposter Count
-	     KD = Kill Distance (Unknown Units)
+	     IC = Imposter Count (2 or 3)
+	     KD = Kill Distance (Unknown Units) (Medium or Short)
 	     DT = Discussion Time (Int-32)
 	     VT = Voting Time (Int-32)
-	     DS = Default Settings
+	     DS = Default Settings (true or false)
 	     EC = Emergency Cooldown (Version 2+)
 
 	     The game doesn't send these at all when starting a lobby for hosting the game
@@ -74,7 +81,7 @@ public class GameSettings {
 		// LogHelper.printPacketBytes(payloadBytes);
 
 		// TODO: Debug
-		LogHelper.printPacketBytes(payloadBytes);
+		// LogHelper.printPacketBytes(payloadBytes);
 
 		// Ensure Minimum Size
 		if (payloadBytes.length < 2)
@@ -87,17 +94,18 @@ public class GameSettings {
 		if (payloadLength > payloadBytes.length)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("game_settings_length_mismatch"));
 
-		byte[] gameSettingsBytes = payloadBytes; // PacketHelper.extractFirstPartBytes(payloadLength - 2, PacketHelper.extractSecondPartBytes(2, payloadBytes));
+		byte[] gameSettingsBytes = PacketHelper.extractSecondPartBytes(2, payloadBytes); // PacketHelper.extractFirstPartBytes(payloadLength - 2, PacketHelper.extractSecondPartBytes(2, payloadBytes));
 
+		// LogHelper.printLine("Game Settings Version: " + gameSettingsVersion);
 		switch (gameSettingsVersion) {
 			case 2:
-				parseGameSettingsV2(gameSettingsBytes);
+				parseGameSettingsV2(search, gameSettingsBytes);
 				break;
 			case 3:
-				parseGameSettingsV3(gameSettingsBytes);
+				parseGameSettingsV3(search, gameSettingsBytes);
 				break;
 			case 4:
-				parseGameSettingsV4(gameSettingsBytes);
+				parseGameSettingsV4(search, gameSettingsBytes);
 		}
 	}
 
@@ -110,9 +118,11 @@ public class GameSettings {
 		this.languages = Language.getLanguageArray(language);
 	}
 
-	public void setMap(byte map) {
+	public void setMaps(byte map) {
 		// Confirm Detection of Value Type
 		// this.maps = Map
+
+		LogHelper.printLine(String.format("Set Map: %s", map));
 
 		this.maps = new Map[] {Map.UNSPECIFIED};
 	}
@@ -291,12 +301,12 @@ public class GameSettings {
 		return this.anonymousVoting;
 	}
 
-	private void parseGameSettingsV2(byte... payloadBytes) {
+	private void parseGameSettingsV2(boolean search, byte... payloadBytes) {
 		// TODO: Validate Size
 
 		setMaxPlayers(payloadBytes[0]);
 		setLanguages(PacketHelper.getUnsignedIntLE(payloadBytes[1], payloadBytes[2], payloadBytes[3], payloadBytes[4]));
-		setMap(payloadBytes[5]);
+		setMaps(payloadBytes[5]);
 
 		// Floats
 		setPlayerSpeedModifier(PacketHelper.getUnsignedFloatLE(payloadBytes[6], payloadBytes[7], payloadBytes[8], payloadBytes[9]));
@@ -319,25 +329,25 @@ public class GameSettings {
 		setVoteTime(PacketHelper.getUnsignedIntLE(payloadBytes[35], payloadBytes[36], payloadBytes[37], payloadBytes[38]));
 
 		// Default Settings
-		setDefaultSettings(payloadBytes[39]);
+		// setDefaultSettings(payloadBytes[39]);
 
 		// V2
-		setEmergencyCooldown(payloadBytes[40]);
+		// setEmergencyCooldown(payloadBytes[40]);
 	}
 
-	private void parseGameSettingsV3(byte... payloadBytes) {
+	private void parseGameSettingsV3(boolean search, byte... payloadBytes) {
 		// TODO: Validate Size
 
-		parseGameSettingsV2(payloadBytes);
+		parseGameSettingsV2(search, payloadBytes);
 
 		setConfirmEjects(payloadBytes[41]);
 		setVisualTasks(payloadBytes[42]);
 	}
 
-	private void parseGameSettingsV4(byte... payloadBytes) {
+	private void parseGameSettingsV4(boolean search, byte... payloadBytes) {
 		// TODO: Validate Size
 
-		parseGameSettingsV3(payloadBytes);
+		parseGameSettingsV3(search, payloadBytes);
 
 		setAnonymousVoting(payloadBytes[43]);
 		setTaskBarUpdates(payloadBytes[44]);

@@ -40,6 +40,13 @@ public class GameSettingsPacket {
 	 */
 	@API(status = API.Status.EXPERIMENTAL)
 	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
+		// 01 00 02 2b 00 00 2a 02 09 02 00 00 00 01 00 00 c0 3f 00 00 00 3f 00 00 80 3f 00 00 f0 41 02 02 03 01 00 00 00 03 00 0f 00 00 00 78 00 00 00 00 0f
+		// RP NO NO PL PL RC
+		// RP = Reliable Packet (1)
+		// NO = Nonce (2)
+		// PL = Packet Length (43)
+		// RC = Reliable Packet Type (0x00 for Host Game)
+
 		GameSettings gameSettings = new GameSettings(payloadBytes);
 
 		LogHelper.printLine("Imposter Count: " + gameSettings.getImposterCount());

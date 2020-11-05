@@ -22,7 +22,20 @@ public class SearchGamePacket {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
 
 	public static byte[] handleSearchPublicGame(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
-		GameSettings searchSettings = new GameSettings(payloadBytes);
+		// 01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 07 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
+		// RP NO NO PL PL RC CS
+		// RP = Reliable Packet (1)
+		// NO = Nonce (2)
+		// PL = Packet Length (44)
+		// RC = Reliable Packet Type (0x10 for Search)
+		// CS = Constant?
+
+		byte[] searchSettingsBytes = PacketHelper.extractSecondPartBytes(1, payloadBytes);
+
+		LogHelper.printLine("Search Bytes: ");
+		LogHelper.printPacketBytes(searchSettingsBytes);
+
+		GameSettings searchSettings = new GameSettings(true, searchSettingsBytes);
 
 		int numberOfImposters = searchSettings.getImposterCount();
 		Map[] maps = searchSettings.getMaps(); // new Map[] {Map.UNSPECIFIED};
@@ -30,7 +43,7 @@ public class SearchGamePacket {
 
 		ResourceBundle translation = Main.getTranslationBundle();
 		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
-		LogHelper.printLine(String.format(translation.getString("maps_logged"), MapSearch.getPrintableMapsList(maps)));
+		LogHelper.printLine(String.format(translation.getString("maps_logged"), MapSearch.getPrintableMapsList(maps))); // TODO: Check For Null
 		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getPrintableLanguagesList(languages)));
 
 		GameSearchEvent event = new GameSearchEvent(languages, numberOfImposters, maps);
