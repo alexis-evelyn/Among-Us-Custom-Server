@@ -25,12 +25,11 @@ public enum MapSearch {
 	@Deprecated MAP_EIGHT((byte) 0b10000000); // 128
 
 	private final byte map;
+	private static final java.util.Map<Byte, MapSearch> mapSearch = new HashMap<>();
 
 	MapSearch(byte map) {
 		this.map = map;
 	}
-
-	private static final java.util.Map<Byte, MapSearch> mapSearch = new HashMap<>();
 
 	public byte getByte() {
 		return this.map;
@@ -68,6 +67,7 @@ public enum MapSearch {
 	 * @return array of Maps
 	 */
 	@NotNull
+	@SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity"})
 	public static Map[] getMapArray(byte mapByte) {
 		// From what I'm hearing, this is a bitfield. https://discordapp.com/channels/750301084202958899/761731747762667560/765242112031064074
 		// This function parses as a bitfield so if say 9 maps exist, then we don't have to have every possible map combination written in code.

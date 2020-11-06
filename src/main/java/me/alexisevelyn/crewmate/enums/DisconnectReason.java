@@ -28,12 +28,11 @@ public enum DisconnectReason {
 	SERVER_OVERLOADED((byte) 0x14);
 
 	private final byte reason;
+	private static final java.util.Map<Byte, DisconnectReason> reasonSearch = new HashMap<>();
 
 	DisconnectReason(byte reason) {
 		this.reason = reason;
 	}
-
-	private static final java.util.Map<Byte, DisconnectReason> reasonSearch = new HashMap<>();
 
 	public byte getByte() {
 		return this.reason;

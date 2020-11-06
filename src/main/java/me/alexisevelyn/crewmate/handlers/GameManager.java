@@ -9,7 +9,6 @@ import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class GameManager {
     private static final HashMap<String, Game> gamesByCode = new HashMap<>();

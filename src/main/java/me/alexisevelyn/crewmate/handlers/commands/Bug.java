@@ -5,6 +5,7 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Terminal;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class Bug implements Command {
@@ -16,8 +17,8 @@ public class Bug implements Command {
 	public Bug() {
 		String tempLink;
 
-		try {
-			compileTimeProperties.load(Main.class.getResourceAsStream("/compileTime.properties"));
+		try (InputStream compileTimePropertiesStream = Main.class.getResourceAsStream("/compileTime.properties")) {
+			compileTimeProperties.load(compileTimePropertiesStream);
 
 			tempLink = compileTimeProperties.getProperty("issue_link");
 		} catch (IOException exception) {

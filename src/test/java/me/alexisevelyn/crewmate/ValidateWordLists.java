@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class ValidateWordLists {
 	@Test
+	@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 	public void testMainList() {
 		URL list = Main.class.getClassLoader().getResource("codes/words.txt");
 
@@ -17,6 +18,7 @@ public class ValidateWordLists {
 	}
 
 	@Test
+	@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 	public void testNamesList() {
 		URL list = Main.class.getClassLoader().getResource("codes/names.txt");
 
@@ -24,6 +26,7 @@ public class ValidateWordLists {
 	}
 
 	@Test
+	@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 	public void testAcronymList() {
 		URL list = Main.class.getClassLoader().getResource("codes/acronym.txt");
 
@@ -31,6 +34,7 @@ public class ValidateWordLists {
 	}
 
 	@Test
+	@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 	public void testProfanityList() {
 		URL list = Main.class.getClassLoader().getResource("codes/prof. anity.txt");
 
@@ -38,6 +42,7 @@ public class ValidateWordLists {
 	}
 
 	@Test
+	@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 	public void testUltraBannedList() {
 		URL list = Main.class.getClassLoader().getResource("codes/ultrabanned.txt");
 
@@ -45,6 +50,7 @@ public class ValidateWordLists {
 	}
 
 	@Test
+	@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 	public void testOtherList() {
 		URL list = Main.class.getClassLoader().getResource("codes/other.txt");
 

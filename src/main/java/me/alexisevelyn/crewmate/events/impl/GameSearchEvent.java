@@ -45,7 +45,7 @@ public class GameSearchEvent extends Event {
     }
 
     public Language[] getLanguages() {
-        return languages;
+        return languages.clone();
     }
 
     public int getImpostors() {
@@ -53,7 +53,6 @@ public class GameSearchEvent extends Event {
     }
 
     public Map[] getMaps() {
-        return maps;
+        return maps.clone();
     }
-
 }

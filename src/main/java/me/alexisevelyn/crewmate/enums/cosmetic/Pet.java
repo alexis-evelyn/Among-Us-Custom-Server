@@ -22,12 +22,11 @@ public enum Pet {
 	BEDCRAB((byte) 10);
 
 	private final byte pet;
+	private static final java.util.Map<Byte, Pet> petSearch = new HashMap<>();
 
 	Pet(byte pet) {
 		this.pet = pet;
 	}
-
-	private static final java.util.Map<Byte, Pet> petSearch = new HashMap<>();
 
 	public byte getByte() {
 		return this.pet;

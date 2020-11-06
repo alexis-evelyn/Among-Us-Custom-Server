@@ -20,12 +20,11 @@ public enum SendOption {
 	PING((byte) 0x0C);
 
 	private final byte sendOption;
+	private static final java.util.Map<Byte, SendOption> sendOptionHashMap = new HashMap<>();
 
 	SendOption(byte sendOption) {
 		this.sendOption = sendOption;
 	}
-
-	private static final java.util.Map<Byte, SendOption> sendOptionHashMap = new HashMap<>();
 
 	@Nullable
 	public static SendOption getByte(byte sendOptionValue) {

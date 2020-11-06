@@ -6,7 +6,7 @@ import me.alexisevelyn.crewmate.Remote;
 import me.alexisevelyn.crewmate.Terminal;
 
 public class SSH implements Command {
-	Remote server;
+	private Remote server;
 
 	public void execute(String command, Terminal terminal) {
 		String message = Main.getTranslationBundle().getString("not_implemented");

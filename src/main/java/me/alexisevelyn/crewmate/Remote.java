@@ -1,8 +1,5 @@
 package me.alexisevelyn.crewmate;
 
-import org.apache.sshd.client.auth.hostbased.HostKeyIdentityProvider;
-import org.apache.sshd.common.config.keys.OpenSshCertificate;
-import org.apache.sshd.common.keyprovider.HostKeyCertificateProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.common.session.SessionContext;
 import org.apache.sshd.common.session.SessionHeartbeatController;
@@ -15,7 +12,6 @@ import org.apache.sshd.server.auth.password.PasswordChangeRequiredException;
 import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.server.shell.ProcessShellFactory;
 import org.apache.sshd.server.shell.ShellFactory;
 
 import java.io.IOException;
@@ -24,12 +20,8 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.*;
-import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public class Remote extends Thread {
 	// https://github.com/apache/mina-sshd/blob/master/docs/server-setup.md
@@ -72,8 +64,8 @@ public class Remote extends Thread {
 }
 
 class TempKeyPairProvider implements KeyPairProvider {
-	KeyPairGenerator keyPairGenerator;
-	KeyPair keyPair;
+	private final KeyPairGenerator keyPairGenerator;
+	private final KeyPair keyPair;
 
 	public TempKeyPairProvider() throws NoSuchAlgorithmException {
 		// Generate KeyPair
@@ -115,10 +107,10 @@ class TempShellFactory implements ShellFactory {
 class TempCommand implements Command, Runnable {
 	// https://github.com/apache/mina-sshd/blob/master/docs/commands.md
 
-	InputStream in;
-	OutputStream out;
-	OutputStream err;
-	ExitCallback exitCallback;
+	private InputStream in;
+	private OutputStream out;
+	private OutputStream err;
+	private ExitCallback exitCallback;
 
 	@Override
 	public void setInputStream(InputStream in) {

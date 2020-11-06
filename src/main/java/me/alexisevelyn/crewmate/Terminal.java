@@ -13,7 +13,7 @@ public class Terminal extends Thread {
 	// This prefix will be changeable via commands in the future
 	private String prefix = "# ";
 	private boolean running = false;
-	Scanner input;
+	private Scanner input;
 
 	@Override
 	public void run() {
@@ -73,10 +73,12 @@ public class Terminal extends Thread {
 		return this.running;
 	}
 
+	@Deprecated
 	private void setupShutdownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> Main.getTerminal().exit()));
 	}
 
+	@Deprecated
 	public static Logger getLogger() {
 		return logger;
 	}

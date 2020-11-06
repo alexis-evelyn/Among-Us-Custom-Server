@@ -42,12 +42,11 @@ public enum RPC {
 	UPDATE_GAME_DATA((byte) 30);
 
 	private final byte rpc;
+	private static final java.util.Map<Byte, RPC> rpcSearch = new HashMap<>();
 
 	RPC(byte rpc) {
 		this.rpc = rpc;
 	}
-
-	private static final java.util.Map<Byte, RPC> rpcSearch = new HashMap<>();
 
 	@SuppressWarnings("unused")
 	public byte getByte() {

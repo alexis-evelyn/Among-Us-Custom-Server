@@ -104,12 +104,11 @@ public enum Hat {
 	SNOW_CREWMATE((byte) 93);
 
 	private final byte hat;
+	private static final java.util.Map<Byte, Hat> hatSearch = new HashMap<>();
 
 	Hat(byte hat) {
 		this.hat = hat;
 	}
-
-	private static final java.util.Map<Byte, Hat> hatSearch = new HashMap<>();
 
 	public byte getByte() {
 		return this.hat;
@@ -121,6 +120,7 @@ public enum Hat {
 	}
 
 	@NotNull
+	@SuppressWarnings("PMD.ExcessiveMethodLength")
 	public static String getHatName(@NotNull Hat hat) {
 		ResourceBundle translation = Main.getTranslationBundle();
 

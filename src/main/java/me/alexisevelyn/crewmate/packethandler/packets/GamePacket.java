@@ -23,6 +23,7 @@ public class GamePacket {
 	 * @return data to send back to client
 	 */
 	@NotNull
+	@SuppressWarnings("PMD.MissingBreakInSwitch")
 	public static byte[] handleAmongUsPacket(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// Needs to Be At Least 6 Bytes Long To Be A Valid Reliable Packet
 		if (payloadBytes.length < 3)

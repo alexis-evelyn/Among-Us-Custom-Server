@@ -23,10 +23,10 @@ public class GameCode implements Command {
 		}
 
 		// Second Argument - Either bytes or string (whatever the translation has set)
-		String convertType = arguments[1].trim().toLowerCase();
+		String convertType = arguments[1].trim();
 
 		// Convert To Bytes
-		if (convertType.equals(translation.getString("gamecode_bytes_argument"))) {
+		if (convertType.equalsIgnoreCase(translation.getString("gamecode_bytes_argument"))) {
 			try {
 				this.convertStringToBytes(terminal, arguments);
 			} catch (InvalidGameCodeException e) {
@@ -35,7 +35,7 @@ public class GameCode implements Command {
 		}
 
 		// Convert To String
-		if (convertType.equals(translation.getString("gamecode_string_argument")))
+		if (convertType.equalsIgnoreCase(translation.getString("gamecode_string_argument")))
 			this.convertBytesToString(terminal, arguments);
 	}
 

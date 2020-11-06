@@ -27,12 +27,11 @@ public enum Map {
 	@Deprecated MAP_EIGHT((byte) 7);
 
 	private final byte map;
+	private static final java.util.Map<Byte, Map> mapSearch = new HashMap<>();
 
 	Map(byte map) {
 		this.map = map;
 	}
-
-	private static final java.util.Map<Byte, Map> mapSearch = new HashMap<>();
 
 	public byte getByte() {
 		return this.map;

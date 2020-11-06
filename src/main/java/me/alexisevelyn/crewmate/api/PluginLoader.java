@@ -10,19 +10,15 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 public class PluginLoader {
 
@@ -94,7 +90,7 @@ public class PluginLoader {
                 }
             } catch (UnsupportedClassVersionError exception) {
                 LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail_wrong_java"), plugin.getName()));
-            } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException | ClassFormatError exception) {
+            } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | IllegalArgumentException | ClassFormatError exception) {
                 LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail"), plugin.getName()));
             } catch (Exception exception) {
                 LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail_unbelievable"), plugin.getName()));
@@ -107,7 +103,7 @@ public class PluginLoader {
 
     @Nullable
     // This has the most exceptions I've seen being passed out of a method. I'll probably have to rewrite this
-    private static Plugin findPlugin(@NotNull String className) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, NullPointerException {
+    private static Plugin findPlugin(@NotNull String className) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IllegalArgumentException {
         Class<?> aClass = Class.forName(className, false, classLoader);
 
         if (!aClass.isInterface()) {
@@ -115,7 +111,8 @@ public class PluginLoader {
                 Plugin instance = (Plugin) aClass.getDeclaredConstructor().newInstance();
                 String id = instance.getID();
 
-                if (id != null && !id.isEmpty() && id.toLowerCase().equalsIgnoreCase(id) && id.replaceAll(" ", "").equals(id)) {
+                // TODO: Figure Out What This If Statement Is
+                if (id != null && !id.isEmpty() && id.replaceAll(" ", "").equals(id)) {
                     if (getPlugin(id) == null) {
                         boolean enabled = true; // TODO: Replace with setting of some sort.
 
@@ -134,10 +131,10 @@ public class PluginLoader {
                         
                         return instance;
                     } else {
-                        throw new NullPointerException(Main.getTranslationBundle().getString("plugin_null"));
+                        throw new IllegalArgumentException(Main.getTranslationBundle().getString("plugin_null"));
                     }
                 } else {
-                    throw new NullPointerException(Main.getTranslationBundle().getString("plugin_id_null"));
+                    throw new IllegalArgumentException(Main.getTranslationBundle().getString("plugin_id_null"));
                 }
             }
         }

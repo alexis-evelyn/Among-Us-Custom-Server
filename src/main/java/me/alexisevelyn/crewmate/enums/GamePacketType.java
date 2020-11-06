@@ -25,12 +25,11 @@ public enum GamePacketType {
 	SEARCH_PUBLIC_GAME((byte) 0x10); // 16 - Missing From https://wiki.weewoo.net/wiki/Protocol
 
 	private final byte gamePacketType;
+	private static final java.util.Map<Byte, GamePacketType> reliablePacketTypeSearch = new HashMap<>();
 
 	GamePacketType(byte gamePacketType) {
 		this.gamePacketType = gamePacketType;
 	}
-
-	private static final java.util.Map<Byte, GamePacketType> reliablePacketTypeSearch = new HashMap<>();
 
 	public int getReliablePacketType() {
 		return this.gamePacketType;

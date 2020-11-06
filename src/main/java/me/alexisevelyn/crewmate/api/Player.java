@@ -1,13 +1,13 @@
 package me.alexisevelyn.crewmate.api;
 
-import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class Player extends Entity {
     private final String name;
@@ -19,7 +19,7 @@ public class Player extends Entity {
     private final Version clientVersion;
     private final Server server;
 
-    private static Random rnd = new Random();
+    private static final SecureRandom rnd = new SecureRandom();
 
     public Player(@NotNull String name, @NotNull InetAddress address, int port, int hazelVersion, int clientVersionRaw, @NotNull Server server) {
         super(4);

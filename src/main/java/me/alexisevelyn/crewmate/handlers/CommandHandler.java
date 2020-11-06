@@ -5,6 +5,7 @@ import me.alexisevelyn.crewmate.Terminal;
 import me.alexisevelyn.crewmate.handlers.commands.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class CommandHandler {
 	// TODO: Replace printLine with Terminal Specific (Implementation) Print Line
@@ -23,57 +24,56 @@ public class CommandHandler {
 		if (command == null || terminal == null)
 			return;
 
-		String checkCommand = command.trim().toLowerCase().split("\\s+")[0];
+		String checkCommand = command.trim().split("\\s+")[0];
 
 		// Exit Command
-		if (checkCommand.equals(Main.getTranslationBundle().getString("exit_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("exit_command"))) {
 			new Exit().execute(command, terminal);
 		}
 
 		// Region File Generator Command
-		if (checkCommand.equals(Main.getTranslationBundle().getString("region_file_generator_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("region_file_generator_command"))) {
 			new RegionFileGenerator().execute(command, terminal);
 		}
 
 		// Help Command
-		if (checkCommand.equals(Main.getTranslationBundle().getString("help_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("help_command"))) {
 			new Help().execute(command, terminal);
 		}
 
 		// Bug Command
-		if (checkCommand.equals(Main.getTranslationBundle().getString("bug_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("bug_command"))) {
 			new Bug().execute(command, terminal);
 		}
 
 		// Lua Command
-		if (checkCommand.equals(Main.getTranslationBundle().getString("lua_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("lua_command"))) {
 			new Lua().execute(command, terminal);
 		}
 
 		// Game Code To Bytes Or String
-		if (checkCommand.equals(Main.getTranslationBundle().getString("gamecode_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("gamecode_command"))) {
 			new GameCode().execute(command, terminal);
 		}
 
 		// SSH Control Command
-		if (checkCommand.equals(Main.getTranslationBundle().getString("ssh_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("ssh_command"))) {
 			new SSH().execute(command, terminal);
 		}
 
 		// Plugin Info Command
-		if (checkCommand.equals(Main.getTranslationBundle().getString("plugin_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("plugin_command"))) {
 			new Plugin().execute(command, terminal);
 		}
 
 		// Packed Ints Tester
-		if (checkCommand.equals(Main.getTranslationBundle().getString("packed_ints_command"))) {
+		if (checkCommand.equalsIgnoreCase(Main.getTranslationBundle().getString("packed_ints_command"))) {
 			new PackedInts().execute(command, terminal);
 		}
 
-		for (String commandName : commands.keySet()) {
-			if (checkCommand.equalsIgnoreCase(commandName)) {
-				commands.get(commandName).execute(command, terminal);
-			}
+		for (Map.Entry<String, Command> commandEntry : commands.entrySet()) {
+			if (checkCommand.equalsIgnoreCase(commandEntry.getKey()))
+				commandEntry.getValue().execute(command, terminal);
 		}
 	}
 }

@@ -22,12 +22,11 @@ public enum PlayerColor {
 	LIGHT_GREEN((byte) 11);
 
 	private final byte playerColor;
+	private static final java.util.Map<Byte, PlayerColor> playerColorSearch = new HashMap<>();
 
 	PlayerColor(byte playerColor) {
 		this.playerColor = playerColor;
 	}
-
-	private static final java.util.Map<Byte, PlayerColor> playerColorSearch = new HashMap<>();
 
 	@SuppressWarnings("unused")
 	public byte getByte() {

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.InetAddress;
 import java.net.URL;
+import java.security.SecureRandom;
 
 public class HostSettingsPacket {
 	/**
@@ -113,7 +114,8 @@ public class HostSettingsPacket {
 
 			// For Random Position
 			long length = file.length() - 1;
-			long position = (long) (Math.random() * length);
+			SecureRandom secureRandom = new SecureRandom();
+			long position = secureRandom.nextLong() * length;
 
 			// Skip Ahead
 			file.seek(position);
@@ -122,9 +124,13 @@ public class HostSettingsPacket {
 			// TODO: Fix so it can grab the first word on the list and
 			//  so it doesn't NPE for reading the line on the last word of the list
 			file.readLine();
+			byte[] gameCodeBytes = GameCodeHelper.generateGameCodeBytes(file.readLine());
+
+			// Close File Reference
+			file.close();
 
 			// Get Word
-			return GameCodeHelper.generateGameCodeBytes(file.readLine());
+			return gameCodeBytes;
 		} catch (IOException | NullPointerException exception) {
 			exception.printStackTrace();
 

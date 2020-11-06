@@ -8,9 +8,9 @@ import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerManager {
-
     public static final HashMap<Integer, Player> playersByID = new HashMap<>();
     public static final HashMap<String, Player> playersByAddress = new HashMap<>();
 
@@ -29,13 +29,14 @@ public class PlayerManager {
 
     public static void removePlayer(InetAddress address, int port) {
         if (existsWithAddress(address, port)) {
-            for (int key : playersByID.keySet()) {
-                Player foundPlayer = playersByID.get(key);
+            for (Map.Entry<Integer, Player> playerEntry : playersByID.entrySet()) {
+                Player foundPlayer = playerEntry.getValue();
 
                 if (foundPlayer.getAddress().equals(address) && foundPlayer.getPort() == port) {
-                    playersByID.remove(key, foundPlayer);
+                    playersByID.remove(playerEntry.getKey(), foundPlayer);
                     playersByAddress.remove(address + ":" + port, foundPlayer);
                     removeFromGames(foundPlayer);
+
                     LogHelper.printLine("Removed player: " + foundPlayer.getName());
                     break;
                 }
@@ -51,11 +52,11 @@ public class PlayerManager {
     @Deprecated
     public static void removePlayer(int id) {
         if (existsWithID(id)) {
-            for (String key : playersByAddress.keySet()) {
-                Player foundPlayer = playersByAddress.get(key);
+            for (Map.Entry<String, Player> playerEntry : playersByAddress.entrySet()) {
+                Player foundPlayer = playerEntry.getValue();
 
                 if (foundPlayer.getID() == id) {
-                    playersByAddress.remove(key, foundPlayer);
+                    playersByAddress.remove(playerEntry.getKey(), foundPlayer);
                     playersByID.remove(id, foundPlayer);
                     removeFromGames(foundPlayer);
 

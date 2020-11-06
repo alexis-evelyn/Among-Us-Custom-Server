@@ -16,6 +16,7 @@ public class TestEventListener {
     Server server;
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testEventListener() {
         try {
             Config config = new Config();

@@ -19,12 +19,11 @@ public enum GameDataType {
 	CHANGE_SETTINGS((byte) 0x08);
 
 	private final byte gameDataType;
+	private static final java.util.Map<Byte, GameDataType> gameDataTypeSearch = new HashMap<>();
 
 	GameDataType(byte gameDataType) {
 		this.gameDataType = gameDataType;
 	}
-
-	private static final java.util.Map<Byte, GameDataType> gameDataTypeSearch = new HashMap<>();
 
 	public byte getByte() {
 		return this.gameDataType;

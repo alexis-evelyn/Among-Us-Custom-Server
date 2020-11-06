@@ -26,12 +26,11 @@ public enum Skin {
 	ARCHAEOLOGIST((byte) 15);
 
 	private final byte skin;
+	private static final java.util.Map<Byte, Skin> skinSearch = new HashMap<>();
 
 	Skin(byte skin) {
 		this.skin = skin;
 	}
-
-	private static final java.util.Map<Byte, Skin> skinSearch = new HashMap<>();
 
 	public byte getByte() {
 		return this.skin;

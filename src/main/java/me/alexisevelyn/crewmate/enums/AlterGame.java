@@ -11,12 +11,11 @@ public enum AlterGame {
 	CHANGE_PRIVACY((byte) 0x01); // 0x01 = 1
 
 	private final byte alterGameFlag;
+	private static final java.util.Map<Byte, AlterGame> alterGameFlagSearch = new HashMap<>();
 
 	AlterGame(byte alterGameFlag) {
 		this.alterGameFlag = alterGameFlag;
 	}
-
-	private static final java.util.Map<Byte, AlterGame> alterGameFlagSearch = new HashMap<>();
 
 	public byte getAlterGameFlag() {
 		return this.alterGameFlag;

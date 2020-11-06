@@ -23,15 +23,15 @@ public class PackedInts implements Command {
 		}
 
 		// Second Argument - Either bytes or string (whatever the translation has set)
-		String convertType = arguments[1].trim().toLowerCase();
+		String convertType = arguments[1].trim();
 
 		// Convert To Bytes
-		if (convertType.equals(translation.getString("packed_ints_bytes_argument"))) {
+		if (convertType.equalsIgnoreCase(translation.getString("packed_ints_bytes_argument"))) {
 			this.convertIntToBytes(terminal, arguments);
 		}
 
 		// Convert To String
-		if (convertType.equals(translation.getString("packed_ints_int_argument")))
+		if (convertType.equalsIgnoreCase(translation.getString("packed_ints_int_argument")))
 			this.convertBytesToInt(terminal, arguments);
 	}
 

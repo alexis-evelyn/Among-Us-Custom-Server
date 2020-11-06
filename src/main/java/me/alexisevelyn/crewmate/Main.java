@@ -3,6 +3,7 @@ package me.alexisevelyn.crewmate;
 import org.apiguardian.api.API;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.Locale;
@@ -54,9 +55,10 @@ public class Main {
 	@API(status = API.Status.STABLE)
 	public static void startServer(Config config) {
 		// Read Compile Time Properties
+		// TODO: Turn Into Static HashMap Object
 		String versionString;
-		try {
-			compileTimeProperties.load(Main.class.getResourceAsStream("/compileTime.properties"));
+		try (InputStream compileTimePropertiesStream = Main.class.getResourceAsStream("/compileTime.properties")) {
+			compileTimeProperties.load(compileTimePropertiesStream);
 			versionString = compileTimeProperties.getProperty("version");
 		} catch (IOException exception) {
 			versionString = getTranslationBundle().getString("unknown");

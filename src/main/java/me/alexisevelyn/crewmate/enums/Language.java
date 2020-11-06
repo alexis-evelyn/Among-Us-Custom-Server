@@ -77,6 +77,7 @@ public enum Language {
 	}
 
 	@NotNull
+	@SuppressWarnings("PMD.ExcessiveMethodLength")
 	public static String getLanguageName(@NotNull Language language) {
 		ResourceBundle translation = Main.getTranslationBundle();
 
@@ -179,6 +180,7 @@ public enum Language {
 	 * @return array of Languages
 	 */
 	@NotNull
+	@SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity"})
 	public static Language[] getLanguageArray(long languageNumber) {
 		ArrayList<Language> languages = new ArrayList<>();
 		// Not a Bitwise Operation

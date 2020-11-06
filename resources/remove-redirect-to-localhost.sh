@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This list may not be complete, please send me more ip addresses accessed when this redirect is on
 # You NEED ROOT to be able to run this file
 
