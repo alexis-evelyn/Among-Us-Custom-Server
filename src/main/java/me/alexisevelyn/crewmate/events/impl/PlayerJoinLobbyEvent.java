@@ -4,11 +4,11 @@ import me.alexisevelyn.crewmate.events.EventCancellable;
 
 import java.net.InetAddress;
 
-public class PlayerPreJoinEvent extends EventCancellable {
+public class PlayerJoinLobbyEvent extends EventCancellable {
     private final InetAddress address;
     private final int port;
 
-    public PlayerPreJoinEvent(InetAddress address, int port) {
+    public PlayerJoinLobbyEvent(InetAddress address, int port) {
         this.address = address;
         this.port = port;
     }

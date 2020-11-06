@@ -5,7 +5,6 @@ import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.events.EventCancellable;
 
 public class ChangeVisibilityEvent extends EventCancellable {
-
     private final Server server;
     private final Player player;
     private boolean visible;
@@ -31,5 +30,4 @@ public class ChangeVisibilityEvent extends EventCancellable {
     public Player getPlayer() {
         return player;
     }
-
 }

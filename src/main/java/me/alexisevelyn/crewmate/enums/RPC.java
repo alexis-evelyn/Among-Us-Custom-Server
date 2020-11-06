@@ -41,29 +41,27 @@ public enum RPC {
 	SET_TASKS((byte) 29),
 	UPDATE_GAME_DATA((byte) 30);
 
-	private final int rpc;
+	private final byte rpc;
 
-	RPC(int rpc) {
+	RPC(byte rpc) {
 		this.rpc = rpc;
 	}
 
-	private static final java.util.Map<Integer, RPC> rpcSearch = new HashMap<>();
+	private static final java.util.Map<Byte, RPC> rpcSearch = new HashMap<>();
 
-	public int getRPC() {
+	@SuppressWarnings("unused")
+	public byte getByte() {
 		return this.rpc;
 	}
 
 	@Nullable
-	public static RPC getRPC(int rpcInteger) {
-		return rpcSearch.get(rpcInteger);
+	public static RPC getRPC(byte rpcByte) {
+		return rpcSearch.get(rpcByte);
 	}
 
 	@NotNull
 	public static String getRPCName(@NotNull RPC rpc) {
 		ResourceBundle translation = Main.getTranslationBundle();
-
-		if (rpc == null)
-			return translation.getString("unknown");
 
 		switch (rpc) {
 			case ANIMATION:

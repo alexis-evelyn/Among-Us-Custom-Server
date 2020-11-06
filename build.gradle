@@ -1,87 +1,25 @@
 plugins {
-    id "java" // https://docs.gradle.org/current/userguide/java_plugin.html
-    id "signing" // https://docs.gradle.org/current/userguide/signing_plugin.html
-    id "com.github.johnrengelman.shadow" version "6.1.0" // https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow
-    id "com.github.vlsi.license-gather" version "1.7.0" // https://plugins.gradle.org/plugin/com.github.vlsi.license-gather
+    // General Plugins
+    id "java" // ./gradlew build - https://docs.gradle.org/current/userguide/java_plugin.html
+    id "signing" // Performed By Maven Publish - For Signing Artifacts Before Publishing to Sonatype - https://docs.gradle.org/current/userguide/signing_plugin.html
+    id "maven-publish" // ./gradlew publish - For publishing to Sonatype - https://docs.gradle.org/current/userguide/publishing_maven.html
+    id "com.github.johnrengelman.shadow" version "6.1.0" // ./gradlew shadowJar - https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow
+    id "io.codearte.nexus-staging" version "0.22.0" // ./gradlew closeAndReleaseRepository - For releasing uploaded releases to the public - https://plugins.gradle.org/plugin/io.codearte.nexus-staging
+
+    // For Unit-Testing.gradle
+    // id "com.github.spotbugs" version "4.5.1" // https://plugins.gradle.org/plugin/com.github.spotbugs
+    id "com.github.spotbugs-base" version "4.5.1" // https://plugins.gradle.org/plugin/com.github.spotbugs-base
+
+    // For Experimental.gradle
+//    id "com.github.vlsi.license-gather" version "1.7.0" // ./gradlew generateLicense - https://plugins.gradle.org/plugin/com.github.vlsi.license-gather
 }
 
 group 'me.alexisevelyn'
-version '0.0.5-SNAPSHOT'
-
-// https://discuss.gradle.org/t/sourcecompatibility-targetcompatibility-usage-reasons/25133/4
-// I have no idea how to tell which version is the minimal version that can compile this
-//sourceCompatibility = 1.8
-//targetCompatibility = 1.11
+version "${project.server_version}"
 
 repositories {
     mavenCentral()
 }
-
-dependencies {
-    // License Compatibility - https://opensource.stackexchange.com/a/7908/9726
-    // License (Dual Licensed Under EPL v1.0 and LGPL 2.1) - https://logback.qos.ch/license.html
-    implementation "ch.qos.logback:logback-core:${project.logback_version}"
-    shadow "ch.qos.logback:logback-core:${project.logback_version}"
-
-    // License (Dual Licensed Under EPL v1.0 and LGPL 2.1) - https://logback.qos.ch/license.html
-    implementation "ch.qos.logback:logback-classic:${project.logback_version}"
-    shadow "ch.qos.logback:logback-classic:${project.logback_version}"
-
-    // License (Identical to MIT) - http://slf4j.org/license.html
-    implementation "org.slf4j:slf4j-api:${project.slf4j_api_version}"
-    shadow "org.slf4j:slf4j-api:${project.slf4j_api_version}"
-
-    // License (MIT) - https://github.com/luaj/luaj/blob/master/LICENSE
-    implementation "org.luaj:luaj-jse:${project.luaj_version}"
-    shadow "org.luaj:luaj-jse:${project.luaj_version}"
-
-    // License (Apache 2.0) - https://github.com/JetBrains/java-annotations/blob/master/LICENSE.txt
-    implementation "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
-
-    // License (Apache 2.0) - https://github.com/apache/mina-sshd/blob/master/LICENSE.txt
-    // Compatible With MIT According To https://www.quora.com/Is-the-MIT-license-compatible-with-the-Apache-License-Version-2-APLv2
-    // Modules - https://github.com/apache/mina-sshd/blob/master/README.md#basic-artifacts-structure
-    implementation "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
-    shadow "org.apache.sshd:sshd-core:${project.apache_mina_sshd_version}"
-
-    // License (Crockford MIT - aka the no evil license) - https://github.com/stleary/JSON-java/blob/master/LICENSE
-    implementation "org.json:json:${project.json_version}"
-    shadow "org.json:json:${project.json_version}"
-
-    // License (BSD-3) - https://github.com/jline/jline3/blob/master/LICENSE.txt
-    // Requires License In Binary Distribution - Can Be Found in `META-INF/licenses/jline3-license.txt`
-    implementation "org.jline:jline:${project.jline_version}"
-    shadow "org.jline:jline:${project.jline_version}"
-
-    // License (Apache 2.0) - https://github.com/apiguardian-team/apiguardian/blob/master/LICENSE
-    implementation "org.apiguardian:apiguardian-api:${project.api_guardian_version}"
-
-    // JUnit API
-    // License (EPL-2.0) - https://github.com/junit-team/junit5/blob/main/LICENSE.md
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: "${project.junit_version}"
-
-    // JUnit Engine
-    // License (EPL-2.0) - https://github.com/junit-team/junit5/blob/main/LICENSE.md
-    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: "${project.junit_version}"
-}
-
-// Configure Auto Relocation
-//import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-
-//shadowJar {
-//    archiveBaseName.set('shadow')
-//    archiveClassifier.set('')
-//    archiveVersion.set('')
-//}
-
-// This is to prevent dependency conflicts (causes too many problems right now, will deal with later)
-// https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
-//task relocateShadowJar(type: ConfigureShadowRelocation) {
-//    target = tasks.shadowJar
-//    prefix = "shadow.crewmate" // Default value is "shadow"
-//}
-
-//tasks.shadowJar.dependsOn tasks.relocateShadowJar
 
 jar {
     manifest {
@@ -94,24 +32,53 @@ jar {
 
 // This is so build time properties like the server version are saved in the jar
 // https://stackoverflow.com/a/54006518/6828099
-processResources {
+tasks.processResources {
     filesMatching('compileTime.properties') {
         expand([build_version: version])
     }
 }
 
-test {
-    useJUnitPlatform() // For JUnit 5 - JUnit 4 was just useJUnit()
-
-    maxHeapSize = '1G'
+// ensure that the encoding is set to UTF-8, no matter what the system default is
+// this fixes some edge cases with special characters not displaying correctly
+// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }
 
-// Currently None of the libraries appear to use a standard for machine license reading
-// https://github.com/vlsi/vlsi-release-plugins#license-gather-plugin
-tasks.register('generateLicense', com.github.vlsi.gradle.license.GatherLicenseTask.class) {
-    configurations.add(project.configurations.runtime)
-    licenseDir.set(file("$buildDir/third-party-licenses"))
+// Pull Java Source Files For Javadocs
+javadoc {
+    options.stylesheetFile = new File(projectDir, "src/main/javadoc/alexis-javadoc8.css")
 }
 
-// Include Source Set For Example Plugin
-apply from: "example-plugin.gradle"
+// Package Javadocs Into Jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set("javadoc")
+
+    javadoc.failOnError false
+    from javadoc.destinationDir
+}
+
+// If you remove this task, sources will not be generated.
+task sourcesJar(type: Jar, dependsOn: classes) {
+    // For some reason, depending on processResources does nothing, so I have to copy the code
+    filesMatching('compileTime.properties') {
+        expand([build_version: getArchiveVersion()])
+    }
+
+    archiveClassifier.set("sources")
+
+    from sourceSets.main.allSource
+}
+
+// Other Build Gradle Files
+apply from: "gradles/dependencies.gradle" // Compile Dependencies
+apply from: "gradles/unit-testing.gradle" // Unit Testing Dependencies/Setup
+apply from: "gradles/plugins.gradle" // Example/Testing/Demo Plugins
+
+// Experimental Gradle
+//apply from: "gradles/experimental.gradle"
+
+// CI Build
+if (System.getenv('IS_CI_BUILD') != null) {
+    apply from: 'gradles/publishing.gradle'
+}

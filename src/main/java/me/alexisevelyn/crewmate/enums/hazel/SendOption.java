@@ -1,7 +1,6 @@
 package me.alexisevelyn.crewmate.enums.hazel;
 
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.enums.ReliablePacketType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,16 +28,13 @@ public enum SendOption {
 	private static final java.util.Map<Byte, SendOption> sendOptionHashMap = new HashMap<>();
 
 	@Nullable
-	public static SendOption getSendOption(byte sendOptionValue) {
+	public static SendOption getByte(byte sendOptionValue) {
 		return sendOptionHashMap.get(sendOptionValue);
 	}
 
 	@NotNull
 	public static String getSendOptionName(@NotNull SendOption sendOptionType) {
 		ResourceBundle translation = Main.getTranslationBundle();
-
-		if (sendOptionType == null)
-			return translation.getString("unknown");
 
 		switch (sendOptionType) {
 			case NONE:
@@ -60,7 +56,7 @@ public enum SendOption {
 		}
 	}
 
-	public byte getSendOption() {
+	public byte getByte() {
 		return this.sendOption;
 	}
 

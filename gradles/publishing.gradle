@@ -1,0 +1,126 @@
+// For Staging - Attempts to Close and Release Repositories
+nexusStaging {
+    packageGroup = "me.alexisevelyn" //optional if packageGroup == project.getGroup()
+    // stagingProfileId = "yourStagingProfileId" //when not defined will be got from server using "packageGroup"
+
+    // Environment Var For Github, Other For Me
+    if (System.getenv('SONATYPE_USERNAME') != null) {
+        username = System.getenv('SONATYPE_USERNAME')
+    } else {
+        username = findProperty('SONATYPE_USERNAME')
+    }
+
+    // Environment Var For Github, Other For Me
+    if (System.getenv('SONATYPE_PASSWORD') != null) {
+        password = System.getenv('SONATYPE_PASSWORD')
+    } else {
+        password = findProperty('SONATYPE_PASSWORD')
+    }
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        publishServer(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            // Server Jar
+            artifact(shadowJar) {
+                builtBy shadowJar
+            }
+
+            // Javadoc Jar
+            artifact javadocJar
+
+            // Sources Jar
+            artifact sourcesJar
+
+            groupId = project.group
+            artifactId = 'crewmate'
+            version = project.version
+
+            pom {
+                name = 'Crewmate'
+                packaging = 'jar'
+                // optionally artifactId can be defined here
+                description = 'An open-source implementation of a custom Among Us server written in Java. Also supports anti-cheat, plugins, and modding!'
+                url = 'https://github.com/alexis-evelyn/Crewmate/blob/master/README.md'
+                // logo = 'https://raw.githubusercontent.com/alexis-evelyn/Crewmate/master/src/main/resources/icon.png' // My attempt at getting a logo to show up in mvnrepository.com
+
+                scm {
+                    connection = 'git@github.com:alexis-evelyn/Crewmate.git'
+                    developerConnection = 'git@github.com:alexis-evelyn/Crewmate.git'
+                    url = 'https://github.com/alexis-evelyn/Crewmate'
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://github.com/alexis-evelyn/Crewmate/blob/master/LICENSE.md'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'alexis-evelyn'
+                        name = 'Alexis Evelyn'
+                        email = 'alexis.a.evelyn@gmail.com'
+                    }
+                    developer {
+                        id = 'SLLCoding'
+                        name = 'Luis'
+                    }
+                }
+            }
+        }
+    }
+
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
+
+        // For Sonatype Staging
+        maven {
+            def releaseURL = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotURL = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+            url = version.endsWith('-SNAPSHOT') ? snapshotURL : releaseURL
+
+            credentials {
+                // Environment Var For Github, Other For Me
+                if (System.getenv('SONATYPE_USERNAME') != null) {
+                    username = System.getenv('SONATYPE_USERNAME')
+                } else {
+                    username = findProperty('SONATYPE_USERNAME')
+                }
+
+                // Environment Var For Github, Other For Me
+                if (System.getenv('SONATYPE_PASSWORD') != null) {
+                    password = System.getenv('SONATYPE_PASSWORD')
+                } else {
+                    password = findProperty('SONATYPE_PASSWORD')
+                }
+            }
+        }
+    }
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("publish") }
+
+    def signingKey = findProperty("SONATYPE_GPG_KEY")
+    def signingPassword = findProperty("SONATYPE_GPG_PASSWORD")
+
+    // Sonatype Specific GPG Key - Follow https://stackoverflow.com/a/58000485/6828099
+    if (System.getenv('SONATYPE_GPG_KEY') != null) {
+        signingKey = System.getenv('SONATYPE_GPG_KEY')
+    }
+
+    // Sonatype Specific GPG Key Password
+    if (System.getenv('SONATYPE_GPG_PASSWORD') != null) {
+        signingPassword = System.getenv('SONATYPE_GPG_PASSWORD')
+    }
+
+    useInMemoryPgpKeys(signingKey as String, signingPassword as String)
+    sign publishing.publications.publishServer
+}

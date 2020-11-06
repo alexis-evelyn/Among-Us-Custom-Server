@@ -30,7 +30,7 @@ public class PluginLoader {
     private static final List<Plugin> activePlugins = new ArrayList<>();
     private static final List<Plugin> disabledPlugins = new ArrayList<>();
 
-    private static final CrewmateClassLoader classLoader = new CrewmateClassLoader(new URL[]{}, PluginLoader.class.getClassLoader());
+    private static final CrewmateClassLoader classLoader = new CrewmateClassLoader(PluginLoader.class.getClassLoader());
 
     @NotNull
     public static List<Plugin> getActivePlugins() {

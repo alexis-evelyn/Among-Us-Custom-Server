@@ -6,11 +6,11 @@ import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.events.bus.EventHandler;
 import me.alexisevelyn.crewmate.events.impl.*;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
-
-import org.junit.jupiter.api.Test;
 
 public class TestEventListener {
     Server server;
@@ -18,7 +18,13 @@ public class TestEventListener {
     @Test
     public void testEventListener() {
         try {
-            this.server = new Server(new Config());
+            Config config = new Config();
+            File testDirectory = new File(System.getProperty("java.io.tmpdir"), "Crewmate-Event-Listener-Test");
+            System.out.printf("Location: %s%n", testDirectory.getAbsolutePath());
+
+            config.setRootDir(testDirectory); // Temporary Directory
+
+            this.server = new Server(config);
         } catch (SocketException | AccessDeniedException exception) {
             System.err.println(exception.getMessage());
 
@@ -29,12 +35,12 @@ public class TestEventListener {
 
         // TODO: Figure Out Best Testing Practices For Event Handlers
         // Test Host
-        HostGameEvent hostGameEvent = new HostGameEvent("CODE", 20, 6, Map.STICKMIN, Language.ENGLISH);
+        HostGameEvent hostGameEvent = new HostGameEvent("CODE", 20, 6, Map.STICKMIN, new Language[] {Language.ENGLISH});
         this.onHostGame(hostGameEvent);
     }
 
     @EventHandler
-    public void onPreJoin(PlayerPreJoinEvent event) {
+    public void onPreJoin(PlayerJoinLobbyEvent event) {
         //event.setCancelled(true, "Kicked during PreJoin");
     }
 

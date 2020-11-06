@@ -4,7 +4,7 @@ This file is for describing how to contribute to the Crewmate project.
 
 ## Adding Dependencies
 
-If you find yourself needing to add a dependency, there's some requirements that need to be fulfilled for the dependency to be added.
+If you find yourself needing to add a dependency, there're some requirements that need to be fulfilled for the dependency to be added.
 
 Requirements
 * Make sure to only use the dependency if it can be substantially used in the project. So, adding a dependency just for one method call is not okay.
@@ -116,3 +116,9 @@ The goal is to make the code legible and neat. Single line if statements are all
 ## Notes
 
 As this software is still in the alpha stage, methods are likely to change locations, names, and even arguments rapidly and potentially without any deprecation notice. As the software becomes more stable, API Guardian will be used to help guide developers and modders in knowing what code is stable and meant to be accessed versus code that is internal and not guaranteed to stay the same. This contribution file will be updated accordingly as the software continues to grow, so please check it every time you submit a PR.
+
+Also, please use the [bouncer pattern][bouncer] when writing functions.
+
+Commits must be signed in order to validate authenticity of the source. This requirement might be removed in the future.
+
+[bouncer]: https://wiki.c2.com/?BouncerPattern

@@ -1,73 +1,56 @@
-package me.alexisevelyn.crewmate.handlers.gamepacket;
+package me.alexisevelyn.crewmate.packethandler.packets.reliable;
 
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Server;
+import me.alexisevelyn.crewmate.api.GameSettings;
 import me.alexisevelyn.crewmate.enums.Language;
 import me.alexisevelyn.crewmate.enums.Map;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.impl.GameSearchEvent;
+import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
+import org.jetbrains.annotations.NotNull;
 
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
 
-public class SearchGame {
+public class SearchGamePacket {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
 
-	public static byte[] handleSearchPublicGame(DatagramPacket packet, Server server) {
-		// Request Search
-		// 0000   01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 01 00   ...,...*........
-		// 0010   00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01   ..?...?...?..pA.
-		// 0020   01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00   ............x...
-		// 0030   01 0f                                             ..
+	@NotNull
+	public static byte[] handleSearchPublicGame(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
+		// 01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 07 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
+		// RP NO NO PL PL RC CS
+		// RP = Reliable Packet (1)
+		// NO = Nonce (2)
+		// PL = Packet Length (44)
+		// RC = Reliable Packet Type (0x10 for Search)
+		// CS = Constant?
 
-		if (packet.getLength() != 50)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_request_invalid_size"));
+		byte[] searchSettingsBytes = PacketHelper.extractSecondPartBytes(1, payloadBytes);
 
-		byte[] buffer = packet.getData();
+		GameSettings searchSettings;
+		try {
+			searchSettings = new GameSettings(true, searchSettingsBytes);
+		} catch (InvalidBytesException exception) {
+			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
+		}
 
-		// 0 Means Any
-		int numberOfImposters = buffer[38];
+		int numberOfImposters = searchSettings.getImposterCount();
+		Map[] maps = searchSettings.getMaps();
+		Language[] languages = searchSettings.getLanguages();
 
-		// List of Maps Searched For
-		Map[] maps = parseMapsSearch(buffer[14]);
-
-		// Language To Search By
-		Language language = Language.getLanguage(Language.convertToInt(buffer[10], buffer[11]));
-
-		ResourceBundle translation = Main.getTranslationBundle();
-		LogHelper.printLine(String.format(translation.getString("imposter_count_logged"), (numberOfImposters == 0) ? translation.getString("imposter_count_any_logged") : numberOfImposters));
-		LogHelper.printLine(String.format(translation.getString("maps_logged"), getPrintableMapsList(maps)));
-		LogHelper.printLine(String.format(translation.getString("language_logged"), Language.getLanguageName(language)));
-
-		GameSearchEvent event = new GameSearchEvent(language, maps, numberOfImposters);
+		GameSearchEvent event = new GameSearchEvent(languages, numberOfImposters, maps);
 		event.call(server);
 
 		return event.getGames();
 	}
 
-	public static String getPrintableMapsList(Map[] maps) {
-		// List of Maps Being Included In Search
-		StringBuilder printableMapsList = new StringBuilder();
-
-		// Append Delimiters (Usually Comma + Space) To List and Then Remove Last Delimiter
-		String delimiter = Main.getTranslationBundle().getString("list_delimiter_logged");
-		for (Map map : maps) {
-			printableMapsList.append(Map.getMapName(map)).append(delimiter);
-		}
-		printableMapsList.delete(printableMapsList.length() - delimiter.length(), printableMapsList.length());
-
-		return printableMapsList.toString();
-	}
-
-	public static byte[] getFakeSearchBytes(int numberOfImposters, Map[] maps, int language) throws UnknownHostException {
+	@NotNull
+	public static byte[] getFakeSearchBytes(int numberOfImposters, long language, Map... maps) throws UnknownHostException {
 		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u
 		// 0010   07 56 e6 71 31 80 08 73 75 73 68 69 69 69 69 03   .V.q1..sushiiii.
@@ -152,7 +135,7 @@ public class SearchGame {
 		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;
 		int playerCount = 3;
 		int maxPlayerCount = 10;
-		int mapID = maps[0].getMap();
+		int mapID = maps[0].getByte();
 
 		// Total Number of Games
 		// TODO: Figure out how to get game list to display when showing total games!!!
@@ -185,7 +168,7 @@ public class SearchGame {
 
 		// Header - TODO: Figure out what unknownBytes means!!!
 		byte[] unknownBytes = new byte[] {0x01, 0x0f}; // https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
-		byte[] header = new byte[] {SendOption.RELIABLE.getSendOption(), 0x00, unknownBytes[0], unknownBytes[1], SearchBytes.POTENTIAL_FLAG.getSearchByte(), SearchBytes.GAME_LIST_VERSION.getSearchByte(), messageLength[0], messageLength[1],
+		byte[] header = new byte[] {SendOption.RELIABLE.getByte(), 0x00, unknownBytes[0], unknownBytes[1], SearchBytes.POTENTIAL_FLAG.getSearchByte(), SearchBytes.GAME_LIST_VERSION.getSearchByte(), messageLength[0], messageLength[1],
 				showTotalGames ? SearchBytes.SHOW_TOTAL_GAMES.getSearchByte() : SearchBytes.HIDE_TOTAL_GAMES.getSearchByte()};
 
 		// Outputs Blank List, But Shows Text At Bottom As Skeld - 1, Mira - 2, Polus - 3
@@ -209,107 +192,6 @@ public class SearchGame {
 				new byte[] {(byte) mapID},
 				new byte[] {(byte) imposterCount},
 				new byte[] {(byte) maxPlayerCount});
-	}
-
-	public static Map[] parseMapsSearch(int mapNumber) {
-		// From what I'm hearing, this is a bitfield. https://discordapp.com/channels/750301084202958899/761731747762667560/765242112031064074
-		// This function parses as a bitfield so if say 8 maps exist, then we don't have to have every possible map combination written in code.
-
-		/*
-		 * Math (Prior To Bitfield Knowledge)
-		 *
-		 *             1 (Skeld)
-		 *             2 (Mira)
-		 *     1 + 2 = 3 (Skeld + Mira)
-		 *             4 (Polus)
-		 *     1 + 4 = 5 (Skeld + Polus)
-		 *     2 + 4 = 6 (Mira + Polus)
-		 * 1 + 2 + 4 = 7 (All)
-		 */
-
-		/*
-		 * Bitfield
-		 *
-		 *     ABC
-		 * 1 = 001
-		 * 2 = 010
-		 * 3 = 011
-		 * 4 = 100
-		 * 5 = 101
-		 * 6 = 110
-		 * 7 = 111
-		 *
-		 * A = Polus
-		 * B = Mira-HQ
-		 * C = Skeld
-		 */
-
-		// What the full bytes would look like
-		// 00000001 = Skeld
-		// 00000010 = Mira-HQ
-		// 00000100 = Polus
-
-//		LogHelper.printLine("Skeld: " + (1 & mapNumber));
-//		LogHelper.printLine("Mira-HQ: " + (2 & mapNumber));
-//		LogHelper.printLine("Polus: " + (4 & mapNumber));
-
-		int skeldBit = 0b1;
-		int miraBit = 0b10;
-		int polusBit = 0b100;
-
-		// Will Be Renamed To Map Names On Map Release
-		int stickminBit = 0b1000;
-		int fiveBit = 0b10000;
-		int sixBit = 0b100000;
-		int sevenBit = 0b1000000;
-		int eightBit = 0b10000000;
-
-		ArrayList<Map> maps = new ArrayList<>();
-		if ((skeldBit & mapNumber) > 0) {
-			// Skeld
-			maps.add(Map.SKELD);
-		}
-
-		if ((miraBit & mapNumber) > 0) {
-			// Mira-HQ
-			maps.add(Map.MIRA_HQ);
-		}
-
-		if ((polusBit & mapNumber) > 0) {
-			// Polus
-			maps.add(Map.POLUS);
-		}
-
-		// As of this writing, these maps have either not been released or created yet.
-		// So, I could not tell you the official names of the maps (especially for the ones that simply don't exist).
-		if ((stickminBit & mapNumber) > 0) {
-			// Stickmin Map
-			maps.add(Map.STICKMIN);
-		}
-
-		if ((fiveBit & mapNumber) > 0) {
-			// Fifth Map
-			maps.add(Map.MAP_FIVE);
-		}
-
-		if ((sixBit & mapNumber) > 0) {
-			// Sixth Map
-			maps.add(Map.MAP_SIX);
-		}
-
-		if ((sevenBit & mapNumber) > 0) {
-			// Seventh Map
-			maps.add(Map.MAP_SEVEN);
-		}
-
-		if ((eightBit & mapNumber) > 0) {
-			// Eighth Map
-			maps.add(Map.MAP_EIGHT);
-		}
-
-		// https://stackoverflow.com/a/5061692/6828099
-		// Apparently it's supposed to be marked as empty now
-		return maps.toArray(new Map[0]);
 	}
 
 	private enum SearchBytes {

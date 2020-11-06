@@ -13,7 +13,7 @@ public class Help implements Command {
 	private final ArrayList<Class <? extends Command>> commands = new ArrayList<>();
 
 	/**
-	 * See {@link CommandHandler#handleCommand)
+	 * See {@link CommandHandler#handleCommand(String, Terminal)}
 	 */
 	public Help() {
 		commands.add(Exit.class);
@@ -24,6 +24,7 @@ public class Help implements Command {
 		commands.add(GameCode.class);
 		commands.add(SSH.class);
 		commands.add(Plugin.class);
+		commands.add(PackedInts.class);
 
 		// TODO: Sort List and Pull From Registry
 	}

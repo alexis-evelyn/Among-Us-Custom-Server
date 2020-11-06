@@ -8,46 +8,43 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public enum Skin {
-	NONE(0),
-	ASTRONAUT(1),
-	CAPTAIN(2),
-	MECHANIC(3),
-	MILITARY(4),
-	POLICE(5),
-	SCIENTIST(6),
-	SUIT_BLACK(7),
-	SUIT_WHITE(8),
-	THE_WALL(9),
-	HAZMAT(10),
-	SECURITY(11),
-	TARMAC(12),
-	MINER(13),
-	WINTER(14),
-	ARCHAEOLOGIST(15);
+	NONE((byte) 0),
+	ASTRONAUT((byte) 1),
+	CAPTAIN((byte) 2),
+	MECHANIC((byte) 3),
+	MILITARY((byte) 4),
+	POLICE((byte) 5),
+	SCIENTIST((byte) 6),
+	SUIT_BLACK((byte) 7),
+	SUIT_WHITE((byte) 8),
+	THE_WALL((byte) 9),
+	HAZMAT((byte) 10),
+	SECURITY((byte) 11),
+	TARMAC((byte) 12),
+	MINER((byte) 13),
+	WINTER((byte) 14),
+	ARCHAEOLOGIST((byte) 15);
 
-	private final int skin;
+	private final byte skin;
 
-	Skin(int skin) {
+	Skin(byte skin) {
 		this.skin = skin;
 	}
 
-	private static final java.util.Map<Integer, Skin> skinSearch = new HashMap<>();
+	private static final java.util.Map<Byte, Skin> skinSearch = new HashMap<>();
 
-	public int getSkin() {
+	public byte getByte() {
 		return this.skin;
 	}
 
 	@Nullable
-	public static Skin getSkin(int skinInteger) {
-		return skinSearch.get(skinInteger);
+	public static Skin getSkin(byte skinByte) {
+		return skinSearch.get(skinByte);
 	}
 
 	@NotNull
 	public static String getSkinName(@NotNull Skin skin) {
 		ResourceBundle translation = Main.getTranslationBundle();
-
-		if (skin == null)
-			return translation.getString("unknown");
 
 		switch (skin) {
 			case NONE:

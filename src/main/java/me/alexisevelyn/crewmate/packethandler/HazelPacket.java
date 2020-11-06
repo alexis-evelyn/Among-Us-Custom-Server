@@ -1,6 +1,5 @@
 package me.alexisevelyn.crewmate.packethandler;
 
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
@@ -9,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.DatagramPacket;
 
-public class HazelParser {
+public class HazelPacket {
 	/**
 	 * Handles Packets Received By The Server
 	 *
@@ -19,7 +18,7 @@ public class HazelParser {
 	 */
 	@NotNull
 	public static byte[] handlePacket(DatagramPacket packet, Server server) {
-		SendOption sendOption = SendOption.getSendOption(packet.getData()[0]);
+		SendOption sendOption = SendOption.getByte(packet.getData()[0]);
 
 		// Throw Out Any Unknown Packets
 		// Sanitization Check
@@ -31,29 +30,39 @@ public class HazelParser {
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
 				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
-				byte[] handshakeBytes = PacketHelper.extractBytes(packet.getData(), 3);
+				byte[] handshakeBytes = PacketHelper.extractFirstPartBytes(packet.getLength() - 3, PacketHelper.extractSecondPartBytes(3, packet.getData()));
 
-				return HandshakePacket.handleHandshake(handshakeBytes, (packet.getLength() - 3), server, packet.getAddress(), packet.getPort());
+				return HandshakePacket.handleHandshake(server, packet.getAddress(), packet.getPort(), handshakeBytes);
 			case ACKNOWLEDGEMENT: // Acknowledgement of Received Data From Client
 				if (packet.getLength() < 4)
 					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
 
 				// Nonce Bytes
-				byte[] nonce = new byte[]{packet.getData()[1], packet.getData()[2]};
+				byte[] nonce = new byte[] {packet.getData()[1], packet.getData()[2]};
 
-				return AcknowledgementPacket.handleAcknowledgement(nonce, packet.getAddress(), packet.getPort(), server);
+				return AcknowledgementPacket.handleAcknowledgement(packet.getAddress(), packet.getPort(), server, nonce);
 			case PING: // Ping
+				// This is to stay the current format as we don't care about parsing ping past the nonce bytes.
+				// Besides, there's three packet types that have nonce values, so it's better to keep the generic nonce parser
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
 				return new byte[0];
 			case RELIABLE: // Reliable Packet (UDP Doesn't Have Reliability Builtin Like TCP Does)
 				AcknowledgementPacket.sendReliablePacketAcknowledgement(packet, server);
 
-				return GamePacket.handleReliablePacket(packet, server);
+				// The first three bytes are irrelevant to the below function (hazel handshake and nonce)
+				byte[] payloadBytes = PacketHelper.extractFirstPartBytes(packet.getLength() - 3, PacketHelper.extractSecondPartBytes(3, packet.getData()));
+
+				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), payloadBytes);
 			case NONE: // Generic Unreliable Packet - Used For Movement (Unknown If Used For Anything Else)
-				return GamePacket.handleUnreliablePacket(packet, server);
+				byte[] unPayloadBytes = PacketHelper.extractFirstPartBytes(packet.getLength() - 1, PacketHelper.extractSecondPartBytes(1, packet.getData()));
+
+				return GamePacket.handleAmongUsPacket(server, packet.getAddress(), packet.getPort(), unPayloadBytes);
 			case FRAGMENT: // Fragmented Packet (For Data Bigger Than One Packet Can Hold) - Unknown If Used in Among Us
-				return FragmentPacket.handleFragmentPacket(packet, server);
+				// Not Implemented Even on Hazel. No Idea What The Packet Structure Would Look Like
+				byte[] fragmentBytes = PacketHelper.extractFirstPartBytes(packet.getLength() - 1, PacketHelper.extractSecondPartBytes(1, packet.getData()));
+
+				return FragmentPacket.handleFragmentPacket(server, packet.getAddress(), packet.getPort(), fragmentBytes);
 		}
 
 		return new byte[0];

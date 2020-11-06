@@ -5,7 +5,8 @@ import me.alexisevelyn.crewmate.api.PluginLoader;
 import me.alexisevelyn.crewmate.enums.TerminalColors;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.bus.EventBus;
-import me.alexisevelyn.crewmate.packethandler.HazelParser;
+import me.alexisevelyn.crewmate.packethandler.HazelPacket;
+import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class Server extends Thread {
 
 	private final DatagramSocket socket;
 	private boolean running = false;
-	private final byte[] buf = new byte[256];
+	private final byte[] buf = new byte[1024]; // Note: Maximum Tested Payload Size is 1024. Original Size is 256!
 
 	private final InetAddress boundIP;
 	private final int port;
@@ -133,7 +134,17 @@ public class Server extends Thread {
 		if (packet.getData().length < 1)
 			return;
 
-		byte[] replyBuffer = HazelParser.handlePacket(packet, this);
+		byte[] replyBuffer;
+		try {
+			replyBuffer = HazelPacket.handlePacket(packet, this);
+		} catch (Exception exception) {
+			// Generic Catch All For Uncaught Exceptions
+			replyBuffer = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+
+			// Log Uncaught Exception
+			LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("uncaught_server_side_exception"), exception.getMessage()));
+			exception.printStackTrace();
+		}
 
 		// Don't Send Packet if No Data To Send
 		if (replyBuffer.length == 0)
@@ -144,35 +155,41 @@ public class Server extends Thread {
 		int port = packet.getPort();
 
 		// Packet to Send Back to Client
-		packet = this.createSendPacket(replyBuffer, replyBuffer.length, address, port);
+		packet = this.createSendPacket(address, port, replyBuffer.length, replyBuffer);
 
 		// Send Reply Back
-		this.socket.send(packet);
-
-		// Check If Disconnect and Disconnect From Our End
-		SendOption replyOption = SendOption.getSendOption(replyBuffer[0]);
-
-		// Sanitization
-		if (replyOption == null)
-			return;
-
-		// Disconnect Client From Server End
-		if (replyOption.equals(SendOption.DISCONNECT)) {
-			// TODO: Figure out how to close one client's connection
-			// LogHelper.printLine("Closing Connection!!!");
-			// this.socket.disconnect();
-		}
+		this.sendPacket(packet);
 	}
 
 	public void sendPacket(DatagramPacket packet) {
 		try {
 			this.socket.send(packet);
+
+			byte[] packetData = packet.getData();
+
+			// Don't Send Packet if No Data To Send
+			if (packetData.length == 0)
+				return;
+
+			// Check If Disconnect and Disconnect From Our End
+			SendOption replyOption = SendOption.getByte(packetData[0]);
+
+			// Sanitization
+			if (replyOption == null)
+				return;
+
+			// Disconnect Client From Server End
+			if (replyOption.equals(SendOption.DISCONNECT)) {
+				// TODO: Figure out how to close one client's connection
+				// LogHelper.printLine("Closing Connection!!!");
+				// this.socket.disconnect();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public DatagramPacket createSendPacket(byte[] buffer, int length, InetAddress address, int port) {
+	public DatagramPacket createSendPacket(InetAddress address, int port, int length, byte... buffer) {
 		byte[] sendBuffer = new byte[length];
 
 		if (length >= 0)
@@ -206,7 +223,7 @@ public class Server extends Thread {
 	}
 
 	private void setupShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> Main.getServer().exit()));
+		Runtime.getRuntime().addShutdownHook(new Thread(this::exit));
 	}
 
 	public InetAddress getBoundIP() {

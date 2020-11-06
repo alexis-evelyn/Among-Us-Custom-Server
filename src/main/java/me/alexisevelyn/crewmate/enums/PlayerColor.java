@@ -21,29 +21,27 @@ public enum PlayerColor {
 	CYAN((byte) 10),
 	LIGHT_GREEN((byte) 11);
 
-	private final int playerColor;
+	private final byte playerColor;
 
-	PlayerColor(int playerColor) {
+	PlayerColor(byte playerColor) {
 		this.playerColor = playerColor;
 	}
 
-	private static final java.util.Map<Integer, PlayerColor> playerColorSearch = new HashMap<>();
+	private static final java.util.Map<Byte, PlayerColor> playerColorSearch = new HashMap<>();
 
-	public int getColor() {
+	@SuppressWarnings("unused")
+	public byte getByte() {
 		return this.playerColor;
 	}
 
 	@Nullable
-	public static PlayerColor getColor(int playerColorInteger) {
+	public static PlayerColor getColor(byte playerColorInteger) {
 		return playerColorSearch.get(playerColorInteger);
 	}
 
 	@NotNull
 	public static String getColorName(@NotNull PlayerColor playerColor) {
 		ResourceBundle translation = Main.getTranslationBundle();
-
-		if (playerColor == null)
-			return translation.getString("unknown");
 
 		switch (playerColor) {
 			case RED:

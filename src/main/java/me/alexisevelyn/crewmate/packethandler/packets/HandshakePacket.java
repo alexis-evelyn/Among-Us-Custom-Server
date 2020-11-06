@@ -6,6 +6,7 @@ import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -18,6 +19,8 @@ import java.util.ResourceBundle;
 public class HandshakePacket {
 	@SuppressWarnings("SpellCheckingInspection") // I mean, I appreciate the IDE wanting to make sure I don't make a typo, but please, the whole alphabet doesn't even look like a word
 	private static final char[] revisionLetters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+	private static final String NAME_CHECK_ONE = "([A-Za-z0-9 ])+";
+	private static final String NAME_CHECK_TWO = "([ ])+";
 
 	/**
 	 * Parse out handshake packet and register player
@@ -26,8 +29,10 @@ public class HandshakePacket {
 	 * @param server Server instance
 	 * @return Masters list or empty byte array
 	 */
-	public static byte[] handleHandshake(byte[] handshakeBytes, int byteLength, Server server, InetAddress clientAddress, int clientPort) {
+	@NotNull
+	public static byte[] handleHandshake(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... handshakeBytes) {
 		/*
+	                  V---- Starts Here (Subtract 3)
 			00 01 02 03 04 05 06 07 08 09 10 11 12 13 14
 			--------------------------------------------
 			08 00 01 00 46 d2 02 03 06 41 6c 65 78 69 73
@@ -41,15 +46,11 @@ public class HandshakePacket {
 			NT = Name Text
 		 */
 
-		// Starts at 3
-		// 00 01 02 03 04 05
-		// HV CV CV CV CV NL
-
 		if (handshakeBytes.length > 6) {
 			int displayNameLength = handshakeBytes[5];
 
 			// If either the name is missing or the name length is bigger than the what the rest of the buffer has, close connection
-			if (displayNameLength <= 0 || (byteLength - 6) < displayNameLength)
+			if (displayNameLength <= 0 || (handshakeBytes.length - 6) < displayNameLength)
 				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("missing_display_name_handshake"));
 
 			// Client only allows up to 10 characters, we are enforcing that server side
@@ -60,7 +61,7 @@ public class HandshakePacket {
 			int hazelVersion = handshakeBytes[0];
 
 			// Client Version
-			byte[] clientVersionBytes = new byte[4]; // UInt-32 LE
+			byte[] clientVersionBytes = new byte[4]; // Int-32 LE
 			System.arraycopy(handshakeBytes, 1, clientVersionBytes, 0, 4);
 
 			// Client Version Info
@@ -73,6 +74,9 @@ public class HandshakePacket {
 			System.arraycopy(handshakeBytes, 6, nameBytes, 0, displayNameLength);
 			String name = new String(nameBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
+			if (!name.matches(NAME_CHECK_ONE) || name.matches(NAME_CHECK_TWO))
+				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("invalid_name_close_connection"));
+
 			// Register Player On Server
 			PlayerManager.addPlayer(new Player(name, clientAddress, clientPort, hazelVersion, clientVersionRaw, server));
 
@@ -81,13 +85,16 @@ public class HandshakePacket {
 		}
 
 		// Invalid Packet Received - Close Connection
-		return new byte[] {SendOption.DISCONNECT.getSendOption()};
+		return new byte[] {SendOption.DISCONNECT.getByte()};
 	}
 
 	/**
 	 * Logs Client Version to Console For Debugging
 	 *
-	 * @param raw Client Version as U-Int-32 LE Integer
+	 * <br><br>
+	 * Will be replaced by an Object to represent the client version
+	 *
+	 * @param raw Client Version as Int-32 LE Integer
 	 */
 	@Deprecated
 	private static void logVersionInfo(int raw) {

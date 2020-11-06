@@ -5,6 +5,7 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -23,7 +24,8 @@ public class AcknowledgementPacket {
 	 * @param server Server Instance
 	 * @return Empty Byte Array Or Close Connection Byte Array
 	 */
-	public static byte[] handleAcknowledgement(byte[] nonce, InetAddress clientAddress, int clientPort, Server server) {
+	@NotNull
+	public static byte[] handleAcknowledgement(InetAddress clientAddress, int clientPort, Server server, byte... nonce) {
 		if (nonce.length < 2)
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
 
@@ -38,11 +40,11 @@ public class AcknowledgementPacket {
 	 * @param nonceBytes 2 byte array of the nonce data to return to client
 	 * @return bytes to send to client in the form of a Hazel acknowledgment packet
 	 */
-	public static byte[] getAcknowledgement(byte[] nonceBytes) throws InvalidBytesException {
+	private static byte[] getAcknowledgement(byte... nonceBytes) throws InvalidBytesException {
 		if (nonceBytes.length != 2)
 			throw new InvalidBytesException(Main.getTranslationBundle().getString("nonce_wrong_size"));
 
-		return new byte[] {SendOption.ACKNOWLEDGEMENT.getSendOption(), nonceBytes[0], nonceBytes[1], (byte) 0xff};
+		return new byte[] {SendOption.ACKNOWLEDGEMENT.getByte(), nonceBytes[0], nonceBytes[1], (byte) 0xff};
 	}
 
 	/**
@@ -60,12 +62,25 @@ public class AcknowledgementPacket {
 		int length = packet.getLength();
 		byte[] buffer = packet.getData();
 
-		// Verify Packet Length
-		if (length < 3)
-			return;
+	    // Verify Packet Length
+	    if (length < 3) {
+		    byte[] exception = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
+
+		    // Packet to Send Back to Client
+		    packet = server.createSendPacket(address, port, exception.length, exception);
+
+		    // Send Reply Back
+		    server.sendPacket(packet);
+
+		    // Return
+		    return;
+	    }
 
 		// Get Nonce
 		byte[] nonce = new byte[] {buffer[1], buffer[2]};
+
+		// Nonce is Big Endian
+		// LogHelper.printLine(String.format(Main.getTranslationBundle().getString("nonce_value"), PacketHelper.getUnsignedShortBE(nonce)));
 
 		// Get Acknowledgement
 		byte[] acknowledgement;
@@ -78,7 +93,7 @@ public class AcknowledgementPacket {
 		}
 
 		// Packet to Send Back to Client
-		packet = server.createSendPacket(acknowledgement, acknowledgement.length, address, port);
+		packet = server.createSendPacket(address, port, acknowledgement.length, acknowledgement);
 
 		// Send Reply Back
 		server.sendPacket(packet);

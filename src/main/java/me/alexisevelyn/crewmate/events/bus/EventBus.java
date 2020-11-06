@@ -9,10 +9,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- *
- * @author @SLLCoding
- */
 public class EventBus {
     private final HashMap<Class<? extends Event>, CopyOnWriteArrayList<EventHandlerContainer>> listeners = new HashMap<>();
 

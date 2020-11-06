@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate.events;
 
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
+import org.jetbrains.annotations.NotNull;
 
 public class EventCancellable extends Event {
     private boolean cancelled = false;
@@ -25,7 +26,7 @@ public class EventCancellable extends Event {
     }
 
     @Override
-    public boolean call(Server server) {
+    public boolean call(@NotNull Server server) {
         super.call(server);
         return isCancelled();
     }

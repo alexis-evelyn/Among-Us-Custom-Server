@@ -1,0 +1,1 @@
+package me.alexisevelyn.crewmate.enums.cosmetic;

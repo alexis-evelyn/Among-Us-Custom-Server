@@ -1,5 +1,16 @@
 # Crewmate
 
+[![Maven Central Download Release][sonatype-release-badge]][maven-central-release-latest-download]
+[![Maven Central Download Snapshot][sonatype-snapshot-badge]][maven-central-snapshot-latest-download]
+<br>
+[![Discord Link][discord-badge]][discord]
+[![Documentation Status][read-the-docs-badge]][read-the-docs-link]
+<br>
+[![Github Actions Link][github-actions-badge]][github-actions-link]
+[![Codacy Link][codacy-badge]][codacy-link]
+[![Crowdin Link][crowdin-badge]][crowdin-link]
+[![Javadocs][javadocs-badge]][javadocs-link]
+
 This will be a custom server which will support custom game modes and mini-games as well as improving the security of games by validating if certain actions are possible (e.g. killing if you are not the imposter and enforcing the kill cool down). This server will also be able to support modded clients and be able to be modded itself in order to add custom features which are not possible with a vanilla client.
 
 You can find out more from [this issue][nickcis-issue], [my Discord][discord], and the [protocol description][wiki] I'm working on.
@@ -12,7 +23,7 @@ To connect to this server, you can either use the scripts [redirect-to-localhost
 
 # Contributing
 
-For consistency's sake, I'll be writing a coding standard for the server soon. For now, just keep the code in the style that already exists.
+See [CONTRIBUTING.md][contributing-file] for more info.
 
 ### Me:
 
@@ -59,11 +70,40 @@ My goals are:
 * runtime permission system for mods that need to break sandbox
 * obviously, add proper custom server support, so we don't need to faff with region files
 
-[nickcis-issue]: https://github.com/NickCis/among-us-proxy/issues/4
-[discord]: https://discord.com/invite/DFUaVMx
-[wiki]: https://github.com/alexis-evelyn/Among-Us-Protocol/wiki
-[regionFileGenerator]: https://aeonlucid.com/Impostor/
-[localhost]: udp://127.0.0.1:22023/
-[redirect-file]: resources/redirect-to-localhost.sh
-[remove-redirect-file]: resources/remove-redirect-to-localhost.sh
-[regionFile]: resources/regionInfo.dat
+<!-- Documentation Links -->
+[nickcis-issue]: <https://github.com/NickCis/among-us-proxy/issues/4> "Original Issue Responsible For Development of Crewmate"
+[wiki]: <https://github.com/alexis-evelyn/Among-Us-Protocol/wiki> "Detailed Protocol Analysis Wiki"
+
+<!-- Connection Links -->
+[regionFileGenerator]: <https://aeonlucid.com/Impostor/> "Online Region File Generator"
+[localhost]: <udp://127.0.0.1:22023/> "Development Server URL"
+[redirect-file]: <resources/redirect-to-localhost.sh> "Pre-Region File Add Redirect Script"
+[remove-redirect-file]: <resources/remove-redirect-to-localhost.sh> "Pre-Region File Remove Redirect Script"
+[regionFile]: <resources/regionInfo.dat> "Pre-made Region File"
+
+<!-- Maven Central Downloads -->
+[maven-central-release-latest-download]: <https://mvnrepository.com/artifact/me.alexisevelyn/crewmate/latest> "Maven Central Release Latest Download"
+[maven-central-snapshot-latest-download]: <https://oss.sonatype.org/#nexus-search;gav~me.alexisevelyn~crewmate~~~> "Maven Central Snapshot Search"
+
+<!-- Badges -->
+[discord-badge]: <https://discord.com/api/guilds/750301084202958899/widget.png> "Discord Badge"
+[crowdin-badge]: <https://badges.crowdin.net/crewmate/localized.svg> "Crowdin Badge"
+[read-the-docs-badge]: <https://readthedocs.org/projects/crewmate/badge/?version=latest> "Read The Docs Badge"
+[javadocs-badge]: <https://javadoc.io/badge2/me.alexisevelyn/crewmate/Crewmate%20Javadocs.svg> "Javadocs Badge"
+[github-actions-badge]: <https://github.com/alexis-evelyn/Crewmate/workflows/Build%20Server/badge.svg> "Github Actions Badge"
+[codacy-badge]: <https://app.codacy.com/project/badge/Grade/75f47a57f41a453983985f0279dfb424> "Codacy Badge"
+
+<!-- Badge Links -->
+[discord]: <https://discord.com/invite/DFUaVMx> "Development Discord"
+[crowdin-link]: <https://crwd.in/crewmate> "Crowdin Link"
+[read-the-docs-link]: <https://crewmate.alexisevelyn.me/en/latest/?badge=latest> "Read The Docs Link"
+[javadocs-link]: <https://javadoc.io/doc/me.alexisevelyn/crewmate> "Javadocs Link"
+[github-actions-link]: <https://github.com/alexis-evelyn/Crewmate/actions> "Github Actions Link"
+[codacy-link]: <https://www.codacy.com/gh/alexis-evelyn/Crewmate/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alexis-evelyn/Crewmate&amp;utm_campaign=Badge_Grade> "Codacy Link"
+
+<!-- Sonatype Badges -->
+[sonatype-release-badge]: <https://img.shields.io/nexus/r/me.alexisevelyn/crewmate.svg?server=https%3A%2F%2Foss.sonatype.org&style=flat&color=brightgreen&label=Crewmate%20Release> "Sonatype Release Badge"
+[sonatype-snapshot-badge]: <https://img.shields.io/nexus/s/me.alexisevelyn/crewmate.svg?server=https%3A%2F%2Foss.sonatype.org&style=flat&color=brightgreen&label=Crewmate%20Snapshot> "Sonatype Snapshot Badge"
+
+<!-- Other Internal Files -->
+[contributing-file]: CONTRIBUTING.md

@@ -28,7 +28,7 @@ public class GameCode implements Command {
 		// Convert To Bytes
 		if (convertType.equals(translation.getString("gamecode_bytes_argument"))) {
 			try {
-				this.convertStringToBytes(arguments, terminal);
+				this.convertStringToBytes(terminal, arguments);
 			} catch (InvalidGameCodeException e) {
 				e.printStackTrace();
 			}
@@ -36,11 +36,11 @@ public class GameCode implements Command {
 
 		// Convert To String
 		if (convertType.equals(translation.getString("gamecode_string_argument")))
-			this.convertBytesToString(arguments, terminal);
+			this.convertBytesToString(terminal, arguments);
 	}
 
 	// Convert Game Code String to Bytes
-	private void convertStringToBytes(String[] arguments, Terminal terminal) throws InvalidGameCodeException {
+	private void convertStringToBytes(Terminal terminal, String... arguments) throws InvalidGameCodeException {
 		byte[] gameCodeBytes = GameCodeHelper.generateGameCodeBytes(arguments[2]);
 
 		// Game Code is not valid if true
@@ -51,11 +51,11 @@ public class GameCode implements Command {
 			return;
 		}
 
-		LogHelper.printPacketBytes(gameCodeBytes, gameCodeBytes.length);
+		LogHelper.printPacketBytes(gameCodeBytes.length, gameCodeBytes);
 	}
 
 	// Convert Game Code Bytes to String
-	private void convertBytesToString(String[] arguments, Terminal terminal) {
+	private void convertBytesToString(Terminal terminal, String... arguments) {
 		// b5:f0:90:8a
 		// 01:34:67:9-
 		String argument = arguments[2].trim();

@@ -9,41 +9,38 @@ import java.util.ResourceBundle;
 
 public enum Pet {
 	// TODO: Confirm These Are The Correct Pet Bytes
-	NONE(0),
-	ALIEN(1),
-	CREWMATE(2),
-	DOG(3),
-	STICKMIN(4),
-	HAMSTER(5),
-	ROBOT(6),
-	UFO(7),
-	ELLIE(8),
-	SQUIG(9),
-	BEDCRAB(10);
+	NONE((byte) 0),
+	ALIEN((byte) 1),
+	CREWMATE((byte) 2),
+	DOG((byte) 3),
+	STICKMIN((byte) 4),
+	HAMSTER((byte) 5),
+	ROBOT((byte) 6),
+	UFO((byte) 7),
+	ELLIE((byte) 8),
+	SQUIG((byte) 9),
+	BEDCRAB((byte) 10);
 
-	private final int pet;
+	private final byte pet;
 
-	Pet(int pet) {
+	Pet(byte pet) {
 		this.pet = pet;
 	}
 
-	private static final java.util.Map<Integer, Pet> petSearch = new HashMap<>();
+	private static final java.util.Map<Byte, Pet> petSearch = new HashMap<>();
 
-	public int getPet() {
+	public byte getByte() {
 		return this.pet;
 	}
 
 	@Nullable
-	public static Pet getPet(int hatInteger) {
-		return petSearch.get(hatInteger);
+	public static Pet getPet(byte petByte) {
+		return petSearch.get(petByte);
 	}
 
 	@NotNull
 	public static String getPetName(@NotNull Pet pet) {
 		ResourceBundle translation = Main.getTranslationBundle();
-
-		if (pet == null)
-			return translation.getString("unknown");
 
 		switch (pet) {
 			case NONE:

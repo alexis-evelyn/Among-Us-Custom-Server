@@ -4,12 +4,12 @@ import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.util.Random;
 
 public class Player extends Entity {
-
     private final String name;
     private final int id;
     private final InetAddress address;
@@ -21,13 +21,15 @@ public class Player extends Entity {
 
     private static Random rnd = new Random();
 
-    public Player(String name, InetAddress address, int port, int hazelVersion, int clientVersionRaw, Server server) {
+    public Player(@NotNull String name, @NotNull InetAddress address, int port, int hazelVersion, int clientVersionRaw, @NotNull Server server) {
         super(4);
         this.name = name;
         int id = rnd.nextInt(server.getMaxPlayers());
+
         while (PlayerManager.existsWithID(id)) {
             id = rnd.nextInt(server.getMaxPlayers());
         }
+
         this.id = id;
         this.address = address;
         this.port = port;
@@ -41,6 +43,7 @@ public class Player extends Entity {
         return port;
     }
 
+    @NotNull
     public InetAddress getAddress() {
         return address;
     }
@@ -49,10 +52,12 @@ public class Player extends Entity {
         return id;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
 
+    @NotNull
     public Server getServer() {
         return server;
     }
@@ -65,6 +70,7 @@ public class Player extends Entity {
         return hazelVersion;
     }
 
+    @NotNull
     public Version getClientVersion() {
         return clientVersion;
     }
@@ -75,22 +81,21 @@ public class Player extends Entity {
         byte flags = (byte) (entity instanceof Player ? 1 : 0);
         byte[] components = new byte[]{};
         int componentCount = components.length;
-        byte[] message = new byte[]{SendOption.RELIABLE.getSendOption(), 0x04, (byte) id, (byte) ownerId, flags, (byte) componentCount, 0x0};
-        server.sendPacket(server.createSendPacket(message, message.length, address, port));
+        byte[] message = new byte[]{SendOption.RELIABLE.getByte(), 0x04, (byte) id, (byte) ownerId, flags, (byte) componentCount, 0x0};
+        server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }*/
 
-    public void kick(DisconnectReason reason) {
+    public void kick(@NotNull DisconnectReason reason) {
         byte[] message = ClosePacket.closeConnection(reason);
-        server.sendPacket(server.createSendPacket(message, message.length, address, port));
+        server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }
 
-    public void kick(String reason) {
+    public void kick(@NotNull String reason) {
         byte[] message = ClosePacket.closeWithMessage(reason);
-        server.sendPacket(server.createSendPacket(message, message.length, address, port));
+        server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }
 
     public static class Version {
-
         private static final char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
         private final long year;
@@ -132,28 +137,30 @@ public class Player extends Entity {
             return year;
         }
 
+        @NotNull
         public String getDateFull() {
             return dateFull;
         }
 
+        @NotNull
         public String getRevisionFull() {
             return revisionFull;
         }
 
+        @NotNull
         public String getRevisionLetter() {
             return revisionLetter;
         }
 
+        @NotNull
         public String getVersionFull() {
             return versionFull;
         }
-
     }
 
     /*
         TODO: Implement Code
-        byte[] header = new byte[] {SendOption.NONE.getSendOption(), 0x00, 0x02, 0x0d, 0x00, 0x07};
+        byte[] header = new byte[] {SendOption.NONE.getByte(), 0x00, 0x02, 0x0d, 0x00, 0x07};
 	    return PacketHelper.mergeBytes(header, new byte[]{(byte) RPC.SNAP_TO.getRPC(), 5, 5});
      */
-
 }

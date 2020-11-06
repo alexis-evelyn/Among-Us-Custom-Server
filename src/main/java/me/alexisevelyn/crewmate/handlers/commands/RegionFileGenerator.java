@@ -2,31 +2,97 @@ package me.alexisevelyn.crewmate.handlers.commands;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
-import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.Terminal;
+import me.alexisevelyn.crewmate.packethandler.PacketHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ResourceBundle;
 
 public class RegionFileGenerator implements Command {
 	public void execute(String command, Terminal terminal) {
+		// TODO: Take Input From Server Owner/Administrator
+		String[] arguments = command.trim().split("\\s+");
+
+		// TODO: Replace With Better Argument Parser
+		if (arguments.length <= 3)
+			this.simpleRegionFileSettings(arguments);
+		else
+			this.simpleNamedRegionFileSettings(arguments);
+	}
+
+	private void simpleRegionFileSettings(String... arguments) {
+		ResourceBundle translation = Main.getTranslationBundle();
+
+		// Defaults
 		String ipAddressRaw = "127.0.0.1";
 		int port = 22023;
 
-		String displayName = Main.getTranslationBundle().getString("region_file_generator_command_default_display_name");
-		String masterServerName = "Crewmate-Master-1";
+		// Default Arguments
+		if (arguments.length == 2) {
+			ipAddressRaw = arguments[1];
+		} else if (arguments.length >= 3) {
+			ipAddressRaw = arguments[1];
 
+			try {
+				port = Integer.parseInt(arguments[2]);
+			} catch (NumberFormatException e) {
+				LogHelper.printLineErr(translation.getString("region_file_generator_command_invalid_port"));
+			}
+		}
+
+		LogHelper.printLine(String.format(translation.getString("region_file_generator_command_settings_simple"), ipAddressRaw, port));
+		this.createRegionFile(ipAddressRaw, port);
+	}
+
+	private void simpleNamedRegionFileSettings(String... arguments) {
+		ResourceBundle translation = Main.getTranslationBundle();
+		String displayName;
+		String ipAddressRaw;
+		int port;
+
+		// Set IP Address
+		ipAddressRaw = arguments[1];
+
+		// Set Port
+		try {
+			port = Integer.parseInt(arguments[2]);
+		} catch (NumberFormatException e) {
+			LogHelper.printLineErr(translation.getString("region_file_generator_command_invalid_port"));
+			return;
+		}
+
+		// Set Display Name
+		displayName = arguments[3];
+
+		LogHelper.printLine(String.format(translation.getString("region_file_generator_command_settings_simple_named"), displayName, ipAddressRaw, port));
+		this.createRegionFile(ipAddressRaw, port, displayName);
+	}
+
+	private void createRegionFile(@NotNull String ipAddressRaw, int port) {
+		String displayName = Main.getTranslationBundle().getString("region_file_generator_command_default_display_name");
+
+		this.createRegionFile(ipAddressRaw, port, displayName);
+	}
+
+	private void createRegionFile(@NotNull String ipAddressRaw, int port, @NotNull String displayName) {
+		String masterServerName = "Crewmate-Master-1";
 		File outFile = new File("regionInfo.dat");
 
+		this.createRegionFile(ipAddressRaw, port, displayName, masterServerName, outFile);
+	}
+
+	private void createRegionFile(@NotNull String ipAddressRaw, int port, @NotNull String displayName, @NotNull String masterServerName, @NotNull File outFile) {
 		try {
 			InetAddress ipAddress = InetAddress.getByName(ipAddressRaw);
 
 			byte[] regionFileData = createRegionFileBytes(ipAddress, port, displayName, masterServerName);
 
-			saveRegionFile(regionFileData, outFile);
+			saveRegionFile(outFile, regionFileData);
 		} catch (UnknownHostException e) {
 			LogHelper.printLineErr(
 					String.format(
@@ -97,7 +163,7 @@ public class RegionFileGenerator implements Command {
 		byte[] portBytes = PacketHelper.convertShortToLE((short) port);
 
 //		LogHelper.print("Port Bytes: ");
-//		LogHelper.printPacketBytes(portBytes, portBytes.length);
+//		LogHelper.printPacketBytes(portBytes.length, portBytes);
 //		LogHelper.printLine();
 
 		// Footer
@@ -118,7 +184,7 @@ public class RegionFileGenerator implements Command {
 				footerBytes);
 	}
 
-	private static void saveRegionFile(byte[] bytes, File outFile) throws IOException {
+	private static void saveRegionFile(File outFile, byte... bytes) throws IOException {
 		if (outFile.exists() && !outFile.delete())
 			throw new IOException("Failed to delete existing file!!!");
 

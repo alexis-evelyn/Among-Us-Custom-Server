@@ -1,0 +1,30 @@
+dependencies {
+    // JUnit API
+    // License (EPL-2.0) - https://github.com/junit-team/junit5/blob/main/LICENSE.md
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: "${project.junit_version}"
+
+    // JUnit Engine
+    // License (EPL-2.0) - https://github.com/junit-team/junit5/blob/main/LICENSE.md
+    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: "${project.junit_version}"
+
+    // For Spotbugs Annotations
+    // testImplementation group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugs.toolVersion.get()}"
+
+	// For Spotbugs Plugin
+    // spotbugs group: "com.github.spotbugs", name: "spotbugs", version: "${spotbugs.toolVersion.get()}", ext: "pom"
+
+    // Contains All SpotBugs detectors
+    // spotbugsPlugins group: "com.h3xstream.findsecbugs", name: "findsecbugs-plugin", version: "${project.spotbugs_detectors_version}"
+}
+
+test {
+    useJUnitPlatform() // For JUnit 5 - JUnit 4 was just useJUnit()
+
+    maxHeapSize = '1G'
+}
+
+spotbugs {
+    // TODO: Disable When Everything Fixed
+    ignoreFailures.set(true)
+    // toolVersion = "4.1.4"
+}

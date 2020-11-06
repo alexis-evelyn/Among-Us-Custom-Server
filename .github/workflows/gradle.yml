@@ -1,0 +1,180 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+# Useful Debugging Info: https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-a-debug-message
+# Run Actions Locally: https://github.com/nektos/act
+# VirusTotal API Usage Permission - https://imgur.com/a/rH9VhGm
+
+name: Build Server
+
+on:
+  push:
+    branches: [ master, rewrite ]
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - '.github/workflows/codeql-analysis.yml'
+
+jobs:
+  publish:
+    name: "Build and Publish"
+
+    runs-on: ubuntu-latest
+    env:
+      ENABLE_PUBLISHING: ${{ secrets.ENABLE_PUBLISHING }}
+      IS_GITHUB_ACTIONS: ${{ secrets.IS_GITHUB_ACTIONS }}
+
+    steps:
+    - name: Setup Self-Hosted Runner Tools
+      if: ${{ !startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
+      run: |
+        apt-get update
+        apt-get install zstd
+
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 1.11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.11 # The JDK version to make available on the path. - https://static.azul.com/zulu/bin/
+        java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+        architecture: x64 # (x64 or x86) - defaults to x64
+
+    - name: Gradle Setup Cache
+      uses: actions/cache@v2
+      if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
+      with:
+        path: |
+          ~/.gradle
+        key: ${{ runner.os }}-setup-cache-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: ${{ runner.os }}-setup-cache-
+
+    - name: Gradle Build Cache
+      uses: actions/cache@v2
+      if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
+      with:
+        path: |
+          build
+          !build/libs
+        key: ${{ runner.os }}-build-cache-${{ hashFiles('**/*.java*') }}
+        restore-keys: ${{ runner.os }}-build-cache-
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build Only
+      if: ${{ !startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled') }}
+      run: ./gradlew shadowJar
+      env:
+        IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
+
+    - name: Build And Publish To Sonatype
+      if: startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
+      run: ./gradlew clean shadowJar publish
+      env:
+        SONATYPE_GPG_KEY: ${{ secrets.SONATYPE_GPG_KEY }}
+        SONATYPE_GPG_PASSWORD: ${{ secrets.SONATYPE_GPG_PASSWORD }}
+        SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
+      continue-on-error: false
+
+    - name: Run Unit Tests
+      run: ./gradlew test
+      continue-on-error: true
+
+    - name: Setup Vars For Release Booleans and Version Info
+      run: |
+        # For Setting Up Independent Release Booleans
+        strings gradle.properties | grep server_version | cut -d' ' -f3 | grep -q SNAPSHOT && echo ::set-env name=SERVER_RELEASE::false || echo ::set-env name=SERVER_RELEASE::true
+
+        # For Setting Up Independent Version Vars
+        echo ::set-env name=SERVER_VERSION::$( strings gradle.properties | grep server_version | cut -d' ' -f3 )
+
+    - name: Setup Vars For Main Release Boolean and Version Info
+      run: |
+        # For Setting Up Main Release Boolean
+        echo ::set-env name=RELEASE::false
+        test "$SERVER_RELEASE" = "true" && echo ::set-env name=RELEASE::true
+
+        # For Setting Up Main Version Var
+        echo ::set-env name=VERSION::$( echo $SERVER_VERSION )
+
+    - name: Test Result Vars (For Debugging)
+      run: |
+        echo "Release: '$RELEASE' - Server: '$SERVER_RELEASE'"
+        echo "Version: '$VERSION' - Server: '$SERVER_VERSION'"
+
+    - name: Upload Server to Github Actions For Review
+      uses: actions/upload-artifact@v2
+      if: ${{ startsWith(env.IS_GITHUB_ACTIONS, 'is_github_actions') }}
+      with:
+        name: Crewmate
+        path: |
+          build/libs/*
+
+    - name: Setup Git Credentials For Tagging
+      uses: oleksiyrudenko/gha-git-credentials@v1
+      if: startsWith(env.RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
+      with: # https://github.com/settings/tokens
+        name: 'Automated Tag'
+        email: 'automated-tag@alexisevelyn.me'
+        actor: ${{ github.actor }}
+        token: ${{ secrets.TOKEN_AUTOTAG_CREATOR }}
+
+    - name: Update Tag If Release
+      if: startsWith(env.RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
+      run: |
+        # Causes Incorrect Version Info (If Pushing Snapshot Before This Is Ran) - git pull --ff-only
+        git tag -a v${{ env.VERSION }} -m "Automatically Generated Tag For Release v${{ env.VERSION }}" $GITHUB_SHA
+        git push origin v${{ env.VERSION }}
+
+    - name: Attempt Close/Release
+      if: startsWith(env.RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
+      run: ./gradlew closeAndReleaseRepository
+      env: # https://oss.sonatype.org/#profile;User%20Token
+        SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        IS_CI_BUILD: ${{ secrets.IS_CI_BUILD }}
+
+    - name: Spotbugs Analysis
+      uses: codacy/codacy-analysis-cli-action@master
+      continue-on-error: true
+      with:
+        tool: spotbugs
+        allow-network: true
+        upload: true
+        verbose: true
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
+    - name: Coverage Report Upload
+      run: |
+        echo Not Implemented...
+        # https://docs.codacy.com/coverage-reporter/adding-coverage-to-your-repository/
+        # bash <(curl -Ls https://coverage.codacy.com/get.sh) report
+
+    - name: Alert Discord to New Crewmate Release # Alternate Options are 4915330 and 139. I like 4915330 better, so I may switch at a future point
+      if: startsWith(env.SERVER_RELEASE, 'true') && startsWith(env.ENABLE_PUBLISHING, 'publishing_enabled')
+      continue-on-error: true
+      run: |
+        # Useful Links:
+        # https://discord.com/developers/docs/resources/webhook
+        # https://discord.com/developers/docs/resources/channel#embed-object
+
+        # For Sending Crewmate Download Webhook to Discord
+        curl \
+        -H 'Content-Type: application/json' ${{ secrets.DISCORD_RELEASES_WEBHOOK_URL }} \
+        --data-binary @- << EOF
+        {
+          "content": "Crewmate Download: [v$SERVER_VERSION](https://mvnrepository.com/artifact/me.alexisevelyn/crewmate/$SERVER_VERSION)",
+          "avatar_url": "https://raw.githubusercontent.com/alexis-evelyn/Crewmate/master/src/main/resources/icon.png",
+          "embeds": [
+            {
+              "title": "Crewmate v$SERVER_VERSION",
+              "description": "Java Implementation of a Custom Among Us Server",
+              "url": "https://mvnrepository.com/artifact/me.alexisevelyn/crewmate/$SERVER_VERSION",
+              "color": 4620980
+            }
+          ]
+        }
+        EOF
