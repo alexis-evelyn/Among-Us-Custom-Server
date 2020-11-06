@@ -10,6 +10,7 @@ import me.alexisevelyn.crewmate.events.impl.GameSearchEvent;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -19,7 +20,8 @@ import java.nio.ByteOrder;
 public class SearchGamePacket {
 	// https://gist.github.com/codyphobe/af35532e650ef332b14af413b6328273
 
-	public static byte[] handleSearchPublicGame(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
+	@NotNull
+	public static byte[] handleSearchPublicGame(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// 01 00 02 2c 00 10 00 2a 02 0a 00 01 00 00 07 00 00 80 3f 00 00 80 3f 00 00 c0 3f 00 00 70 41 01 01 02 01 00 00 00 02 01 0f 00 00 00 78 00 00 00 01 0f
 		// RP NO NO PL PL RC CS
 		// RP = Reliable Packet (1)
@@ -47,6 +49,7 @@ public class SearchGamePacket {
 		return event.getGames();
 	}
 
+	@NotNull
 	public static byte[] getFakeSearchBytes(int numberOfImposters, long language, Map... maps) throws UnknownHostException {
 		// Search Results - ff 00 = 255 In INT16 - Little Endian (BA) - 19 00 = 25 In INT16 - Little Endian (BA)
 		// 0000   01 00 1c 02 01 10 ff 00 00 19 00 00 68 ed 80 75   ............h..u

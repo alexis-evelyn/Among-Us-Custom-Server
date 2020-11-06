@@ -4,6 +4,7 @@ import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.util.Random;
@@ -20,7 +21,7 @@ public class Player extends Entity {
 
     private static Random rnd = new Random();
 
-    public Player(String name, InetAddress address, int port, int hazelVersion, int clientVersionRaw, Server server) {
+    public Player(@NotNull String name, @NotNull InetAddress address, int port, int hazelVersion, int clientVersionRaw, @NotNull Server server) {
         super(4);
         this.name = name;
         int id = rnd.nextInt(server.getMaxPlayers());
@@ -42,6 +43,7 @@ public class Player extends Entity {
         return port;
     }
 
+    @NotNull
     public InetAddress getAddress() {
         return address;
     }
@@ -50,10 +52,12 @@ public class Player extends Entity {
         return id;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
 
+    @NotNull
     public Server getServer() {
         return server;
     }
@@ -66,6 +70,7 @@ public class Player extends Entity {
         return hazelVersion;
     }
 
+    @NotNull
     public Version getClientVersion() {
         return clientVersion;
     }
@@ -80,18 +85,17 @@ public class Player extends Entity {
         server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }*/
 
-    public void kick(DisconnectReason reason) {
+    public void kick(@NotNull DisconnectReason reason) {
         byte[] message = ClosePacket.closeConnection(reason);
         server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }
 
-    public void kick(String reason) {
+    public void kick(@NotNull String reason) {
         byte[] message = ClosePacket.closeWithMessage(reason);
         server.sendPacket(server.createSendPacket(address, port, message.length, message));
     }
 
     public static class Version {
-
         private static final char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
         private final long year;
@@ -133,18 +137,22 @@ public class Player extends Entity {
             return year;
         }
 
+        @NotNull
         public String getDateFull() {
             return dateFull;
         }
 
+        @NotNull
         public String getRevisionFull() {
             return revisionFull;
         }
 
+        @NotNull
         public String getRevisionLetter() {
             return revisionLetter;
         }
 
+        @NotNull
         public String getVersionFull() {
             return versionFull;
         }

@@ -5,6 +5,7 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -23,6 +24,7 @@ public class AcknowledgementPacket {
 	 * @param server Server Instance
 	 * @return Empty Byte Array Or Close Connection Byte Array
 	 */
+	@NotNull
 	public static byte[] handleAcknowledgement(InetAddress clientAddress, int clientPort, Server server, byte... nonce) {
 		if (nonce.length < 2)
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));

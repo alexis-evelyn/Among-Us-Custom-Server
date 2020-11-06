@@ -7,11 +7,13 @@ import me.alexisevelyn.crewmate.enums.AlterGame;
 import me.alexisevelyn.crewmate.events.impl.ChangeVisibilityEvent;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 
 public class AlterGamePacket {
-	public static byte[] alterGame(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
+	@NotNull
+	public static byte[] alterGame(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// 00 01 02 03 04 05
 		// -----------------
 		// 5a 5c ff 89 01 01
@@ -38,7 +40,7 @@ public class AlterGamePacket {
         }
 	}
 
-	private static byte[] handleGameVisibility(Server server, InetAddress clientAddress, int clientPort, byte visibility) {
+	private static byte[] handleGameVisibility(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, byte visibility) {
 		// 0000   01 00 59 06 00 0a 3b be 25 8c 01 00               ..Y...;.%... - Private Game
 		// 0000   01 00 42 06 00 0a 3b be 25 8c 01 01               ..B...;.%... - Public Game
 

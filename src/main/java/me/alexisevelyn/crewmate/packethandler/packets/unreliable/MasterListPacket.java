@@ -5,6 +5,7 @@ import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.net.DatagramPacket;
@@ -23,6 +24,7 @@ public class MasterListPacket {
 	 * @return byte array of masters list to send back to client
 	 */
 	@Deprecated
+	@NotNull
 	public static byte[] getFakeMastersList(DatagramPacket packet, Server server) {
 		// TODO: Figure out how to fix this!!!
 

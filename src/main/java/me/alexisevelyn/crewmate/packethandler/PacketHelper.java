@@ -65,8 +65,8 @@ public class PacketHelper {
    * @param bytes byte[] (Not Byte[]) and or byte of values to merge together into one giant byte[].
    * @return merged values in a byte[]
    */
-  @NotNull
-  public static byte[] mergeBytes(@NotNull Object... bytes) {
+	@NotNull
+	public static byte[] mergeBytes(@NotNull Object... bytes) {
 		// Separate Out Bytes From Byte Arrays And Convert Bytes To Byte Arrays
 		ArrayList<byte[]> byteList = new ArrayList<>();
 		for (Object bite : bytes) {

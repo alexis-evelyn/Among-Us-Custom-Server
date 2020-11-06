@@ -1,7 +1,6 @@
 package me.alexisevelyn.crewmate.packethandler.packets.reliable;
 
 import me.alexisevelyn.crewmate.GameCodeHelper;
-import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
@@ -16,6 +15,7 @@ import me.alexisevelyn.crewmate.handlers.GameManager;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 
@@ -32,7 +32,8 @@ public class JoinLobbyPacket {
 	 * @param payload Data to be parsed
 	 * @return data to send back to client
 	 */
-	public static byte[] handleJoinLobby(Server server, InetAddress clientAddress, int clientPort, byte... payload) {
+	@NotNull
+	public static byte[] handleJoinLobby(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payload) {
 		PlayerJoinLobbyEvent event = new PlayerJoinLobbyEvent(clientAddress, clientPort);
 		event.call(server);
 
@@ -41,9 +42,9 @@ public class JoinLobbyPacket {
 				String gamecode = addClientToLobby(server, clientAddress, clientPort, payload);
 
 				// TODO: Debug
-				LogHelper.printLine("DEBUG: Joined Lobby Bytes");
+				//LogHelper.printLine("DEBUG: Joined Lobby Bytes");
 				byte[] reply = generateJoinLobbyReply(gamecode);
-				LogHelper.printPacketBytes(reply.length, reply);
+				//LogHelper.printPacketBytes(reply.length, reply);
 
 				return reply;
 			} else {
@@ -68,7 +69,7 @@ public class JoinLobbyPacket {
 	 * @param payload payload bytes
 	 */
 	@Deprecated
-	private static String addClientToLobby(Server server, InetAddress clientAddress, int clientPort, byte... payload) throws InvalidGameCodeException {
+	private static String addClientToLobby(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payload) throws InvalidGameCodeException {
 		// 00 01 02 03 04
 		// --------------
 		// A2 26 8E 83 07

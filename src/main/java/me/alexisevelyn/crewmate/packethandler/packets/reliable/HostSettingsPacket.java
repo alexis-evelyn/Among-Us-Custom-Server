@@ -14,6 +14,7 @@ import me.alexisevelyn.crewmate.handlers.GameManager;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
 import org.apiguardian.api.API;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,7 +37,8 @@ public class HostSettingsPacket {
 	 * @return Joined Game Packet With List of Other Clients If Any Or Close Packet If Exception
 	 */
 	@API(status = API.Status.EXPERIMENTAL)
-	public static byte[] getNewGameSettings(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
+	@NotNull
+	public static byte[] getNewGameSettings(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// 01 00 02 2b 00 00 2a 02 09 02 00 00 00 01 00 00 c0 3f 00 00 00 3f 00 00 80 3f 00 00 f0 41 02 02 03 01 00 00 00 03 00 0f 00 00 00 78 00 00 00 00 0f
 		// RP NO NO PL PL RC
 		// RP = Reliable Packet (1)

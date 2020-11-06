@@ -6,6 +6,7 @@ import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -28,7 +29,8 @@ public class HandshakePacket {
 	 * @param server Server instance
 	 * @return Masters list or empty byte array
 	 */
-	public static byte[] handleHandshake(Server server, InetAddress clientAddress, int clientPort, byte... handshakeBytes) {
+	@NotNull
+	public static byte[] handleHandshake(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... handshakeBytes) {
 		/*
 	                  V---- Starts Here (Subtract 3)
 			00 01 02 03 04 05 06 07 08 09 10 11 12 13 14

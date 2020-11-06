@@ -1,5 +1,7 @@
 package me.alexisevelyn.crewmate.handlers.plugins;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -16,6 +18,7 @@ public class JarHelper {
 		return new String(readJarEntry(jarFile, jarEntry), charset);
 	}
 
+	@NotNull
 	public static byte[] readJarEntry(JarFile jarFile, JarEntry jarEntry) throws IOException {
 		InputStream inputStream = jarFile.getInputStream(jarEntry);
 		long entrySize = jarEntry.getSize();

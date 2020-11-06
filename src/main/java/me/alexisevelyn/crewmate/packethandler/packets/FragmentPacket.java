@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate.packethandler.packets;
 
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 
@@ -20,7 +21,8 @@ public class FragmentPacket {
 	 * @param payloadBytes payload bytes
 	 * @return data to send back to client
 	 */
-	public static byte[] handleFragmentPacket(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
+	@NotNull
+	public static byte[] handleFragmentPacket(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// This will be added back once I get proper logging. That way the information would be invisible unless using debug level or something
 //		LogHelper.printLine(Main.getTranslationBundle().getString("fragment_packet"));
 //		LogHelper.printPacketBytes(payloadBytes);

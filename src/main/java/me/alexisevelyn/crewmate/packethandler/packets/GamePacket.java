@@ -6,6 +6,7 @@ import me.alexisevelyn.crewmate.enums.GamePacketType;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
 import me.alexisevelyn.crewmate.packethandler.packets.reliable.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -21,7 +22,8 @@ public class GamePacket {
 	 * @param payloadBytes payload bytes
 	 * @return data to send back to client
 	 */
-	public static byte[] handleAmongUsPacket(Server server, InetAddress clientAddress, int clientPort, byte... payloadBytes) {
+	@NotNull
+	public static byte[] handleAmongUsPacket(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// Needs to Be At Least 6 Bytes Long To Be A Valid Reliable Packet
 		if (payloadBytes.length < 3)
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));

@@ -1,14 +1,16 @@
-package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata;
+package me.alexisevelyn.crewmate.packethandler.packets.reliable.gamedata.rpc;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.DatagramPacket;
 import java.nio.charset.StandardCharsets;
 
 public class SyncSettingsPacket {
+	@NotNull
 	public static byte[] getLobbyGameSettings(DatagramPacket packet) {
 		// TODO: Figure out what this packet is for!!!
 

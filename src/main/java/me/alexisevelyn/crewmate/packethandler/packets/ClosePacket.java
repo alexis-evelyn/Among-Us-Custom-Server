@@ -3,12 +3,15 @@ package me.alexisevelyn.crewmate.packethandler.packets;
 import me.alexisevelyn.crewmate.enums.DisconnectReason;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class ClosePacket {
+	@NotNull
 	public static byte[] closeWithMessage(String message) {
 		return closeConnection(message, DisconnectReason.CUSTOM);
 	}
 
+	@NotNull
 	public static byte[] closeConnection(DisconnectReason disconnectReason) {
 		return closeConnection(null, disconnectReason);
 	}
