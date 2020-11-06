@@ -30,7 +30,7 @@ public class GameDataPacket {
 		// GC GC GC GC PL UK MT NI RT CL CT CT CT CT CT
 		// GC = Game Code (LE INT-32)
 		// PL = Payload Length
-		// UK = Unknown
+		// UK = Unknown (Message Flag?)
 		// MT = Message Type (0x02 for RPC)
 		// RT = RPC Type
 		// CL = Chat Length
