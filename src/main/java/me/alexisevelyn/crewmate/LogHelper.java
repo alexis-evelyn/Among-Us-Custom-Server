@@ -40,8 +40,6 @@ public class LogHelper {
 	@Deprecated
 	@API(status = API.Status.DEPRECATED)
 	public static void printLine(Object line) {
-		setCurrentThread();
-
 		if (showTimestamp && !isTerminalThread)
 			System.out.println(createLogTimestamp(ZonedDateTime.now(), twentyFourHour, simpleDateTime) + line);
 		else {
@@ -54,15 +52,13 @@ public class LogHelper {
 	@Deprecated
 	@API(status = API.Status.DEPRECATED)
 	public static void print(Object line) {
-		setCurrentThread();
-
 		System.out.print(line);
 	}
 
 	@Deprecated
 	@API(status = API.Status.DEPRECATED)
 	public static void printFormatted(String line, Object... args) {
-		setCurrentThread();
+		
 
 		System.out.format(line, args);
 	}
@@ -70,16 +66,12 @@ public class LogHelper {
 	@Deprecated
 	@API(status = API.Status.DEPRECATED)
 	public static void printLineErr(Object line) {
-		setCurrentThread();
-
 		System.err.println(line);
 	}
 
 	@Deprecated
 	@API(status = API.Status.DEPRECATED)
 	public static void printErr(Object line) {
-		setCurrentThread();
-
 		System.err.print(line);
 	}
 
@@ -105,7 +97,6 @@ public class LogHelper {
 		if (bytes.length < length)
 			return;
 
-		setCurrentThread();
 		printPacketBytesHorizontal(length, bytes);
 	}
 
@@ -120,8 +111,6 @@ public class LogHelper {
 		// https://stackoverflow.com/a/15215434/6828099
 		if (bytes.length < length)
 			return;
-
-		setCurrentThread();
 
 		String positionHeader = Main.getTranslationBundle().getString("positions_header");
 		String bytesHeader = Main.getTranslationBundle().getString("bytes_header");
@@ -183,8 +172,6 @@ public class LogHelper {
 		if (bytes.length < length)
 			return;
 
-		setCurrentThread();
-
 		String leftAlignFormat = "| %-15s | %-5s |%n";
 
 		printFormatted("+-----------------+-------+%n");
@@ -208,20 +195,6 @@ public class LogHelper {
 	@API(status = API.Status.EXPERIMENTAL)
 	public static String convertByteToHexString(byte bite) {
 		return String.format("0x%02X", (0xFF & bite));
-	}
-
-	@Deprecated
-	@API(status = API.Status.DEPRECATED)
-	private static boolean wasLastThreadTerminalThread() {
-		return isTerminalThread;
-	}
-
-	@Deprecated
-	@API(status = API.Status.DEPRECATED)
-	private static void setCurrentThread() {
-		// This should help with tracking lines in terminal and whether or not to overwrite them.
-
-		isTerminalThread = Thread.currentThread().equals(Main.getTerminal());
 	}
 
 	@Deprecated

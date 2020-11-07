@@ -49,7 +49,7 @@ public class Server extends Thread {
 		// Create Root Folder If It Does Not Exist
 		if (!root.exists() && !root.mkdirs()) {
 			// https://docs.oracle.com/javase/7/docs/api/java/nio/file/AccessDeniedException.html
-			throw new AccessDeniedException(String.format(Main.getTranslationBundle().getString("root_directory_failed_creation"), root.getAbsolutePath()));
+			throw new AccessDeniedException(String.format(config.getTranslations().getString("root_directory_failed_creation"), root.getAbsolutePath()));
 		}
 
 		// Plugins Directory For Server Plugins

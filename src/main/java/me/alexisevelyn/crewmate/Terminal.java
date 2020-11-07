@@ -40,10 +40,10 @@ public class Terminal extends Thread {
 				command = input.nextLine();
 
 				// Exit Thread If Server Not Running
-				if (Main.getServer() == null || !Main.getServer().isRunning()) {
-					this.exit();
-					return;
-				}
+//				if (Main.getServer() == null || !Main.getServer().isRunning()) {
+//					this.exit();
+//					return;
+//				}
 
 				CommandHandler.handleCommand(command, this);
 			} catch (InterruptedException e) {
@@ -71,15 +71,5 @@ public class Terminal extends Thread {
 
 	public boolean isRunning() {
 		return this.running;
-	}
-
-	@Deprecated
-	private void setupShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> Main.getTerminal().exit()));
-	}
-
-	@Deprecated
-	public static Logger getLogger() {
-		return logger;
 	}
 }

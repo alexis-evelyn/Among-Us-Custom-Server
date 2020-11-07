@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -14,18 +13,10 @@ import java.util.ResourceBundle;
  * Main Class That Starts {@link Server} and {@link Terminal}
  */
 public class Main {
-	// TODO: Add a region file generator - Same Format As https://gist.github.com/codyphobe/cce98bfc9221a00f7d1c8fede5e87f9c
-
-	private static Server server;
-	private static Terminal terminal;
-	private static Thread main;
-
-	// This will be changeable via commands later
-	private static Locale currentLocale = Locale.getDefault();
-	private static ResourceBundle translations = ResourceBundle.getBundle("translations/Main", currentLocale);
-
 	// Compile Time Properties
 	private static final Properties compileTimeProperties = new Properties();
+	private static Config config;
+	private static Server server;
 
 	/**
 	 * Main Method
@@ -35,10 +26,7 @@ public class Main {
 	@API(status = API.Status.STABLE)
 	public static void main(String... args) {
 		// TODO: Add Proper Argument Parser and Quit Passing Raw Args Array
-		Config config = setUpConfig(args);
-
-		// Store Main Thread
-		main = Thread.currentThread();
+		config = setUpConfig(args);
 
 		// Start Server
 		startServer(config);
@@ -61,21 +49,22 @@ public class Main {
 			compileTimeProperties.load(compileTimePropertiesStream);
 			versionString = compileTimeProperties.getProperty("version");
 		} catch (IOException exception) {
-			versionString = getTranslationBundle().getString("unknown");
+			versionString = config.getTranslations().getString("unknown");
 		}
 
 		// Print Version Info
-		String printableVersionString = String.format(getTranslationBundle().getString("server_version"), getTranslationBundle().getString("server_name"), versionString);
+		String printableVersionString = String.format(config.getTranslations().getString("server_version"), config.getTranslations().getString("server_name"), versionString);
 		LogHelper.printLine(printableVersionString);
 
 		// Print Server Starting Message
-		LogHelper.printLine(getTranslationBundle().getString("server_starting"));
+		LogHelper.printLine(config.getTranslations().getString("server_starting"));
 
 		try {
+			// TODO: Decide If I Want To Pass Config Into Server
 			server = new Server(config);
 			server.start();
 		} catch (SocketException e) {
-			LogHelper.printLineErr(getTranslationBundle().getString("failed_socket_bind"));
+			LogHelper.printLineErr(config.getTranslations().getString("failed_socket_bind"));
 		} catch (AccessDeniedException e) {
 			LogHelper.printLineErr(e.getMessage());
 		}
@@ -88,7 +77,8 @@ public class Main {
 	 */
 	@API(status = API.Status.STABLE)
 	public static void startTerminal(Config config) {
-		terminal = new Terminal();
+		// TODO: Decide If I Want To Pass Config Into Terminal and Server Into Terminal
+		Terminal terminal = new Terminal();
 		terminal.start();
 	}
 
@@ -118,80 +108,13 @@ public class Main {
 		return config;
 	}
 
-	/**
-	 * Get instance of the server
-	 *
-	 * @return instance of server
-	 */
 	@Deprecated
-	@API(status = API.Status.DEPRECATED)
 	public static Server getServer() {
 		return server;
 	}
 
-	/**
-	 * Get instance of the terminal
-	 *
-	 * @return instance of terminal
-	 */
 	@Deprecated
-	@API(status = API.Status.DEPRECATED)
-	public static Terminal getTerminal() {
-		return terminal;
-	}
-
-	/**
-	 * Get instance of the main class
-	 *
-	 * @return instance of the main class
-	 */
-	@Deprecated
-	@API(status = API.Status.DEPRECATED)
-	public static Thread getMain() {
-		return main;
-	}
-
-	/**
-	 * Get instance of the translation bundle
-	 *
-	 * @return instance of the translation bundle
-	 */
-	@Deprecated
-	@API(status = API.Status.DEPRECATED)
 	public static ResourceBundle getTranslationBundle() {
-		return translations;
-	}
-
-	/**
-	 * Get instance of the current locale
-	 *
-	 * @return instance of the current locale
-	 */
-	@Deprecated
-	@API(status = API.Status.DEPRECATED)
-	public static Locale getCurrentLocale() {
-		return currentLocale;
-	}
-
-	/**
-	 * Set instance of the current locale
-	 *
-	 * @param locale instance of locale
-	 */
-	@Deprecated
-	@API(status = API.Status.DEPRECATED)
-	public static void setCurrentLocale(Locale locale) {
-		currentLocale = locale;
-	}
-
-	/**
-	 * Set instance of the current translation bundle
-	 *
-	 * @param translationBundle instance of the translation bundle
-	 */
-	@Deprecated
-	@API(status = API.Status.DEPRECATED)
-	public static void setTranslationBundle(ResourceBundle translationBundle) {
-		translations = translationBundle;
+		return config.getTranslations();
 	}
 }

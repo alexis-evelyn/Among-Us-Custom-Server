@@ -121,7 +121,7 @@ public class SearchGamePacket {
 
 		// Game Address and Port
 		InetAddress ipAddress = InetAddress.getByName("127.0.0.1");
-		int port = Main.getServer().getPort();
+		int port = 22023; // Main.getServer().getPort();
 
 		// Temporary String - Not Translating
 		// Visible Game Information

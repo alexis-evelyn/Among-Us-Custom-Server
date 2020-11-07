@@ -20,7 +20,7 @@ public class Exit implements Command {
 	}
 
 	private static void exit(Terminal terminal) {
-		LogHelper.printLine("");
+		LogHelper.printLine();
 
 		// Shutdown Server
 		Main.getServer().exit();

@@ -96,7 +96,6 @@ public class HostSettingsPacket {
 	@API(status = API.Status.EXPERIMENTAL)
 	private static byte[] getCodeFromList() {
 		try {
-
 			// This is a temporary test function
 			// https://stackoverflow.com/a/53673751/6828099
 			// File To Pull Words From
@@ -108,6 +107,8 @@ public class HostSettingsPacket {
 
 			// Copy Word List to Temporary File
 			FileOutputStream out = new FileOutputStream(tempFile);
+
+			assert filePath != null : "Words List is Missing - Translate Me If Method Kept";
 			out.write(filePath.openStream().readAllBytes());
 
 			RandomAccessFile file = new RandomAccessFile(tempFile, "r");
@@ -131,7 +132,7 @@ public class HostSettingsPacket {
 
 			// Get Word
 			return gameCodeBytes;
-		} catch (IOException | NullPointerException exception) {
+		} catch (IOException | NullPointerException | AssertionError exception) {
 			exception.printStackTrace();
 
 			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
