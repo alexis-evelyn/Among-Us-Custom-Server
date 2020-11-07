@@ -8,7 +8,7 @@ fi
 
 # Build New Build
 echo "Building New Build!!!"
-./gradlew shadowJar
+./gradlew :shadowJar
 
 # Change Directory To Server Directory
 echo "Starting Server!!!"
