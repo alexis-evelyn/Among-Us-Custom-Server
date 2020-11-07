@@ -24,10 +24,10 @@ public class GameSearchEvent extends Event {
         try {
             this.games = SearchGamePacket.getFakeSearchBytes(impostors, getLanguage().getUnsignedInt(), maps);
         } catch (UnknownHostException e) {
-            LogHelper.printLineErr(Main.getTranslationBundle().getString("search_unknown_host"));
+            LogHelper.printLineErr(Main.getTranslation("search_unknown_host"));
             e.printStackTrace();
 
-            games = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_unknown_host"));
+            games = ClosePacket.closeWithMessage(Main.getTranslation("search_unknown_host"));
         }
     }
 

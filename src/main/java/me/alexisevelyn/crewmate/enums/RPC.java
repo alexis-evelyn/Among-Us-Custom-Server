@@ -60,73 +60,71 @@ public enum RPC {
 
 	@NotNull
 	public static String getRPCName(@NotNull RPC rpc) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (rpc) {
 			case ANIMATION:
-				return translation.getString("rpc_animation");
+				return Main.getTranslation("rpc_animation");
 			case COMPLETE_TASK:
-				return translation.getString("rpc_complete_task");
+				return Main.getTranslation("rpc_complete_task");
 			case SYNC_SETTINGS:
-				return translation.getString("rpc_sync_settings");
+				return Main.getTranslation("rpc_sync_settings");
 			case SET_INFECTED:
-				return translation.getString("rpc_set_infected");
+				return Main.getTranslation("rpc_set_infected");
 			case EXILED:
-				return translation.getString("rpc_exiled");
+				return Main.getTranslation("rpc_exiled");
 			case CHECK_NAME:
-				return translation.getString("rpc_check_name");
+				return Main.getTranslation("rpc_check_name");
 			case SET_NAME:
-				return translation.getString("rpc_set_name");
+				return Main.getTranslation("rpc_set_name");
 			case CHECK_COLOR:
-				return translation.getString("rpc_check_color");
+				return Main.getTranslation("rpc_check_color");
 			case SET_COLOR:
-				return translation.getString("rpc_set_color");
+				return Main.getTranslation("rpc_set_color");
 			case SET_HAT:
-				return translation.getString("rpc_set_hat");
+				return Main.getTranslation("rpc_set_hat");
 			case SET_SKIN:
-				return translation.getString("rpc_set_skin");
+				return Main.getTranslation("rpc_set_skin");
 			case REPORT_DEAD_BODY:
-				return translation.getString("rpc_report_dead_body");
+				return Main.getTranslation("rpc_report_dead_body");
 			case MURDER_PLAYER:
-				return translation.getString("rpc_murder_player");
+				return Main.getTranslation("rpc_murder_player");
 			case SEND_CHAT:
-				return translation.getString("rpc_send_chat");
+				return Main.getTranslation("rpc_send_chat");
 			case START_MEETING:
-				return translation.getString("rpc_start_meeting");
+				return Main.getTranslation("rpc_start_meeting");
 			case SET_SCANNER:
-				return translation.getString("rpc_set_scanner");
+				return Main.getTranslation("rpc_set_scanner");
 			case SEND_CHAT_NOTE:
-				return translation.getString("rpc_send_chat_note");
+				return Main.getTranslation("rpc_send_chat_note");
 			case SET_PET:
-				return translation.getString("rpc_set_pet");
+				return Main.getTranslation("rpc_set_pet");
 			case SET_START_COUNTER:
-				return translation.getString("rpc_set_start_counter");
+				return Main.getTranslation("rpc_set_start_counter");
 			case ENTER_VENT:
-				return translation.getString("rpc_enter_vent");
+				return Main.getTranslation("rpc_enter_vent");
 			case EXIT_VENT:
-				return translation.getString("rpc_exit_vent");
+				return Main.getTranslation("rpc_exit_vent");
 			case SNAP_TO:
-				return translation.getString("rpc_snap_to");
+				return Main.getTranslation("rpc_snap_to");
 			case CLOSE:
-				return translation.getString("rpc_close");
+				return Main.getTranslation("rpc_close");
 			case VOTING_COMPLETE:
-				return translation.getString("rpc_voting_complete");
+				return Main.getTranslation("rpc_voting_complete");
 			case CAST_VOTE:
-				return translation.getString("rpc_cast_vote");
+				return Main.getTranslation("rpc_cast_vote");
 			case CLEAR_VOTE:
-				return translation.getString("rpc_clear_vote");
+				return Main.getTranslation("rpc_clear_vote");
 			case ADD_VOTE:
-				return translation.getString("rpc_add_vote");
+				return Main.getTranslation("rpc_add_vote");
 			case CLOSE_DOOR:
-				return translation.getString("rpc_close_door");
+				return Main.getTranslation("rpc_close_door");
 			case REPAIR_SYSTEM:
-				return translation.getString("rpc_repair_system");
+				return Main.getTranslation("rpc_repair_system");
 			case SET_TASKS:
-				return translation.getString("rpc_set_tasks");
+				return Main.getTranslation("rpc_set_tasks");
 			case UPDATE_GAME_DATA:
-				return translation.getString("rpc_update_game_data");
+				return Main.getTranslation("rpc_update_game_data");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

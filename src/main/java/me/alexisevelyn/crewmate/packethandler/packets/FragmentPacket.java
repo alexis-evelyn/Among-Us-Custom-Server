@@ -24,9 +24,9 @@ public class FragmentPacket {
 	@NotNull
 	public static byte[] handleFragmentPacket(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// This will be added back once I get proper logging. That way the information would be invisible unless using debug level or something
-//		LogHelper.printLine(Main.getTranslationBundle().getString("fragment_packet"));
+//		LogHelper.printLine(Main.getTranslation("fragment_packet"));
 //		LogHelper.printPacketBytes(payloadBytes);
 
-		return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("fragment_packet_not_supported"));
+		return ClosePacket.closeWithMessage(Main.getTranslation("fragment_packet_not_supported"));
 	}
 }

@@ -1,6 +1,6 @@
 package me.alexisevelyn.crewmate.events.impl;
 
-import me.alexisevelyn.crewmate.GameCodeHelper;
+import me.alexisevelyn.crewmate.api.GameCodeHelper;
 import me.alexisevelyn.crewmate.events.EventCancellable;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
 

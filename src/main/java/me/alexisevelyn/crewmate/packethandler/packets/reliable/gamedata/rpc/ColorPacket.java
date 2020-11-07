@@ -14,15 +14,15 @@ public class ColorPacket {
 	@NotNull
 	public static byte[] handleColors(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, int netID, @NotNull byte... payload) {
 		if (payload.length < 1)
-			return ClosePacket.closeWithMessage(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 1));
+			return ClosePacket.closeWithMessage(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 1));
 
 		byte colorByte = payload[0];
 		PlayerColor color = PlayerColor.getColor(colorByte);
 
 		if (color == null)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("color_unknown"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("color_unknown"));
 
-        LogHelper.printLine(String.format(Main.getTranslationBundle().getString("color_packet"), PlayerColor.getColorName(color)));
+        LogHelper.printLine(String.format(Main.getTranslation("color_packet"), PlayerColor.getColorName(color)));
 
 		PlayerChangeColorEvent event = new PlayerChangeColorEvent(color);
 		event.call(server);

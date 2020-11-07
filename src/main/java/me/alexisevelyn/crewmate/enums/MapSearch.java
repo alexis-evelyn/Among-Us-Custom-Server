@@ -51,7 +51,7 @@ public enum MapSearch {
 		StringBuilder printableMapsList = new StringBuilder();
 
 		// Append Delimiters (Usually Comma + Space) To List and Then Remove Last Delimiter
-		String delimiter = Main.getTranslationBundle().getString("list_delimiter_logged");
+		String delimiter = Main.getTranslation("list_delimiter_logged");
 		for (Map map : maps) {
 			printableMapsList.append(Map.getMapName(map)).append(delimiter);
 		}

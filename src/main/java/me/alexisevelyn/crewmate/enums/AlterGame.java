@@ -28,14 +28,12 @@ public enum AlterGame {
 
 	@NotNull
 	public static String getAlterGameFlagName(@NotNull AlterGame alterGameFlag) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		//noinspection SwitchStatementWithTooFewBranches
 		switch (alterGameFlag) {
 			case CHANGE_PRIVACY:
-				return translation.getString("alter_game_change_privacy");
+				return Main.getTranslation("alter_game_change_privacy");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

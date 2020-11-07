@@ -27,7 +27,7 @@ public class AcknowledgementPacket {
 	@NotNull
 	public static byte[] handleAcknowledgement(InetAddress clientAddress, int clientPort, Server server, byte... nonce) {
 		if (nonce.length < 2)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("nonce_wrong_size"));
 
 		// TODO: Implement
 
@@ -42,7 +42,7 @@ public class AcknowledgementPacket {
 	 */
 	private static byte[] getAcknowledgement(byte... nonceBytes) throws InvalidBytesException {
 		if (nonceBytes.length != 2)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("nonce_wrong_size"));
+			throw new InvalidBytesException(Main.getTranslation("nonce_wrong_size"));
 
 		return new byte[] {SendOption.ACKNOWLEDGEMENT.getByte(), nonceBytes[0], nonceBytes[1], (byte) 0xff};
 	}
@@ -64,7 +64,7 @@ public class AcknowledgementPacket {
 
 	    // Verify Packet Length
 	    if (length < 3) {
-		    byte[] exception = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
+		    byte[] exception = ClosePacket.closeWithMessage(Main.getTranslation("nonce_wrong_size"));
 
 		    // Packet to Send Back to Client
 		    packet = server.createSendPacket(address, port, exception.length, exception);
@@ -80,7 +80,7 @@ public class AcknowledgementPacket {
 		byte[] nonce = new byte[] {buffer[1], buffer[2]};
 
 		// Nonce is Big Endian
-		// LogHelper.printLine(String.format(Main.getTranslationBundle().getString("nonce_value"), PacketHelper.getUnsignedShortBE(nonce)));
+		// LogHelper.printLine(String.format(Main.getTranslation("nonce_value"), PacketHelper.getUnsignedShortBE(nonce)));
 
 		// Get Acknowledgement
 		byte[] acknowledgement;
@@ -89,7 +89,7 @@ public class AcknowledgementPacket {
 		} catch (InvalidBytesException exception) {
 			LogHelper.printLineErr(exception.getMessage());
 
-			acknowledgement = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+			acknowledgement = ClosePacket.closeWithMessage(Main.getTranslation("server_side_exception"));
 		}
 
 		// Packet to Send Back to Client

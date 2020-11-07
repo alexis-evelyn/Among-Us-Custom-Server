@@ -15,7 +15,7 @@ public class RPCPacket {
 	@NotNull
 	public static byte[] handleRPCPacket(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payload) {
 		if (payload.length < 2)
-			return ClosePacket.closeWithMessage(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 2));
+			return ClosePacket.closeWithMessage(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 2));
 
 		int netID = payload[0];
 		RPC type = RPC.getRPC(payload[1]);
@@ -35,7 +35,7 @@ public class RPCPacket {
 			case SYNC_SETTINGS: // Double Check
 				// return StartGame.getLobbyGameSettings(server, clientAddress, clientPort, netID, rpcPayload); // At Least 173 Bytes?
 			default:
-				// return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("rpc_packet_unknown_type"));
+				// return ClosePacket.closeWithMessage(Main.getTranslation("rpc_packet_unknown_type"));
 				LogHelper.printLine("DEBUG: " + RPC.getRPCName(type));
 				return new byte[0];
 		}

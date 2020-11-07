@@ -9,7 +9,7 @@ public class SSH implements Command {
 	private Remote server;
 
 	public void execute(String command, Terminal terminal) {
-		String message = Main.getTranslationBundle().getString("not_implemented");
+		String message = Main.getTranslation("not_implemented");
 
 		LogHelper.printLine(message);
 
@@ -23,11 +23,11 @@ public class SSH implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("ssh_command");
+		return Main.getTranslation("ssh_command");
 	}
 
 	@Override
 	public String getHelp() {
-		return Main.getTranslationBundle().getString("ssh_command_help");
+		return Main.getTranslation("ssh_command_help");
 	}
 }

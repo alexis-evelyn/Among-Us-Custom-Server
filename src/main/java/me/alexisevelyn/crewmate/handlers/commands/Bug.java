@@ -22,7 +22,7 @@ public class Bug implements Command {
 
 			tempLink = compileTimeProperties.getProperty("issue_link");
 		} catch (IOException exception) {
-			tempLink = Main.getTranslationBundle().getString("unknown");
+			tempLink = Main.getTranslation("unknown");
 		}
 
 		// Assign Issue Link Or If IOException Unknown
@@ -30,7 +30,7 @@ public class Bug implements Command {
 	}
 
 	public void execute(String command, Terminal terminal) {
-		String message = String.format(Main.getTranslationBundle().getString("bug_command_issue_message"), issuesLink);
+		String message = String.format(Main.getTranslation("bug_command_issue_message"), issuesLink);
 
 		// Terminal.getLogger().info(message);
 		LogHelper.printLine(message);
@@ -38,11 +38,11 @@ public class Bug implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("bug_command");
+		return Main.getTranslation("bug_command");
 	}
 
 	@Override
 	public String getHelp() {
-		return Main.getTranslationBundle().getString("bug_command_help");
+		return Main.getTranslation("bug_command_help");
 	}
 }

@@ -94,7 +94,7 @@ public class PacketHelper {
 	@NotNull
 	public static byte[] extractSecondPartBytes(int pos, @NotNull byte... bytes) throws InvalidBytesException {
 		if (bytes == null)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+			throw new InvalidBytesException(Main.getTranslation("invalid_bytes_null_exception"));
 
 		if (bytes.length <= pos)
 			return bytes;
@@ -113,7 +113,7 @@ public class PacketHelper {
 	@NotNull
 	public static byte[] extractFirstPartBytes(int pos, @NotNull byte... bytes) {
 		if (bytes == null)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+			throw new InvalidBytesException(Main.getTranslation("invalid_bytes_null_exception"));
 
 		if (pos <= 0)
 			return bytes;
@@ -177,10 +177,10 @@ public class PacketHelper {
 	 */
 	public static int getUnsignedShortBE(@NotNull byte... shortBytes) throws InvalidBytesException {
 		if (shortBytes == null)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+			throw new InvalidBytesException(Main.getTranslation("invalid_bytes_null_exception"));
 
 		if (shortBytes.length != 2)
-			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 2));
+			throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_exact"), 2));
 
 		return getUnsignedShortLE(shortBytes[1], shortBytes[0]);
 	}
@@ -201,10 +201,10 @@ public class PacketHelper {
 	 */
 	public static int getUnsignedShortLE(@NotNull byte... shortBytes) throws InvalidBytesException {
 		if (shortBytes == null)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+			throw new InvalidBytesException(Main.getTranslation("invalid_bytes_null_exception"));
 
 		if (shortBytes.length != 2)
-			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 2));
+			throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_exact"), 2));
 
 		// Tutorial: https://stackoverflow.com/a/28580238/6828099
 		return (shortBytes[0] & 0xff) | ((shortBytes[1] & 0xff) << 8);
@@ -219,10 +219,10 @@ public class PacketHelper {
 	 */
 	public static long getUnsignedIntBE(@NotNull byte... intBytes) throws InvalidBytesException {
 		if (intBytes == null)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+			throw new InvalidBytesException(Main.getTranslation("invalid_bytes_null_exception"));
 
 		if (intBytes.length != 4)
-			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 4));
+			throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_exact"), 4));
 
 		return getUnsignedIntLE(intBytes[3], intBytes[2], intBytes[1], intBytes[0]);
 	}
@@ -243,10 +243,10 @@ public class PacketHelper {
 	 */
 	public static long getUnsignedIntLE(@NotNull byte... intBytes) throws InvalidBytesException {
 		if (intBytes == null)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+			throw new InvalidBytesException(Main.getTranslation("invalid_bytes_null_exception"));
 
 		if (intBytes.length != 4)
-			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 4));
+			throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_exact"), 4));
 
 		// Tutorial: https://stackoverflow.com/a/28580238/6828099
 		return (intBytes[0] & 0xff) | ((intBytes[1] & 0xff) << 8) | ((intBytes[2] & 0xff) << 16) | ((intBytes[3] & 0xff) << 24) & (-1L >>> 32);
@@ -297,7 +297,7 @@ public class PacketHelper {
 	 */
 	public static int unpackInteger(@NotNull byte... packedBytes) throws InvalidBytesException {
 		if (packedBytes == null)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("invalid_bytes_null_exception"));
+			throw new InvalidBytesException(Main.getTranslation("invalid_bytes_null_exception"));
 
 		boolean readMore = true;
 		int shift = 0;

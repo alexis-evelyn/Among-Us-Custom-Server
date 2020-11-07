@@ -25,18 +25,18 @@ public class AlterGamePacket {
 
 		// Should Change to 5?
     	if (payloadBytes.length < 6)
-    		return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_invalid_size"));
+    		return ClosePacket.closeWithMessage(Main.getTranslation("alter_game_packet_invalid_size"));
 
         AlterGame alterGameFlag = AlterGame.getAlterGameFlag(payloadBytes[4]);
 
         if (alterGameFlag == null)
-            return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_unknown_type"));
+            return ClosePacket.closeWithMessage(Main.getTranslation("alter_game_packet_unknown_type"));
 
         switch (alterGameFlag) {
             case CHANGE_PRIVACY:
                 return handleGameVisibility(server, clientAddress, clientPort, payloadBytes[5]);
             default:
-                return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("alter_game_packet_unknown_type"));
+                return ClosePacket.closeWithMessage(Main.getTranslation("alter_game_packet_unknown_type"));
         }
 	}
 
@@ -50,7 +50,7 @@ public class AlterGamePacket {
 		event.call(server);
 
 		if (!event.isCancelled()) {
-			String visibilityString = event.isVisible() ? Main.getTranslationBundle().getString("public_game") : Main.getTranslationBundle().getString("private_game");
+			String visibilityString = event.isVisible() ? Main.getTranslation("public_game") : Main.getTranslation("private_game");
 			LogHelper.printLine(visibilityString);
 		}
 

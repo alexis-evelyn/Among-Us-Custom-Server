@@ -14,15 +14,15 @@ public class HatPacket {
 	@NotNull
 	public static byte[] handleHats(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, int netID, @NotNull byte... payload) {
 		if (payload.length < 1)
-			return ClosePacket.closeWithMessage(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 1));
+			return ClosePacket.closeWithMessage(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 1));
 
 		byte hatByte = payload[0];
 		Hat hat = Hat.getHat(hatByte);
 
 		if (hat == null)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("hat_unknown"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("hat_unknown"));
 
-		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("hat_packet"), Hat.getHatName(hat)));
+		LogHelper.printLine(String.format(Main.getTranslation("hat_packet"), Hat.getHatName(hat)));
 
 		PlayerChangeHatEvent event = new PlayerChangeHatEvent(hat);
 		event.call(server);

@@ -1,13 +1,16 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.api.Config;
+import me.alexisevelyn.crewmate.api.ResourceBundleHandler;
 import org.apiguardian.api.API;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 /**
  * Main Class That Starts {@link Server} and {@link Terminal}
@@ -49,22 +52,22 @@ public class Main {
 			compileTimeProperties.load(compileTimePropertiesStream);
 			versionString = compileTimeProperties.getProperty("version");
 		} catch (IOException exception) {
-			versionString = config.getTranslations().getString("unknown");
+			versionString = config.getTranslation("unknown");
 		}
 
 		// Print Version Info
-		String printableVersionString = String.format(config.getTranslations().getString("server_version"), config.getTranslations().getString("server_name"), versionString);
+		String printableVersionString = String.format(config.getTranslation("server_version"), config.getTranslation("server_name"), versionString);
 		LogHelper.printLine(printableVersionString);
 
 		// Print Server Starting Message
-		LogHelper.printLine(config.getTranslations().getString("server_starting"));
+		LogHelper.printLine(config.getTranslation("server_starting"));
 
 		try {
 			// TODO: Decide If I Want To Pass Config Into Server
 			server = new Server(config);
 			server.start();
 		} catch (SocketException e) {
-			LogHelper.printLineErr(config.getTranslations().getString("failed_socket_bind"));
+			LogHelper.printLineErr(config.getTranslation("failed_socket_bind"));
 		} catch (AccessDeniedException e) {
 			LogHelper.printLineErr(e.getMessage());
 		}
@@ -114,7 +117,7 @@ public class Main {
 	}
 
 	@Deprecated
-	public static ResourceBundle getTranslationBundle() {
-		return config.getTranslations();
+	public static String getTranslation(@NotNull @PropertyKey(resourceBundle = ResourceBundleHandler.DEFAULT_BUNDLE_PATH) String key) {
+		return config.getTranslation(key);
 	}
 }

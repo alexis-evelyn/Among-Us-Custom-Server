@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class EventCancellable extends Event {
     private boolean cancelled = false;
-    private String reason = Main.getTranslationBundle().getString("unknown");
+    private String reason = Main.getTranslation("unknown");
 
     public boolean isCancelled() {
         return cancelled;

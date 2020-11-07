@@ -11,12 +11,11 @@ import java.util.ResourceBundle;
 
 public class PackedInts implements Command {
 	public void execute(String command, Terminal terminal) {
-		ResourceBundle translation = Main.getTranslationBundle();
 		String[] arguments = command.trim().split("\\s+");
 
 		// Needs Argument
 		if (arguments.length != 3) {
-			String wrongArgumentLengthMessage = String.format(translation.getString("packed_ints_invalid_argument_length"), translation.getString("packed_ints_bytes_argument"), translation.getString("packed_ints_int_argument"));
+			String wrongArgumentLengthMessage = String.format(Main.getTranslation("packed_ints_invalid_argument_length"), Main.getTranslation("packed_ints_bytes_argument"), Main.getTranslation("packed_ints_int_argument"));
 			LogHelper.printLineErr(wrongArgumentLengthMessage);
 
 			return;
@@ -26,12 +25,12 @@ public class PackedInts implements Command {
 		String convertType = arguments[1].trim();
 
 		// Convert To Bytes
-		if (convertType.equalsIgnoreCase(translation.getString("packed_ints_bytes_argument"))) {
+		if (convertType.equalsIgnoreCase(Main.getTranslation("packed_ints_bytes_argument"))) {
 			this.convertIntToBytes(terminal, arguments);
 		}
 
 		// Convert To String
-		if (convertType.equalsIgnoreCase(translation.getString("packed_ints_int_argument")))
+		if (convertType.equalsIgnoreCase(Main.getTranslation("packed_ints_int_argument")))
 			this.convertBytesToInt(terminal, arguments);
 	}
 
@@ -41,7 +40,7 @@ public class PackedInts implements Command {
 		try {
 			packedBytes = PacketHelper.packInteger(Integer.parseInt(arguments[2]));
 		} catch (NumberFormatException exception) {
-			LogHelper.printLineErr(Main.getTranslationBundle().getString("packed_ints_invalid_int"));
+			LogHelper.printLineErr(Main.getTranslation("packed_ints_invalid_int"));
 
 			return;
 		}
@@ -65,7 +64,7 @@ public class PackedInts implements Command {
 				bytes.add((byte) Integer.parseInt(bite, 16));
 			}
 		} catch (NumberFormatException exception) {
-			LogHelper.printLineErr(Main.getTranslationBundle().getString("packed_ints_invalid_hex"));
+			LogHelper.printLineErr(Main.getTranslation("packed_ints_invalid_hex"));
 
 			return;
 		}
@@ -81,7 +80,7 @@ public class PackedInts implements Command {
 		try {
 			int unpackInteger = PacketHelper.unpackInteger(mergedBytesPrimitive);
 
-			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("packed_ints_string"), unpackInteger));
+			LogHelper.printLine(String.format(Main.getTranslation("packed_ints_string"), unpackInteger));
 		} catch (InvalidBytesException exception) {
 			LogHelper.printLineErr(exception.getMessage());
 		}
@@ -89,11 +88,11 @@ public class PackedInts implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("packed_ints_command");
+		return Main.getTranslation("packed_ints_command");
 	}
 
 	@Override
 	public String getHelp() {
-		return Main.getTranslationBundle().getString("packed_ints_command_help");
+		return Main.getTranslation("packed_ints_command_help");
 	}
 }

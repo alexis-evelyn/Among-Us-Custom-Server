@@ -14,7 +14,6 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 public class HandshakePacket {
 	@SuppressWarnings("SpellCheckingInspection") // I mean, I appreciate the IDE wanting to make sure I don't make a typo, but please, the whole alphabet doesn't even look like a word
@@ -51,11 +50,11 @@ public class HandshakePacket {
 
 			// If either the name is missing or the name length is bigger than the what the rest of the buffer has, close connection
 			if (displayNameLength <= 0 || (handshakeBytes.length - 6) < displayNameLength)
-				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("missing_display_name_handshake"));
+				return ClosePacket.closeWithMessage(Main.getTranslation("missing_display_name_handshake"));
 
 			// Client only allows up to 10 characters, we are enforcing that server side
 			if (displayNameLength > 10)
-				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("display_name_too_long"));
+				return ClosePacket.closeWithMessage(Main.getTranslation("display_name_too_long"));
 
 			// Hazel Version
 			int hazelVersion = handshakeBytes[0];
@@ -75,7 +74,7 @@ public class HandshakePacket {
 			String name = new String(nameBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
 			if (!name.matches(NAME_CHECK_ONE) || name.matches(NAME_CHECK_TWO))
-				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("invalid_name_close_connection"));
+				return ClosePacket.closeWithMessage(Main.getTranslation("invalid_name_close_connection"));
 
 			// Register Player On Server
 			PlayerManager.addPlayer(new Player(name, clientAddress, clientPort, hazelVersion, clientVersionRaw, server));
@@ -133,7 +132,6 @@ public class HandshakePacket {
 		// Attempts to Grab Letter - If Fail, Then Use Number Instead
 		String revisionLetter = (revision >= 0 && revision < revisionLetters.length) ? String.valueOf(revisionLetters[(int) revision]) : String.valueOf(revision);
 
-		ResourceBundle translation = Main.getTranslationBundle();
 		Map<String, Object> parameters = new HashMap<>();
 
 		// Date
@@ -145,7 +143,7 @@ public class HandshakePacket {
 		parameters.put("revision", revisionLetter);
 		parameters.put("raw", raw);
 
-		String logLine = LogHelper.formatNamed(translation.getString("client_version_logged"), parameters);
+		String logLine = LogHelper.formatNamed(Main.getTranslation("client_version_logged"), parameters);
 		LogHelper.printLine(logLine);
 	}
 }

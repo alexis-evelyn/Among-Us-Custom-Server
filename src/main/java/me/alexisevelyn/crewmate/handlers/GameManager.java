@@ -1,6 +1,6 @@
 package me.alexisevelyn.crewmate.handlers;
 
-import me.alexisevelyn.crewmate.GameCodeHelper;
+import me.alexisevelyn.crewmate.api.GameCodeHelper;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.api.Game;
@@ -18,7 +18,7 @@ public class GameManager {
         gamesByCode.put(game.getCode(), game);
         gamesByCodeBytes.put(game.getCodeBytes(), game);
 
-        LogHelper.printLine(String.format(Main.getTranslationBundle().getString("added_game"), game.getCode()));
+        LogHelper.printLine(String.format(Main.getTranslation("added_game"), game.getCode()));
     }
 
     public static void removeGame(Game game) {

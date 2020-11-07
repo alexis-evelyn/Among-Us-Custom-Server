@@ -1,7 +1,9 @@
-package me.alexisevelyn.crewmate;
+package me.alexisevelyn.crewmate.api;
 
+import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import me.alexisevelyn.crewmate.exceptions.InvalidGameCodeException;
+import org.apiguardian.api.API;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -10,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@API(status = API.Status.MAINTAINED)
 public class GameCodeHelper {
 	// https://discord.com/channels/757425025379729459/759066383090188308/765437094582943774
 	// The source above was missing the V between the C and B.
@@ -23,10 +26,10 @@ public class GameCodeHelper {
 	// Convert Bytes to GameCode String
 	public static String parseGameCode(byte... gameCodeBytes) throws InvalidBytesException, InvalidGameCodeException {
 		if (gameCodeBytes == null)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_null_exception"));
+			throw new InvalidBytesException(Main.getTranslation("gamecode_null_exception"));
 
 		if (gameCodeBytes.length != 4)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_invalid_length_exception"));
+			throw new InvalidBytesException(Main.getTranslation("gamecode_invalid_length_exception"));
 
 		// Save Bytes as V1 Game Code and Then Verify
 		String gameCodeString = new String(gameCodeBytes, StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
@@ -42,17 +45,16 @@ public class GameCodeHelper {
 
 		// This works because the game will null terminate an invalid gamecode
 		if (gameCodeInteger == 0)
-			throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+			throw new InvalidGameCodeException(Main.getTranslation("gamecode_invalid_code_exception"));
 
 		try {
 			return convertIntToGameCode(gameCodeInteger);
 		} catch (ArrayIndexOutOfBoundsException exception) {
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("gamecode_invalid_bytes_exception"));
+			throw new InvalidBytesException(Main.getTranslation("gamecode_invalid_bytes_exception"));
 		}
 	}
 
 	// V2 - Convert Bytes to GameCode String
-	// TODO: Fix This
 	private static String convertIntToGameCode(int input) throws ArrayIndexOutOfBoundsException {
 		int a = input & 0x3FF;
 		int b = (input >> 10) & 0xFFFFF;
@@ -76,7 +78,7 @@ public class GameCodeHelper {
 
 		// Ensure GameCode Is Valid Or Convertible To Valid
 		if (!gameCode.matches("([A-Z]|[a-z])+"))
-			throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+			throw new InvalidGameCodeException(Main.getTranslation("gamecode_invalid_code_exception"));
 
 		String fixedCode = gameCode.toUpperCase();
 
@@ -86,13 +88,13 @@ public class GameCodeHelper {
 		else if (fixedCode.length() == 6)
 			return generateGameCodeV2(fixedCode);
 
-		throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_wrong_length"));
+		throw new InvalidGameCodeException(Main.getTranslation("gamecode_wrong_length"));
 	}
 
 	// V2 - Convert String to GameCode Bytes
 	private static byte[] generateGameCodeV2(String gameCode) throws InvalidGameCodeException {
 		if (gameCode.length() < 6)
-			throw new InvalidGameCodeException(Main.getTranslationBundle().getString("gamecode_wrong_length_v2"));
+			throw new InvalidGameCodeException(Main.getTranslation("gamecode_wrong_length_v2"));
 
 		int a = v2Map[gameCode.charAt(0) - 65];
 		int b = v2Map[gameCode.charAt(1) - 65];

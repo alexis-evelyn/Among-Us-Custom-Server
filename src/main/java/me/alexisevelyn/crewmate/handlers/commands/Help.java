@@ -30,8 +30,7 @@ public class Help implements Command {
 	}
 
 	public void execute(String command, Terminal terminal) {
-		ResourceBundle translation = Main.getTranslationBundle();
-		String helpFormat = translation.getString("help_command_format");
+		String helpFormat = Main.getTranslation("help_command_format");
 
 		try {
 			for (Class<? extends Command> commandHandler : commands) {
@@ -47,11 +46,11 @@ public class Help implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("help_command");
+		return Main.getTranslation("help_command");
 	}
 
 	@Override
 	public String getHelp() {
-		return Main.getTranslationBundle().getString("help_command_help");
+		return Main.getTranslation("help_command_help");
 	}
 }

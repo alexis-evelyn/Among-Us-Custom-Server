@@ -71,14 +71,14 @@ public class SyncSettingsPacket {
 		// C->S - 00b0   65 78 69 73 08 00 00 00 00 00                     exis......
 
 		if (packet.getLength() < 4)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("initial_game_settings_invalid_size"));
 
 		byte[] buffer = packet.getData();
 
 		// Must Equal 01 00 03 (Join Game Via Code) or 01 00 04 (Create Game)
 		// TODO: Toss Check!!!
 		if (!(buffer[0] == SendOption.RELIABLE.getByte() && buffer[1] == 0x00) || !(buffer[2] == 0x04 || buffer[2] == 0x03))
-			// return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("initial_game_settings_unknown_join_type"));
+			// return ClosePacket.closeWithMessage(Main.getTranslation("initial_game_settings_unknown_join_type"));
 			return new byte[0];
 
 		byte unknown = buffer[3]; // 180 for Alexis and 172 for Hi - +8

@@ -2,16 +2,28 @@ package me.alexisevelyn.exampleplugin;
 
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.api.Plugin;
+import me.alexisevelyn.crewmate.api.ResourceBundleHandler;
 
 public class Main extends Plugin {
+	ResourceBundleHandler resourceBundleHandler;
+
 	@Override
 	public void onEnable() {
-		LogHelper.printLine("Example Plugin Enable!!! Will be replaced with translation friendly logging methods later!!!");
+		// Not Recommended Method - Unsure How To Use
+		resourceBundleHandler = new ResourceBundleHandler();
+		resourceBundleHandler.registerResourceBundle(new TestResourceBundle());
+
+		LogHelper.printLine(resourceBundleHandler.getString("example_plugin_enabled"));
+	}
+
+	//@Override
+	public void onEnable(ResourceBundleHandler resourceBundleHandler) {
+		resourceBundleHandler.registerResourceBundle(new TestResourceBundle());
 	}
 
 	@Override
 	public void onDisable() {
-		LogHelper.printLine("Example Plugin Disable!!! Will be replaced with translation friendly logging methods later!!!");
+		LogHelper.printLine(resourceBundleHandler.getString("example_plugin_disabled"));
 	}
 
 	@Override

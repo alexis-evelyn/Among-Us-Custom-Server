@@ -122,199 +122,197 @@ public enum Hat {
 	@NotNull
 	@SuppressWarnings("PMD.ExcessiveMethodLength")
 	public static String getHatName(@NotNull Hat hat) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (hat) {
 			case NONE:
-				return translation.getString("hat_none");
+				return Main.getTranslation("hat_none");
 			case ASTRONAUT:
-				return translation.getString("hat_astronaut");
+				return Main.getTranslation("hat_astronaut");
 			case BASEBALL_CAP:
-				return translation.getString("hat_baseball_cap");
+				return Main.getTranslation("hat_baseball_cap");
 			case BRAIN_SLUG:
-				return translation.getString("hat_brain_slug");
+				return Main.getTranslation("hat_brain_slug");
 			case BUSH:
-				return translation.getString("hat_bush");
+				return Main.getTranslation("hat_bush");
 			case CAPTAIN:
-				return translation.getString("hat_captain");
+				return Main.getTranslation("hat_captain");
 			case DOUBLE_TOP_HAT:
-				return translation.getString("hat_double_top_hat");
+				return Main.getTranslation("hat_double_top_hat");
 			case FLOWERPOT:
-				return translation.getString("hat_flowerpot");
+				return Main.getTranslation("hat_flowerpot");
 			case GOGGLES:
-				return translation.getString("hat_goggles");
+				return Main.getTranslation("hat_goggles");
 			case HARD_HAT:
-				return translation.getString("hat_hard_hat");
+				return Main.getTranslation("hat_hard_hat");
 			case MILITARY:
-				return translation.getString("hat_military");
+				return Main.getTranslation("hat_military");
 			case PAPER:
-				return translation.getString("hat_paper");
+				return Main.getTranslation("hat_paper");
 			case PARTY_STRIPE:
-				return translation.getString("hat_party_stripe");
+				return Main.getTranslation("hat_party_stripe");
 			case POLICE:
-				return translation.getString("hat_police");
+				return Main.getTranslation("hat_police");
 			case STETHOSCOPE:
-				return translation.getString("hat_stethoscope");
+				return Main.getTranslation("hat_stethoscope");
 			case TOP_HAT:
-				return translation.getString("hat_top_hat");
+				return Main.getTranslation("hat_top_hat");
 			case TOWEL:
-				return translation.getString("hat_towel");
+				return Main.getTranslation("hat_towel");
 			case USHANKA:
-				return translation.getString("hat_ushanka");
+				return Main.getTranslation("hat_ushanka");
 			case VIKING:
-				return translation.getString("hat_viking");
+				return Main.getTranslation("hat_viking");
 			case WALL_GUARD:
-				return translation.getString("hat_wall_guard");
+				return Main.getTranslation("hat_wall_guard");
 			case SNOWMAN:
-				return translation.getString("hat_snowman");
+				return Main.getTranslation("hat_snowman");
 			case ANTLERS:
-				return translation.getString("hat_antlers");
+				return Main.getTranslation("hat_antlers");
 			case XMAS_LIGHTS:
-				return translation.getString("hat_xmas_lights");
+				return Main.getTranslation("hat_xmas_lights");
 			case SANTA:
-				return translation.getString("hat_santa");
+				return Main.getTranslation("hat_santa");
 			case XMAS_TREE:
-				return translation.getString("hat_xmas_tree");
+				return Main.getTranslation("hat_xmas_tree");
 			case GIFT:
-				return translation.getString("hat_gift");
+				return Main.getTranslation("hat_gift");
 			case CANDY_CANES:
-				return translation.getString("hat_candy_canes");
+				return Main.getTranslation("hat_candy_canes");
 			case ELF_HAT:
-				return translation.getString("hat_elf_hat");
+				return Main.getTranslation("hat_elf_hat");
 			case TWENTY_NINETEEN_PARTY:
-				return translation.getString("hat_2019_party");
+				return Main.getTranslation("hat_2019_party");
 			case WHITE:
-				return translation.getString("hat_white");
+				return Main.getTranslation("hat_white");
 			case CROWN:
-				return translation.getString("hat_crown");
+				return Main.getTranslation("hat_crown");
 			case EYEBROWS:
-				return translation.getString("hat_eyebrows");
+				return Main.getTranslation("hat_eyebrows");
 			case ANGEL_HALO:
-				return translation.getString("hat_angel_halo");
+				return Main.getTranslation("hat_angel_halo");
 			case ELF_CAP:
-				return translation.getString("hat_elf_cap");
+				return Main.getTranslation("hat_elf_cap");
 			case FLAT_CAP:
-				return translation.getString("hat_flat_cap");
+				return Main.getTranslation("hat_flat_cap");
 			case PLUNGER:
-				return translation.getString("hat_plunger");
+				return Main.getTranslation("hat_plunger");
 			case SNORKEL:
-				return translation.getString("hat_snorkel");
+				return Main.getTranslation("hat_snorkel");
 			case STICKMIN:
-				return translation.getString("hat_stickmin");
+				return Main.getTranslation("hat_stickmin");
 			case STRAW:
-				return translation.getString("hat_straw");
+				return Main.getTranslation("hat_straw");
 			case SHERIFF:
-				return translation.getString("hat_sheriff");
+				return Main.getTranslation("hat_sheriff");
 			case EYEBALL_LAMP:
-				return translation.getString("hat_eyeball_lamp");
+				return Main.getTranslation("hat_eyeball_lamp");
 			case TOILET_PAPER:
-				return translation.getString("hat_toilet_paper");
+				return Main.getTranslation("hat_toilet_paper");
 			case TOPPAT_CLAN_LEADER:
-				return translation.getString("hat_toppat_clan_leader");
+				return Main.getTranslation("hat_toppat_clan_leader");
 			case BLACK_FEDORA:
-				return translation.getString("hat_black_fedora");
+				return Main.getTranslation("hat_black_fedora");
 			case SKI_GOGGLES:
-				return translation.getString("hat_ski_goggles");
+				return Main.getTranslation("hat_ski_goggles");
 			case LANDING_HEADSET:
-				return translation.getString("hat_landing_headset");
+				return Main.getTranslation("hat_landing_headset");
 			case MIRA_HAZMAT:
-				return translation.getString("hat_mira_hazmat");
+				return Main.getTranslation("hat_mira_hazmat");
 			case MEDICAL_MASK:
-				return translation.getString("hat_medical_mask");
+				return Main.getTranslation("hat_medical_mask");
 			case MIRA_SECURITY_MASK:
-				return translation.getString("hat_mira_security_mask");
+				return Main.getTranslation("hat_mira_security_mask");
 			case SAFARI:
-				return translation.getString("hat_safari");
+				return Main.getTranslation("hat_safari");
 			case BANANA:
-				return translation.getString("hat_banana");
+				return Main.getTranslation("hat_banana");
 			case BEANIE:
-				return translation.getString("hat_beanie");
+				return Main.getTranslation("hat_beanie");
 			case BEAR_EARS:
-				return translation.getString("hat_bear_ears");
+				return Main.getTranslation("hat_bear_ears");
 			case CHEESE:
-				return translation.getString("hat_cheese");
+				return Main.getTranslation("hat_cheese");
 			case CHERRY:
-				return translation.getString("hat_cherry");
+				return Main.getTranslation("hat_cherry");
 			case EGG:
-				return translation.getString("hat_egg");
+				return Main.getTranslation("hat_egg");
 			case GREEN_FEDORA:
-				return translation.getString("hat_green_fedora");
+				return Main.getTranslation("hat_green_fedora");
 			case FLAMINGO:
-				return translation.getString("hat_flamingo");
+				return Main.getTranslation("hat_flamingo");
 			case FLOWER:
-				return translation.getString("hat_flower");
+				return Main.getTranslation("hat_flower");
 			case KNIGHT_HELMET:
-				return translation.getString("hat_knight_helmet");
+				return Main.getTranslation("hat_knight_helmet");
 			case PLANT:
-				return translation.getString("hat_plant");
+				return Main.getTranslation("hat_plant");
 			case CAT_HEAD:
-				return translation.getString("hat_cat_head");
+				return Main.getTranslation("hat_cat_head");
 			case BAT_WINGS:
-				return translation.getString("hat_bat_wings");
+				return Main.getTranslation("hat_bat_wings");
 			case DEVIL_HORNS:
-				return translation.getString("hat_devil_horns");
+				return Main.getTranslation("hat_devil_horns");
 			case MOHAWK:
-				return translation.getString("hat_mohawk");
+				return Main.getTranslation("hat_mohawk");
 			case PUMPKIN:
-				return translation.getString("hat_pumpkin");
+				return Main.getTranslation("hat_pumpkin");
 			case SPOOKY_PAPER_BAG:
-				return translation.getString("hat_spooky_paper_bag");
+				return Main.getTranslation("hat_spooky_paper_bag");
 			case WITCH:
-				return translation.getString("hat_witch");
+				return Main.getTranslation("hat_witch");
 			case WOLF_EARS:
-				return translation.getString("hat_wolf_ears");
+				return Main.getTranslation("hat_wolf_ears");
 			case PIRATE:
-				return translation.getString("hat_pirate");
+				return Main.getTranslation("hat_pirate");
 			case PLAGUE_DOCTOR:
-				return translation.getString("hat_plague_doctor");
+				return Main.getTranslation("hat_plague_doctor");
 			case KNIFE:
-				return translation.getString("hat_knife");
+				return Main.getTranslation("hat_knife");
 			case HOCKEY_MASK:
-				return translation.getString("hat_hockey_mask");
+				return Main.getTranslation("hat_hockey_mask");
 			case MINER_GEAR:
-				return translation.getString("hat_miner_gear");
+				return Main.getTranslation("hat_miner_gear");
 			case WINTER_GEAR:
-				return translation.getString("hat_winter_gear");
+				return Main.getTranslation("hat_winter_gear");
 			case ARCHEOLOGIST:
-				return translation.getString("hat_archaeologist");
+				return Main.getTranslation("hat_archaeologist");
 			case ANTENNA:
-				return translation.getString("hat_antenna");
+				return Main.getTranslation("hat_antenna");
 			case BALLOON:
-				return translation.getString("hat_balloon");
+				return Main.getTranslation("hat_balloon");
 			case BIRD_NEST:
-				return translation.getString("hat_bird_nest");
+				return Main.getTranslation("hat_bird_nest");
 			case BANDANNA_BLACK:
-				return translation.getString("hat_bandanna_black");
+				return Main.getTranslation("hat_bandanna_black");
 			case CAUTION_SIGN:
-				return translation.getString("hat_caution_sign");
+				return Main.getTranslation("hat_caution_sign");
 			case CHEF:
-				return translation.getString("hat_chef");
+				return Main.getTranslation("hat_chef");
 			case CCC:
-				return translation.getString("hat_ccc");
+				return Main.getTranslation("hat_ccc");
 			case DO_RAG:
-				return translation.getString("hat_do_rag");
+				return Main.getTranslation("hat_do_rag");
 			case DUM_STICKY_NOTE:
-				return translation.getString("hat_dum_sticky_note");
+				return Main.getTranslation("hat_dum_sticky_note");
 			case FEZ:
-				return translation.getString("hat_fez");
+				return Main.getTranslation("hat_fez");
 			case MILITARY_GENERAL:
-				return translation.getString("hat_military_general");
+				return Main.getTranslation("hat_military_general");
 			case POMPADOUR:
-				return translation.getString("hat_pompadour");
+				return Main.getTranslation("hat_pompadour");
 			case HUNTER:
-				return translation.getString("hat_hunter");
+				return Main.getTranslation("hat_hunter");
 			case MILITARY_HELMET:
-				return translation.getString("hat_military_helmet");
+				return Main.getTranslation("hat_military_helmet");
 			case CREWMATE:
-				return translation.getString("hat_crewmate");
+				return Main.getTranslation("hat_crewmate");
 			case NINJA_MASK:
-				return translation.getString("hat_ninja_mask");
+				return Main.getTranslation("hat_ninja_mask");
 			case RAM_HORNS:
-				return translation.getString("hat_ram_horns");
+				return Main.getTranslation("hat_ram_horns");
 			case SNOW_CREWMATE:
-				return translation.getString("hat_snow_crewmate");
+				return Main.getTranslation("hat_snow_crewmate");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

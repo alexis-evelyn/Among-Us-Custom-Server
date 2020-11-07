@@ -79,77 +79,75 @@ public enum Language {
 	@NotNull
 	@SuppressWarnings("PMD.ExcessiveMethodLength")
 	public static String getLanguageName(@NotNull Language language) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (language) {
 			case ARABIC:
-				return translation.getString("arabic");
+				return Main.getTranslation("arabic");
 			case ENGLISH:
-				return translation.getString("english");
+				return Main.getTranslation("english");
 			case FILIPINO:
-				return translation.getString("filipino");
+				return Main.getTranslation("filipino");
 			case KOREAN:
-				return translation.getString("korean");
+				return Main.getTranslation("korean");
 			case OTHER:
-				return translation.getString("other");
+				return Main.getTranslation("other");
 			case POLISH:
-				return translation.getString("polish");
+				return Main.getTranslation("polish");
 			case PORTUGUESE:
-				return translation.getString("portuguese");
+				return Main.getTranslation("portuguese");
 			case RUSSIAN:
-				return translation.getString("russian");
+				return Main.getTranslation("russian");
 			case SPANISH:
-				return translation.getString("spanish");
+				return Main.getTranslation("spanish");
 			case LANGUAGE_TEN:
-				return translation.getString("language_ten");
+				return Main.getTranslation("language_ten");
 			case LANGUAGE_ELEVEN:
-				return translation.getString("language_eleven");
+				return Main.getTranslation("language_eleven");
 			case LANGUAGE_TWELVE:
-				return translation.getString("language_twelve");
+				return Main.getTranslation("language_twelve");
 			case LANGUAGE_THIRTEEN:
-				return translation.getString("language_thirteen");
+				return Main.getTranslation("language_thirteen");
 			case LANGUAGE_FOURTEEN:
-				return translation.getString("language_fourteen");
+				return Main.getTranslation("language_fourteen");
 			case LANGUAGE_FIFTEEN:
-				return translation.getString("language_fifteen");
+				return Main.getTranslation("language_fifteen");
 			case LANGUAGE_SIXTEEN:
-				return translation.getString("language_sixteen");
+				return Main.getTranslation("language_sixteen");
 			case LANGUAGE_SEVENTEEN:
-				return translation.getString("language_seventeen");
+				return Main.getTranslation("language_seventeen");
 			case LANGUAGE_EIGHTEEN:
-				return translation.getString("language_eighteen");
+				return Main.getTranslation("language_eighteen");
 			case LANGUAGE_NINETEEN:
-				return translation.getString("language_nineteen");
+				return Main.getTranslation("language_nineteen");
 			case LANGUAGE_TWENTY:
-				return translation.getString("language_twenty");
+				return Main.getTranslation("language_twenty");
 			case LANGUAGE_TWENTY_ONE:
-				return translation.getString("language_twenty_one");
+				return Main.getTranslation("language_twenty_one");
 			case LANGUAGE_TWENTY_TWO:
-				return translation.getString("language_twenty_two");
+				return Main.getTranslation("language_twenty_two");
 			case LANGUAGE_TWENTY_THREE:
-				return translation.getString("language_twenty_three");
+				return Main.getTranslation("language_twenty_three");
 			case LANGUAGE_TWENTY_FOUR:
-				return translation.getString("language_twenty_four");
+				return Main.getTranslation("language_twenty_four");
 			case LANGUAGE_TWENTY_FIVE:
-				return translation.getString("language_twenty_five");
+				return Main.getTranslation("language_twenty_five");
 			case LANGUAGE_TWENTY_SIX:
-				return translation.getString("language_twenty_six");
+				return Main.getTranslation("language_twenty_six");
 			case LANGUAGE_TWENTY_SEVEN:
-				return translation.getString("language_twenty_seven");
+				return Main.getTranslation("language_twenty_seven");
 			case LANGUAGE_TWENTY_EIGHT:
-				return translation.getString("language_twenty_eight");
+				return Main.getTranslation("language_twenty_eight");
 			case LANGUAGE_TWENTY_NINE:
-				return translation.getString("language_twenty_nine");
+				return Main.getTranslation("language_twenty_nine");
 			case LANGUAGE_THIRTY:
-				return translation.getString("language_thirty");
+				return Main.getTranslation("language_thirty");
 			case LANGUAGE_THIRTY_ONE:
-				return translation.getString("language_thirty_one");
+				return Main.getTranslation("language_thirty_one");
 			case LANGUAGE_THIRTY_TWO:
-				return translation.getString("language_thirty_two");
+				return Main.getTranslation("language_thirty_two");
 			case UNSPECIFIED:
-				return translation.getString("unspecified");
+				return Main.getTranslation("unspecified");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 
@@ -164,7 +162,7 @@ public enum Language {
 		StringBuilder printableLanguagesList = new StringBuilder();
 
 		// Append Delimiters (Usually Comma + Space) To List and Then Remove Last Delimiter
-		String delimiter = Main.getTranslationBundle().getString("list_delimiter_logged");
+		String delimiter = Main.getTranslation("list_delimiter_logged");
 		for (Language language : languages) {
 			printableLanguagesList.append(getLanguageName(language)).append(delimiter);
 		}

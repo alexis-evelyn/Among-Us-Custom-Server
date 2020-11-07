@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.ResourceBundle;
 
 public enum Map {
 	// Not A Map (-1 == 255)
@@ -44,29 +43,27 @@ public enum Map {
 
 	@NotNull
 	public static String getMapName(@NotNull Map map) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (map) {
 			case SKELD:
-				return translation.getString("skeld");
+				return Main.getTranslation("skeld");
 			case MIRA_HQ:
-				return translation.getString("mira_hq");
+				return Main.getTranslation("mira_hq");
 			case POLUS:
-				return translation.getString("polus");
+				return Main.getTranslation("polus");
 			case STICKMIN:
-				return translation.getString("stickmin");
+				return Main.getTranslation("stickmin");
 			case MAP_FIVE:
-				return translation.getString("map_five");
+				return Main.getTranslation("map_five");
 			case MAP_SIX:
-				return translation.getString("map_six");
+				return Main.getTranslation("map_six");
 			case MAP_SEVEN:
-				return translation.getString("map_seven");
+				return Main.getTranslation("map_seven");
 			case MAP_EIGHT:
-				return translation.getString("map_eight");
+				return Main.getTranslation("map_eight");
 			case UNSPECIFIED:
-				return translation.getString("unspecified");
+				return Main.getTranslation("unspecified");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

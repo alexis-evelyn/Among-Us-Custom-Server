@@ -11,12 +11,12 @@ public class Exit implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("exit_command");
+		return Main.getTranslation("exit_command");
 	}
 
 	@Override
 	public String getHelp() {
-		return Main.getTranslationBundle().getString("exit_command_help");
+		return Main.getTranslation("exit_command_help");
 	}
 
 	private static void exit(Terminal terminal) {

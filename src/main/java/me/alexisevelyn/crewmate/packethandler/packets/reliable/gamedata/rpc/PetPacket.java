@@ -14,15 +14,15 @@ public class PetPacket {
 	@NotNull
 	public static byte[] handlePets(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, int netID, @NotNull byte... payload) {
 		if (payload.length < 1)
-			return ClosePacket.closeWithMessage(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 1));
+			return ClosePacket.closeWithMessage(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 1));
 
 		byte petByte = payload[0];
 		Pet pet = Pet.getPet(petByte);
 
 		if (pet == null)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("pet_unknown"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("pet_unknown"));
 
-		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("pet_packet"), Pet.getPetName(pet)));
+		LogHelper.printLine(String.format(Main.getTranslation("pet_packet"), Pet.getPetName(pet)));
 
 		PlayerChangePetEvent event = new PlayerChangePetEvent(pet);
 		event.call(server);

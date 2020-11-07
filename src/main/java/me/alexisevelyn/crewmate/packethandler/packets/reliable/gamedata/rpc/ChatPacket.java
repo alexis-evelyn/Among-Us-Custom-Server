@@ -21,13 +21,13 @@ public class ChatPacket {
 
 		// Make Sure Payload Length Is Big Enough
 		if ((payload.length - 1) < messageLength)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("chat_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("chat_packet_invalid_size"));
 
 		String chatMessage = new String(PacketHelper.extractFirstPartBytes(messageLength, PacketHelper.extractSecondPartBytes(1, payload)), StandardCharsets.UTF_8); // Can we assume it will always be UTF-8?
 
 		new PlayerChatEvent(netID, chatMessage).call(server);
 
-		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("received_chat"), netID, chatMessage));
+		LogHelper.printLine(String.format(Main.getTranslation("received_chat"), netID, chatMessage));
 		return new byte[0];
 	}
 }

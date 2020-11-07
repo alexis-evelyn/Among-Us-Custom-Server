@@ -14,15 +14,15 @@ public class SkinPacket {
 	@NotNull
 	public static byte[] handleSkins(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, int netID, @NotNull byte... payload) {
 		if (payload.length < 1)
-			return ClosePacket.closeWithMessage(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 1));
+			return ClosePacket.closeWithMessage(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 1));
 
 		byte skinByte = payload[0];
 		Skin skin = Skin.getSkin(skinByte);
 
 		if (skin == null)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("skin_unknown"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("skin_unknown"));
 
-		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("skin_packet"), Skin.getSkinName(skin)));
+		LogHelper.printLine(String.format(Main.getTranslation("skin_packet"), Skin.getSkinName(skin)));
 
 		PlayerChangeSkinEvent event = new PlayerChangeSkinEvent(skin);
 		event.call(server);

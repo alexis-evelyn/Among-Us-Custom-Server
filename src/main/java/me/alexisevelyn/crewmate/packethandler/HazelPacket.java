@@ -35,7 +35,7 @@ public class HazelPacket {
 				return HandshakePacket.handleHandshake(server, packet.getAddress(), packet.getPort(), handshakeBytes);
 			case ACKNOWLEDGEMENT: // Acknowledgement of Received Data From Client
 				if (packet.getLength() < 4)
-					return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("nonce_wrong_size"));
+					return ClosePacket.closeWithMessage(Main.getTranslation("nonce_wrong_size"));
 
 				// Nonce Bytes
 				byte[] nonce = new byte[] {packet.getData()[1], packet.getData()[2]};

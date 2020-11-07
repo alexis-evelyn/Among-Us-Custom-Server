@@ -1,6 +1,6 @@
 package me.alexisevelyn.crewmate.packethandler.packets.reliable;
 
-import me.alexisevelyn.crewmate.GameCodeHelper;
+import me.alexisevelyn.crewmate.api.GameCodeHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
@@ -54,7 +54,7 @@ public class JoinLobbyPacket {
 			// LogHelper.printLineErr(exception.getMessage());
 			// exception.printStackTrace();
 
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("gamecode_invalid_code_exception"));
 		}
 	}
 
@@ -79,7 +79,7 @@ public class JoinLobbyPacket {
 
 		// Validate Size of payload
 		if (payload.length != 5)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("join_game_invalid_size"));
+			throw new InvalidBytesException(Main.getTranslation("join_game_invalid_size"));
 
 		byte[] gameCodeBytes = new byte[] {payload[0], payload[1], payload[2], payload[3]};
 		Map[] maps = MapSearch.getMapArray(payload[4]); // Client Owned Maps

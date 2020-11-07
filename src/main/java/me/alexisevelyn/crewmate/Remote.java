@@ -13,6 +13,7 @@ import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.server.shell.ShellFactory;
+import org.apiguardian.api.API;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import java.security.*;
 import java.time.Duration;
 import java.util.ArrayList;
 
+@API(status = API.Status.INTERNAL)
 public class Remote extends Thread {
 	// https://github.com/apache/mina-sshd/blob/master/docs/server-setup.md
 
@@ -58,11 +60,12 @@ public class Remote extends Thread {
 		try {
 			sshd.start();
 		} catch (IOException exception) {
-			LogHelper.printLine(Main.getTranslationBundle().getString("ssh_io_exception"));
+			LogHelper.printLine(Main.getTranslation("ssh_io_exception"));
 		}
 	}
 }
 
+@API(status = API.Status.INTERNAL)
 class TempKeyPairProvider implements KeyPairProvider {
 	private final KeyPairGenerator keyPairGenerator;
 	private final KeyPair keyPair;
@@ -85,6 +88,7 @@ class TempKeyPairProvider implements KeyPairProvider {
 	}
 }
 
+@API(status = API.Status.INTERNAL)
 class TempPasswordAuthenticator implements PasswordAuthenticator {
 	@Override
 	public boolean authenticate(String username, String password, ServerSession session) throws PasswordChangeRequiredException, AsyncAuthException {
@@ -93,10 +97,11 @@ class TempPasswordAuthenticator implements PasswordAuthenticator {
 
 	@Override
 	public boolean handleClientPasswordChangeRequest(ServerSession session, String username, String oldPassword, String newPassword) {
-		throw new UnsupportedOperationException(Main.getTranslationBundle().getString("ssh_password_change_not_supported"));
+		throw new UnsupportedOperationException(Main.getTranslation("ssh_password_change_not_supported"));
 	}
 }
 
+@API(status = API.Status.INTERNAL)
 class TempShellFactory implements ShellFactory {
 	@Override
 	public Command createShell(ChannelSession channel) throws IOException {
@@ -104,6 +109,7 @@ class TempShellFactory implements ShellFactory {
 	}
 }
 
+@API(status = API.Status.INTERNAL)
 class TempCommand implements Command, Runnable {
 	// https://github.com/apache/mina-sshd/blob/master/docs/commands.md
 

@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.ResourceBundle;
 
 public enum SendOption {
 	// Names From: https://github.com/willardf/Hazel-Networking/blob/master/Hazel/SendOption.cs
@@ -33,25 +32,23 @@ public enum SendOption {
 
 	@NotNull
 	public static String getSendOptionName(@NotNull SendOption sendOptionType) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (sendOptionType) {
 			case NONE:
-				return translation.getString("send_option_none");
+				return Main.getTranslation("send_option_none");
 			case RELIABLE:
-				return translation.getString("send_option_reliable");
+				return Main.getTranslation("send_option_reliable");
 			case HELLO:
-				return translation.getString("send_option_hello");
+				return Main.getTranslation("send_option_hello");
 			case DISCONNECT:
-				return translation.getString("send_option_disconnect");
+				return Main.getTranslation("send_option_disconnect");
 			case ACKNOWLEDGEMENT:
-				return translation.getString("send_option_acknowledgment");
+				return Main.getTranslation("send_option_acknowledgment");
 			case FRAGMENT:
-				return translation.getString("send_option_fragment");
+				return Main.getTranslation("send_option_fragment");
 			case PING:
-				return translation.getString("send_option_ping");
+				return Main.getTranslation("send_option_ping");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

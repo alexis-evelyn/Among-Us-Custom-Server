@@ -45,7 +45,7 @@ public class MasterListPacket {
 		// LogHelper.printLine("Queried Port: " + port);
 
 		// LogHelper.printLine("Encoded IP: " + Arrays.toString(queriedIP.getAddress().getAddress()));
-		LogHelper.printLine(String.format(Main.getTranslationBundle().getString("encoded_port_logged"), Arrays.toString(encodedPort)));
+		LogHelper.printLine(String.format(Main.getTranslation("encoded_port_logged"), Arrays.toString(encodedPort)));
 
 		// Convert Player Count to Little Endian Bytes
 		short playerCount = 257;

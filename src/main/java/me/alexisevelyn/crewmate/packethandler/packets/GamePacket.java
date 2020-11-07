@@ -27,18 +27,18 @@ public class GamePacket {
 	public static byte[] handleAmongUsPacket(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// Needs to Be At Least 6 Bytes Long To Be A Valid Reliable Packet
 		if (payloadBytes.length < 3)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("game_packet_invalid_size"));
 
 		short payloadLength = ByteBuffer.wrap(new byte[] {payloadBytes[0], payloadBytes[1]}).order(ByteOrder.LITTLE_ENDIAN).getShort();
 
 		if (payloadLength > (payloadBytes.length - 3))
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_payload_length_too_long"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("game_packet_payload_length_too_long"));
 
 		GamePacketType type = GamePacketType.getByte(payloadBytes[2]);
 
 		// Sanitization Check
 		if (type == null)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_unknown_type"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("game_packet_unknown_type"));
 
 		// TODO: Add support for looping through all the payloads
 		byte[] packetData = PacketHelper.extractFirstPartBytes(payloadLength, PacketHelper.extractSecondPartBytes(3, payloadBytes));
@@ -65,7 +65,7 @@ public class GamePacket {
 			case JOINED_GAME: // 0x07
 			case REDIRECT_GAME: // 0x0d
 			default:
-				return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_unknown_type"));
+				return ClosePacket.closeWithMessage(Main.getTranslation("game_packet_unknown_type"));
 		}
 	}
 }

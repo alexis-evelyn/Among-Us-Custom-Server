@@ -43,43 +43,41 @@ public enum Skin {
 
 	@NotNull
 	public static String getSkinName(@NotNull Skin skin) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (skin) {
 			case NONE:
-				return translation.getString("skin_none");
+				return Main.getTranslation("skin_none");
 			case ASTRONAUT:
-				return translation.getString("skin_astronaut");
+				return Main.getTranslation("skin_astronaut");
 			case CAPTAIN:
-				return translation.getString("skin_captain");
+				return Main.getTranslation("skin_captain");
 			case MECHANIC:
-				return translation.getString("skin_mechanic");
+				return Main.getTranslation("skin_mechanic");
 			case MILITARY:
-				return translation.getString("skin_military");
+				return Main.getTranslation("skin_military");
 			case POLICE:
-				return translation.getString("skin_police");
+				return Main.getTranslation("skin_police");
 			case SCIENTIST:
-				return translation.getString("skin_scientist");
+				return Main.getTranslation("skin_scientist");
 			case SUIT_BLACK:
-				return translation.getString("skin_suit_black");
+				return Main.getTranslation("skin_suit_black");
 			case SUIT_WHITE:
-				return translation.getString("skin_suit_white");
+				return Main.getTranslation("skin_suit_white");
 			case THE_WALL:
-				return translation.getString("skin_the_wall");
+				return Main.getTranslation("skin_the_wall");
 			case HAZMAT:
-				return translation.getString("skin_hazmat");
+				return Main.getTranslation("skin_hazmat");
 			case SECURITY:
-				return translation.getString("skin_security");
+				return Main.getTranslation("skin_security");
 			case TARMAC:
-				return translation.getString("skin_tarmac");
+				return Main.getTranslation("skin_tarmac");
 			case MINER:
-				return translation.getString("skin_miner");
+				return Main.getTranslation("skin_miner");
 			case WINTER:
-				return translation.getString("skin_winter");
+				return Main.getTranslation("skin_winter");
 			case ARCHAEOLOGIST:
-				return translation.getString("skin_archaeologist");
+				return Main.getTranslation("skin_archaeologist");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

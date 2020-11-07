@@ -44,13 +44,13 @@ public class GameDataPacket {
 
 		// Needs to be a minimum of 7 bytes to be able to parse game data type
 		if (payload.length < 7)
-			return ClosePacket.closeWithMessage(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 7));
+			return ClosePacket.closeWithMessage(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 7));
 
 		GameDataType gameDataType = GameDataType.getGameDataType(payload[6]);
 
 		// Sanitization
 		if (gameDataType == null)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("unknown_game_data_type"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("unknown_game_data_type"));
 
 		byte[] gameDataPayload = PacketHelper.extractSecondPartBytes(7, payload);
 

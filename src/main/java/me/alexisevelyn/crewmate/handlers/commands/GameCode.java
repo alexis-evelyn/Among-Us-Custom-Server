@@ -1,6 +1,6 @@
 package me.alexisevelyn.crewmate.handlers.commands;
 
-import me.alexisevelyn.crewmate.GameCodeHelper;
+import me.alexisevelyn.crewmate.api.GameCodeHelper;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Terminal;
@@ -11,12 +11,11 @@ import java.util.ResourceBundle;
 
 public class GameCode implements Command {
 	public void execute(String command, Terminal terminal) {
-		ResourceBundle translation = Main.getTranslationBundle();
 		String[] arguments = command.trim().split("\\s+");
 
 		// Needs Argument
 		if (arguments.length != 3) {
-			String wrongArgumentLengthMessage = String.format(translation.getString("gamecode_invalid_argument_length"), translation.getString("gamecode_bytes_argument"), translation.getString("gamecode_string_argument"));
+			String wrongArgumentLengthMessage = String.format(Main.getTranslation("gamecode_invalid_argument_length"), Main.getTranslation("gamecode_bytes_argument"), Main.getTranslation("gamecode_string_argument"));
 			LogHelper.printLineErr(wrongArgumentLengthMessage);
 
 			return;
@@ -26,7 +25,7 @@ public class GameCode implements Command {
 		String convertType = arguments[1].trim();
 
 		// Convert To Bytes
-		if (convertType.equalsIgnoreCase(translation.getString("gamecode_bytes_argument"))) {
+		if (convertType.equalsIgnoreCase(Main.getTranslation("gamecode_bytes_argument"))) {
 			try {
 				this.convertStringToBytes(terminal, arguments);
 			} catch (InvalidGameCodeException e) {
@@ -35,7 +34,7 @@ public class GameCode implements Command {
 		}
 
 		// Convert To String
-		if (convertType.equalsIgnoreCase(translation.getString("gamecode_string_argument")))
+		if (convertType.equalsIgnoreCase(Main.getTranslation("gamecode_string_argument")))
 			this.convertBytesToString(terminal, arguments);
 	}
 
@@ -45,7 +44,7 @@ public class GameCode implements Command {
 
 		// Game Code is not valid if true
 		if (gameCodeBytes.length == 0) {
-			String invalidGameCodeMessage = Main.getTranslationBundle().getString("gamecode_not_valid");
+			String invalidGameCodeMessage = Main.getTranslation("gamecode_not_valid");
 
 			LogHelper.printLineErr(invalidGameCodeMessage);
 			return;
@@ -62,14 +61,14 @@ public class GameCode implements Command {
 
 		// Needs to be Valid String Length
 		if (argument.length() != 11) {
-			LogHelper.printLineErr(Main.getTranslationBundle().getString("gamecode_string_invalid_length"));
+			LogHelper.printLineErr(Main.getTranslation("gamecode_string_invalid_length"));
 
 			return;
 		}
 
 		// Needs to be Valid String Format
 		if (argument.charAt(2) != ':' || argument.charAt(5) != ':' || argument.charAt(8) != ':') {
-			LogHelper.printLineErr(Main.getTranslationBundle().getString("gamecode_string_invalid_format"));
+			LogHelper.printLineErr(Main.getTranslation("gamecode_string_invalid_format"));
 
 			return;
 		}
@@ -85,7 +84,7 @@ public class GameCode implements Command {
 			third = (byte) Integer.parseInt(preParsedBytes[2], 16);
 			fourth = (byte) Integer.parseInt(preParsedBytes[3], 16);
 		} catch (NumberFormatException exception) {
-			LogHelper.printLineErr(Main.getTranslationBundle().getString("gamecode_invalid_hex"));
+			LogHelper.printLineErr(Main.getTranslation("gamecode_invalid_hex"));
 
 			return;
 		}
@@ -96,7 +95,7 @@ public class GameCode implements Command {
 		try {
 			String gameCodeString = GameCodeHelper.parseGameCode(gameCodeBytes);
 
-			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("gamecode_string"), gameCodeString));
+			LogHelper.printLine(String.format(Main.getTranslation("gamecode_string"), gameCodeString));
 		} catch (InvalidGameCodeException | InvalidBytesException exception) {
 			LogHelper.printLineErr(exception.getMessage());
 		}
@@ -104,11 +103,11 @@ public class GameCode implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("gamecode_command");
+		return Main.getTranslation("gamecode_command");
 	}
 
 	@Override
 	public String getHelp() {
-		return Main.getTranslationBundle().getString("gamecode_command_help");
+		return Main.getTranslation("gamecode_command_help");
 	}
 }

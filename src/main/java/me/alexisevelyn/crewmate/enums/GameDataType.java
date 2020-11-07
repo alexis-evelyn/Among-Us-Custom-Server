@@ -36,26 +36,24 @@ public enum GameDataType {
 
 	@NotNull
 	public static String getGameDataTypeName(@NotNull GameDataType gameDataType) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (gameDataType) {
 			case COMPONENT_DATA:
-				return translation.getString("component_data");
+				return Main.getTranslation("component_data");
 			case RPC:
-				return translation.getString("rpc");
+				return Main.getTranslation("rpc");
 			case SPAWN:
-				return translation.getString("spawn");
+				return Main.getTranslation("spawn");
 			case DESPAWN:
-				return translation.getString("despawn");
+				return Main.getTranslation("despawn");
 			case SCENE_CHANGE:
-				return translation.getString("scene_change");
+				return Main.getTranslation("scene_change");
 			case READY:
-				return translation.getString("ready");
+				return Main.getTranslation("ready");
 			case CHANGE_SETTINGS:
-				return translation.getString("change_settings");
+				return Main.getTranslation("change_settings");
 			case UNKNOWN:
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

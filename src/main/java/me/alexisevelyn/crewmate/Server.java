@@ -1,5 +1,6 @@
 package me.alexisevelyn.crewmate;
 
+import me.alexisevelyn.crewmate.api.Config;
 import me.alexisevelyn.crewmate.api.Plugin;
 import me.alexisevelyn.crewmate.api.PluginLoader;
 import me.alexisevelyn.crewmate.enums.TerminalColors;
@@ -18,7 +19,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
-import java.util.ResourceBundle;
 
 public class Server extends Thread {
 	// Server Logger
@@ -49,7 +49,7 @@ public class Server extends Thread {
 		// Create Root Folder If It Does Not Exist
 		if (!root.exists() && !root.mkdirs()) {
 			// https://docs.oracle.com/javase/7/docs/api/java/nio/file/AccessDeniedException.html
-			throw new AccessDeniedException(String.format(config.getTranslations().getString("root_directory_failed_creation"), root.getAbsolutePath()));
+			throw new AccessDeniedException(String.format(config.getTranslation("root_directory_failed_creation"), root.getAbsolutePath()));
 		}
 
 		// Plugins Directory For Server Plugins
@@ -62,8 +62,6 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
-		ResourceBundle translation = Main.getTranslationBundle();
-		
 		// For Cleaning Up When Shutdown
 		this.setupShutdownHook();
 
@@ -76,12 +74,12 @@ public class Server extends Thread {
 			if (!justStarted) {
 				justStarted = true;
 
-				LogHelper.printLine(translation.getString("server_started"));
+				LogHelper.printLine(Main.getTranslation("server_started"));
 
 				// For Title
 				LogHelper.print(
 						TerminalColors.getTitle(
-								String.format(translation.getString("server_listening_title"), this.boundIP.getHostAddress(), this.port)
+								String.format(Main.getTranslation("server_listening_title"), this.boundIP.getHostAddress(), this.port)
 						)
 				);
 			}
@@ -139,10 +137,10 @@ public class Server extends Thread {
 			replyBuffer = HazelPacket.handlePacket(packet, this);
 		} catch (Exception exception) {
 			// Generic Catch All For Uncaught Exceptions
-			replyBuffer = ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+			replyBuffer = ClosePacket.closeWithMessage(Main.getTranslation("server_side_exception"));
 
 			// Log Uncaught Exception
-			LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("uncaught_server_side_exception"), exception.getMessage()));
+			LogHelper.printLineErr(String.format(Main.getTranslation("uncaught_server_side_exception"), exception.getMessage()));
 			exception.printStackTrace();
 		}
 
@@ -212,7 +210,7 @@ public class Server extends Thread {
 	private void shutdown() {
 		this.running = false;
 
-		LogHelper.printLine(Main.getTranslationBundle().getString("server_shutdown"));
+		LogHelper.printLine(Main.getTranslation("server_shutdown"));
 
 		// This never runs.
 		this.socket.close();

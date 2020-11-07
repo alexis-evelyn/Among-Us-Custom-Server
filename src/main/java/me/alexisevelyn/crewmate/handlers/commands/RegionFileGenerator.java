@@ -26,8 +26,6 @@ public class RegionFileGenerator implements Command {
 	}
 
 	private void simpleRegionFileSettings(String... arguments) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		// Defaults
 		String ipAddressRaw = "127.0.0.1";
 		int port = 22023;
@@ -41,16 +39,15 @@ public class RegionFileGenerator implements Command {
 			try {
 				port = Integer.parseInt(arguments[2]);
 			} catch (NumberFormatException e) {
-				LogHelper.printLineErr(translation.getString("region_file_generator_command_invalid_port"));
+				LogHelper.printLineErr(Main.getTranslation("region_file_generator_command_invalid_port"));
 			}
 		}
 
-		LogHelper.printLine(String.format(translation.getString("region_file_generator_command_settings_simple"), ipAddressRaw, port));
+		LogHelper.printLine(String.format(Main.getTranslation("region_file_generator_command_settings_simple"), ipAddressRaw, port));
 		this.createRegionFile(ipAddressRaw, port);
 	}
 
 	private void simpleNamedRegionFileSettings(String... arguments) {
-		ResourceBundle translation = Main.getTranslationBundle();
 		String displayName;
 		String ipAddressRaw;
 		int port;
@@ -62,19 +59,19 @@ public class RegionFileGenerator implements Command {
 		try {
 			port = Integer.parseInt(arguments[2]);
 		} catch (NumberFormatException e) {
-			LogHelper.printLineErr(translation.getString("region_file_generator_command_invalid_port"));
+			LogHelper.printLineErr(Main.getTranslation("region_file_generator_command_invalid_port"));
 			return;
 		}
 
 		// Set Display Name
 		displayName = arguments[3];
 
-		LogHelper.printLine(String.format(translation.getString("region_file_generator_command_settings_simple_named"), displayName, ipAddressRaw, port));
+		LogHelper.printLine(String.format(Main.getTranslation("region_file_generator_command_settings_simple_named"), displayName, ipAddressRaw, port));
 		this.createRegionFile(ipAddressRaw, port, displayName);
 	}
 
 	private void createRegionFile(@NotNull String ipAddressRaw, int port) {
-		String displayName = Main.getTranslationBundle().getString("region_file_generator_command_default_display_name");
+		String displayName = Main.getTranslation("region_file_generator_command_default_display_name");
 
 		this.createRegionFile(ipAddressRaw, port, displayName);
 	}
@@ -96,14 +93,14 @@ public class RegionFileGenerator implements Command {
 		} catch (UnknownHostException e) {
 			LogHelper.printLineErr(
 					String.format(
-							Main.getTranslationBundle().getString("region_file_generator_command_unknown_host"),
+							Main.getTranslation("region_file_generator_command_unknown_host"),
 							ipAddressRaw
 					)
 			);
 		} catch (IOException e) {
 			LogHelper.printLineErr(
 					String.format(
-							Main.getTranslationBundle().getString("region_file_generator_command_failed_create_file"),
+							Main.getTranslation("region_file_generator_command_failed_create_file"),
 							outFile.getAbsolutePath()
 					)
 			);
@@ -116,12 +113,12 @@ public class RegionFileGenerator implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("region_file_generator_command");
+		return Main.getTranslation("region_file_generator_command");
 	}
 
 	@Override
 	public String getHelp() {
-		String helpString = Main.getTranslationBundle().getString("region_file_generator_command_help");
+		String helpString = Main.getTranslation("region_file_generator_command_help");
 
 		return String.format(helpString, System.getProperty("user.dir"));
 	}
@@ -197,7 +194,7 @@ public class RegionFileGenerator implements Command {
 			fileOutputStream.flush();
 			// fileOutputStream.close(); // Apparently this is redundant
 
-			LogHelper.printLine(String.format(Main.getTranslationBundle().getString("region_file_generator_command_success_create_file"), outFile.getAbsolutePath()));
+			LogHelper.printLine(String.format(Main.getTranslation("region_file_generator_command_success_create_file"), outFile.getAbsolutePath()));
 		}
 	}
 }

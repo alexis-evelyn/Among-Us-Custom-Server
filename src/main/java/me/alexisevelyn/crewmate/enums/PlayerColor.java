@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.ResourceBundle;
 
 public enum PlayerColor {
 	RED((byte) 0),
@@ -40,35 +39,33 @@ public enum PlayerColor {
 
 	@NotNull
 	public static String getColorName(@NotNull PlayerColor playerColor) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (playerColor) {
 			case RED:
-				return translation.getString("color_red");
+				return Main.getTranslation("color_red");
 			case BLUE:
-				return translation.getString("color_blue");
+				return Main.getTranslation("color_blue");
 			case DARK_GREEN:
-				return translation.getString("color_dark_green");
+				return Main.getTranslation("color_dark_green");
 			case PINK:
-				return translation.getString("color_pink");
+				return Main.getTranslation("color_pink");
 			case ORANGE:
-				return translation.getString("color_orange");
+				return Main.getTranslation("color_orange");
 			case YELLOW:
-				return translation.getString("color_yellow");
+				return Main.getTranslation("color_yellow");
 			case DARK_GRAY:
-				return translation.getString("color_dark_gray");
+				return Main.getTranslation("color_dark_gray");
 			case WHITE:
-				return translation.getString("color_white");
+				return Main.getTranslation("color_white");
 			case PURPLE:
-				return translation.getString("color_purple");
+				return Main.getTranslation("color_purple");
 			case BROWN:
-				return translation.getString("color_brown");
+				return Main.getTranslation("color_brown");
 			case CYAN:
-				return translation.getString("color_cyan");
+				return Main.getTranslation("color_cyan");
 			case LIGHT_GREEN:
-				return translation.getString("color_light_green");
+				return Main.getTranslation("color_light_green");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

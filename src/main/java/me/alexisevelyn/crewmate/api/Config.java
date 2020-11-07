@@ -1,17 +1,19 @@
-package me.alexisevelyn.crewmate;
+package me.alexisevelyn.crewmate.api;
 
+import me.alexisevelyn.crewmate.Main;
+import org.apiguardian.api.API;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.io.File;
 import java.net.InetAddress;
 import java.net.URL;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Handles Configuration Options For Crewmate
  */
+@API(status = API.Status.MAINTAINED)
 public class Config {
 	private int serverPort = 22023;
 	private InetAddress serverAddress = null; // Null Means 0.0.0.0 which means bind anywhere
@@ -42,8 +44,12 @@ public class Config {
 			mainClassLoader.getResource("codes/ultrabanned.txt")
 	};
 
-	// Default Resource Bundle With Default Locale
-	private ResourceBundle translations = ResourceBundle.getBundle("translations/Main", Locale.getDefault());
+	// Resource Bundle Handler
+	private final ResourceBundleHandler resourceBundleHandler = new ResourceBundleHandler();
+
+	public Config() {
+		// Nada
+	}
 
 	/**
 	 * Get's the desired server's port
@@ -236,26 +242,15 @@ public class Config {
 	 *
 	 * @return translation bundle for server instance
 	 */
-	public ResourceBundle getTranslations() {
-		return this.translations;
+	public String getTranslation(@NotNull @PropertyKey(resourceBundle = ResourceBundleHandler.DEFAULT_BUNDLE_PATH) String key) {
+		return this.resourceBundleHandler.getString(key);
 	}
 
 	/**
-	 * Set's translation bundle for server instance
 	 *
-	 * @param locale locale to use with translation bundle
+	 * @return
 	 */
-	public void setTranslations(@NotNull Locale locale) {
-		setTranslations("translations/Main", locale);
-	}
-
-	/**
-	 * Set's translation bundle for server instance
-	 *
-	 * @param basename basename of translation file to use
-	 * @param locale locale to use with translation bundle
-	 */
-	public void setTranslations(@NotNull String basename, @NotNull Locale locale) {
-		this.translations = ResourceBundle.getBundle(basename, locale);
+	public ResourceBundleHandler getResourceBundleHandler() {
+		return this.resourceBundleHandler;
 	}
 }

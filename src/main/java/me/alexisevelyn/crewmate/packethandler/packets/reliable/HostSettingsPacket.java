@@ -1,6 +1,6 @@
 package me.alexisevelyn.crewmate.packethandler.packets.reliable;
 
-import me.alexisevelyn.crewmate.GameCodeHelper;
+import me.alexisevelyn.crewmate.api.GameCodeHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.api.Game;
@@ -62,9 +62,9 @@ public class HostSettingsPacket {
 			// LogHelper.printLineErr(e.getMessage());
 			// e.printStackTrace();
 
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("gamecode_invalid_code_exception"));
 		} catch(InvalidBytesException exception) {
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("game_packet_invalid_size"));
 		}
 	}
 
@@ -86,7 +86,7 @@ public class HostSettingsPacket {
 	@API(status = API.Status.EXPERIMENTAL)
 	private static byte[] useCustomCode(byte... code) throws InvalidBytesException {
 		if (code.length != 4)
-			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_exact"), 4));
+			throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_exact"), 4));
 
 		byte[] header = new byte[] {SendOption.RELIABLE.getByte(), 0x00, 0x01, 0x04, 0x00, 0x00};
 		return PacketHelper.mergeBytes(header, code);
@@ -135,9 +135,9 @@ public class HostSettingsPacket {
 		} catch (IOException | NullPointerException | AssertionError exception) {
 			exception.printStackTrace();
 
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("server_side_exception"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("server_side_exception"));
 		} catch (InvalidGameCodeException exception) {
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("gamecode_invalid_code_exception"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("gamecode_invalid_code_exception"));
 		}
 	}
 }

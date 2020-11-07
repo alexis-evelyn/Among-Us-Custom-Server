@@ -22,7 +22,7 @@ public class HostGameEvent extends Event {
 
     public void setGameCode(String gameCode) throws IllegalArgumentException {
         if (gameCode.length() != 4 && gameCode.length() != 6)
-            throw new IllegalArgumentException(Main.getTranslationBundle().getString("gamecode_wrong_length"));
+            throw new IllegalArgumentException(Main.getTranslation("gamecode_wrong_length"));
 
         this.gameCode = gameCode;
     }

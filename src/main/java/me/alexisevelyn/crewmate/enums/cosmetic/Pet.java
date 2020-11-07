@@ -39,33 +39,31 @@ public enum Pet {
 
 	@NotNull
 	public static String getPetName(@NotNull Pet pet) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (pet) {
 			case NONE:
-				return translation.getString("pet_none");
+				return Main.getTranslation("pet_none");
 			case ALIEN:
-				return translation.getString("pet_alien");
+				return Main.getTranslation("pet_alien");
 			case CREWMATE:
-				return translation.getString("pet_crewmate");
+				return Main.getTranslation("pet_crewmate");
 			case DOG:
-				return translation.getString("pet_dog");
+				return Main.getTranslation("pet_dog");
 			case STICKMIN:
-				return translation.getString("pet_stickmin");
+				return Main.getTranslation("pet_stickmin");
 			case HAMSTER:
-				return translation.getString("pet_hamster");
+				return Main.getTranslation("pet_hamster");
 			case ROBOT:
-				return translation.getString("pet_robot");
+				return Main.getTranslation("pet_robot");
 			case UFO:
-				return translation.getString("pet_ufo");
+				return Main.getTranslation("pet_ufo");
 			case ELLIE:
-				return translation.getString("pet_ellie");
+				return Main.getTranslation("pet_ellie");
 			case SQUIG:
-				return translation.getString("pet_squig");
+				return Main.getTranslation("pet_squig");
 			case BEDCRAB:
-				return translation.getString("pet_bedcrab");
+				return Main.getTranslation("pet_bedcrab");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

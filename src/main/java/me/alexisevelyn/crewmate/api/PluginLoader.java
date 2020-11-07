@@ -75,7 +75,7 @@ public class PluginLoader {
 
                     // Debug String - May Make Part of Production Loading For Server Admins
                     long loadTime = (stopTime - startTime);
-                    LogHelper.printLine(String.format(Main.getTranslationBundle().getString(loadTime == 1 ? "timing_file_output_singular" : "timing_file_output_plural"), plugin.getName(), (stopTime - startTime)));
+                    LogHelper.printLine(String.format(Main.getTranslation(loadTime == 1 ? "timing_file_output_singular" : "timing_file_output_plural"), plugin.getName(), (stopTime - startTime)));
 
                     if (mainClass == null)
                         continue;
@@ -84,16 +84,16 @@ public class PluginLoader {
                     Plugin newPlugin = findPlugin(mainClass);
 
                     if (newPlugin != null) {
-                        LogHelper.printLine(String.format(Main.getTranslationBundle().getString("registering_plugin"), plugin.getName()));
+                        LogHelper.printLine(String.format(Main.getTranslation("registering_plugin"), plugin.getName()));
                         server.getEventBus().register(newPlugin);
                     }
                 }
             } catch (UnsupportedClassVersionError exception) {
-                LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail_wrong_java"), plugin.getName()));
+                LogHelper.printLineErr(String.format(Main.getTranslation("registering_plugin_fail_wrong_java"), plugin.getName()));
             } catch (JSONException | ClassNotFoundException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | IllegalArgumentException | ClassFormatError exception) {
-                LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail"), plugin.getName()));
+                LogHelper.printLineErr(String.format(Main.getTranslation("registering_plugin_fail"), plugin.getName()));
             } catch (Exception exception) {
-                LogHelper.printLineErr(String.format(Main.getTranslationBundle().getString("registering_plugin_fail_unbelievable"), plugin.getName()));
+                LogHelper.printLineErr(String.format(Main.getTranslation("registering_plugin_fail_unbelievable"), plugin.getName()));
                 exception.printStackTrace();
             }
         }
@@ -131,10 +131,10 @@ public class PluginLoader {
                         
                         return instance;
                     } else {
-                        throw new IllegalArgumentException(Main.getTranslationBundle().getString("plugin_null"));
+                        throw new IllegalArgumentException(Main.getTranslation("plugin_null"));
                     }
                 } else {
-                    throw new IllegalArgumentException(Main.getTranslationBundle().getString("plugin_id_null"));
+                    throw new IllegalArgumentException(Main.getTranslation("plugin_id_null"));
                 }
             }
         }

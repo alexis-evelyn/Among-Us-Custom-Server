@@ -42,33 +42,31 @@ public enum GamePacketType {
 
 	@NotNull
 	public static String getReliablePacketTypeName(@NotNull GamePacketType gamePacketType) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (gamePacketType) {
 			case HOST_SETTINGS:
-				return translation.getString("reliable_packet_host_settings");
+				return Main.getTranslation("reliable_packet_host_settings");
 			case JOIN_LOBBY:
-				return translation.getString("reliable_packet_join_lobby");
+				return Main.getTranslation("reliable_packet_join_lobby");
 			case START_GAME:
-				return translation.getString("reliable_packet_start_game");
+				return Main.getTranslation("reliable_packet_start_game");
 			case REMOVE_GAME:
-				return translation.getString("reliable_packet_remove_game");
+				return Main.getTranslation("reliable_packet_remove_game");
 			case REMOVE_PLAYER:
-				return translation.getString("reliable_packet_remove_player");
+				return Main.getTranslation("reliable_packet_remove_player");
 			case GAME_DATA:
-				return translation.getString("reliable_packet_game_data");
+				return Main.getTranslation("reliable_packet_game_data");
 			case GAME_DATA_TO:
-				return translation.getString("reliable_packet_game_data_to");
+				return Main.getTranslation("reliable_packet_game_data_to");
 			case JOINED_GAME:
-				return translation.getString("reliable_packet_joined_game");
+				return Main.getTranslation("reliable_packet_joined_game");
 			case ALTER_GAME:
-				return translation.getString("reliable_packet_alter_game");
+				return Main.getTranslation("reliable_packet_alter_game");
 			case REDIRECT_GAME:
-				return translation.getString("reliable_packet_redirect_game");
+				return Main.getTranslation("reliable_packet_redirect_game");
 			case SEARCH_PUBLIC_GAME:
-				return translation.getString("reliable_packet_search_public_game");
+				return Main.getTranslation("reliable_packet_search_public_game");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 

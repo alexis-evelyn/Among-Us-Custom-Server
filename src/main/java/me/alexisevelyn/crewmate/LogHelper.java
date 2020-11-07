@@ -112,8 +112,8 @@ public class LogHelper {
 		if (bytes.length < length)
 			return;
 
-		String positionHeader = Main.getTranslationBundle().getString("positions_header");
-		String bytesHeader = Main.getTranslationBundle().getString("bytes_header");
+		String positionHeader = Main.getTranslation("positions_header");
+		String bytesHeader = Main.getTranslation("bytes_header");
 
 		int headerFormatSize;
 		if (positionHeader.getBytes().length > bytesHeader.getBytes().length)
@@ -175,7 +175,7 @@ public class LogHelper {
 		String leftAlignFormat = "| %-15s | %-5s |%n";
 
 		printFormatted("+-----------------+-------+%n");
-		printFormatted(leftAlignFormat, Main.getTranslationBundle().getString("positions_header"), Main.getTranslationBundle().getString("bytes_header"));
+		printFormatted(leftAlignFormat, Main.getTranslation("positions_header"), Main.getTranslation("bytes_header"));
 		printFormatted("+-----------------+-------+%n");
 		for (int i = 0; i < length; i++) {
 			// https://www.thetopsites.net/article/50509537.shtml
@@ -212,8 +212,6 @@ public class LogHelper {
 	@Deprecated
 	@API(status = API.Status.DEPRECATED)
 	private static String createLogTimestamp(ZonedDateTime dateTime, boolean twentyFourHour, boolean simpleDateTime) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		// For Debugging
 		// dateTime = dateTime.minusHours(3);
 
@@ -233,21 +231,21 @@ public class LogHelper {
 		String untranslatedDateTime;
 		if (twentyFourHour) {
 			if (simpleDateTime)
-				untranslatedDateTime = translation.getString("log_datetime_format_24_hour_simple");
+				untranslatedDateTime = Main.getTranslation("log_datetime_format_24_hour_simple");
 			else
-				untranslatedDateTime = translation.getString("log_datetime_format_24_hour");
+				untranslatedDateTime = Main.getTranslation("log_datetime_format_24_hour");
 		}
 		else {
 			if (simpleDateTime)
-				untranslatedDateTime = translation.getString("log_datetime_format_12_hour_simple");
+				untranslatedDateTime = Main.getTranslation("log_datetime_format_12_hour_simple");
 			else
-				untranslatedDateTime = translation.getString("log_datetime_format_12_hour");
+				untranslatedDateTime = Main.getTranslation("log_datetime_format_12_hour");
 
 			if (hour > 12) {
 				hour -= 12;
-				meridiem = translation.getString("log_datetime_post_meridiem");
+				meridiem = Main.getTranslation("log_datetime_post_meridiem");
 			} else {
-				meridiem = translation.getString("log_datetime_pre_meridiem");
+				meridiem = Main.getTranslation("log_datetime_pre_meridiem");
 			}
 
 			if (hour == 0)

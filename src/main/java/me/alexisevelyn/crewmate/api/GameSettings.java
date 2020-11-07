@@ -79,14 +79,14 @@ public class GameSettings {
 
 		// Ensure Minimum Size
 		if (payloadBytes.length < 42)
-			throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 43));
+			throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 43));
 
 		// Data
 		payloadLength = PacketHelper.unpackInteger(payloadBytes[0]);
 		gameSettingsVersion = payloadBytes[1];
 
 		if (payloadLength > payloadBytes.length)
-			throw new InvalidBytesException(Main.getTranslationBundle().getString("game_settings_length_mismatch"));
+			throw new InvalidBytesException(Main.getTranslation("game_settings_length_mismatch"));
 
 		byte[] gameSettingsBytes = PacketHelper.extractSecondPartBytes(2, payloadBytes);
 
@@ -97,23 +97,23 @@ public class GameSettings {
 				break;
 			case 2:
 				if (payloadLength < 41)
-					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 41));
+					throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 41));
 
 				parseGameSettingsV2(search, gameSettingsBytes);
 				break;
 			case 3:
 				if (payloadLength < 43)
-					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 43));
+					throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 43));
 
 				parseGameSettingsV3(search, gameSettingsBytes);
 				break;
 			case 4:
 				if (payloadLength < 45)
-					throw new InvalidBytesException(String.format(Main.getTranslationBundle().getString("invalid_number_of_bytes_minimum"), 45));
+					throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 45));
 
 				parseGameSettingsV4(search, gameSettingsBytes);
 			default:
-				// throw new InvalidBytesException(Main.getTranslationBundle().getString("unsupported_game_settings_version")); // Should this be an exception?
+				// throw new InvalidBytesException(Main.getTranslation("unsupported_game_settings_version")); // Should this be an exception?
 				parseGameSettingsV1(search, gameSettingsBytes);
 		}
 	}

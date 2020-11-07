@@ -15,12 +15,12 @@ public class PlayerManager {
     public static final HashMap<String, Player> playersByAddress = new HashMap<>();
 
     public static void addPlayer(Player player) {
-        LogHelper.printLine(String.format(Main.getTranslationBundle().getString("adding_player"), player.getName()));
+        LogHelper.printLine(String.format(Main.getTranslation("adding_player"), player.getName()));
         removePlayer(player);
 
         playersByID.put(player.getID(), player);
         playersByAddress.put(player.getAddress() + ":" + player.getPort(), player);
-        LogHelper.printLine(String.format(Main.getTranslationBundle().getString("added_player"), player.getName()));
+        LogHelper.printLine(String.format(Main.getTranslation("added_player"), player.getName()));
     }
 
     public static void removePlayer(Player player) {
@@ -60,7 +60,7 @@ public class PlayerManager {
                     playersByID.remove(id, foundPlayer);
                     removeFromGames(foundPlayer);
 
-                    LogHelper.printLine(String.format(Main.getTranslationBundle().getString("removed_player"), foundPlayer.getName()));
+                    LogHelper.printLine(String.format(Main.getTranslation("removed_player"), foundPlayer.getName()));
                     break;
                 }
             }

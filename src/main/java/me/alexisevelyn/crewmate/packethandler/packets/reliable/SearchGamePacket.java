@@ -36,7 +36,7 @@ public class SearchGamePacket {
 		try {
 			searchSettings = new GameSettings(true, searchSettingsBytes);
 		} catch (InvalidBytesException exception) {
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("game_packet_invalid_size"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("game_packet_invalid_size"));
 		}
 
 		int numberOfImposters = searchSettings.getImposterCount();
@@ -117,7 +117,7 @@ public class SearchGamePacket {
 		// 0010   00 00 00 00 00 00 00 00                           ........
 
 		if (maps.length == 0)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_maps_no_selected_maps"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("search_maps_no_selected_maps"));
 
 		// Game Address and Port
 		InetAddress ipAddress = InetAddress.getByName("127.0.0.1");
@@ -129,7 +129,7 @@ public class SearchGamePacket {
 
 		// Sanitization
 		if (languageObj == null)
-			return ClosePacket.closeWithMessage(Main.getTranslationBundle().getString("search_language_unknown_language"));
+			return ClosePacket.closeWithMessage(Main.getTranslation("search_language_unknown_language"));
 
 		String name = "Fake Game - " + Language.getLanguageName(languageObj);
 		int imposterCount = (numberOfImposters != 0) ? numberOfImposters : 6;

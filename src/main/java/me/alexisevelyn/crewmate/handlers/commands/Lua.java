@@ -17,7 +17,6 @@ public class Lua implements Command {
 		// This is setup to capture Lua Output so I can manipulate it and log it how I want
 
 		// Initialize Resources
-		ResourceBundle translation = Main.getTranslationBundle();
 		Globals globals = JsePlatform.standardGlobals();
 
 		// Setup PrintStream to Capture Output - https://stackoverflow.com/a/47680140/6828099
@@ -29,7 +28,7 @@ public class Lua implements Command {
 
 		// Setup Script and Sanitize Translation
 		String preGreetingScript = "print '%s'";
-		String postGreetingScript = String.format(preGreetingScript, translation.getString("test_lua_greeting").replace("'", "\\'"));
+		String postGreetingScript = String.format(preGreetingScript, Main.getTranslation("test_lua_greeting").replace("'", "\\'"));
 
 		// Load and Execute Script
 		LuaValue chunk = globals.load(postGreetingScript);
@@ -47,11 +46,11 @@ public class Lua implements Command {
 
 	@Override
 	public String getCommand() {
-		return Main.getTranslationBundle().getString("lua_command");
+		return Main.getTranslation("lua_command");
 	}
 
 	@Override
 	public String getHelp() {
-		return Main.getTranslationBundle().getString("lua_command_help");
+		return Main.getTranslation("lua_command_help");
 	}
 }

@@ -45,43 +45,41 @@ public enum DisconnectReason {
 
 	@NotNull
 	public static String getReasonName(@NotNull DisconnectReason disconnectReason) {
-		ResourceBundle translation = Main.getTranslationBundle();
-
 		switch (disconnectReason) {
 			case NONE:
-				return translation.getString("none");
+				return Main.getTranslation("none");
 			case GAME_FULL:
-				return translation.getString("game_full");
+				return Main.getTranslation("game_full");
 			case GAME_STARTED:
-				return translation.getString("game_started");
+				return Main.getTranslation("game_started");
 			case GAME_NOT_FOUND:
-				return translation.getString("game_not_found");
+				return Main.getTranslation("game_not_found");
 			case LEGACY_CUSTOM:
-				return translation.getString("legacy_custom");
+				return Main.getTranslation("legacy_custom");
 			case OUTDATED_CLIENT:
-				return translation.getString("outdated_client");
+				return Main.getTranslation("outdated_client");
 			case BANNED_FROM_ROOM:
-				return translation.getString("banned_from_room");
+				return Main.getTranslation("banned_from_room");
 			case KICKED_FROM_ROOM:
-				return translation.getString("kicked_from_room");
+				return Main.getTranslation("kicked_from_room");
 			case CUSTOM:
-				return translation.getString("custom");
+				return Main.getTranslation("custom");
 			case INVALID_USERNAME:
-				return translation.getString("invalid_username");
+				return Main.getTranslation("invalid_username");
 			case HACKING:
-				return translation.getString("hacking");
+				return Main.getTranslation("hacking");
 			case FORCE_NO_REASON:
-				return translation.getString("force_no_reason");
+				return Main.getTranslation("force_no_reason");
 			case BAD_CONNECTION:
-				return translation.getString("bad_connection");
+				return Main.getTranslation("bad_connection");
 			case GAME_NOT_FOUND_TWO:
-				return translation.getString("game_not_found_two");
+				return Main.getTranslation("game_not_found_two");
 			case ROOM_CLOSED:
-				return translation.getString("room_closed");
+				return Main.getTranslation("room_closed");
 			case SERVER_OVERLOADED:
-				return translation.getString("server_overloaded");
+				return Main.getTranslation("server_overloaded");
 			default:
-				return translation.getString("unknown");
+				return Main.getTranslation("unknown");
 		}
 	}
 
