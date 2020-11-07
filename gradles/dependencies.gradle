@@ -34,8 +34,9 @@ dependencies {
 
     // License (MIT) - https://github.com/alexis-evelyn/Crewmate/blob/master/LICENSE.md
     // My Own Library - So, No Need For Special License Requirements
-    implementation project(":annotation-processor")
-    annotationProcessor project(":annotation-processor")
+    // Project On Backburner For Now
+    // implementation project(":annotation-processor")
+    // annotationProcessor project(":annotation-processor")
 }
 
 // Annotations

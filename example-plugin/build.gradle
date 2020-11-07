@@ -15,8 +15,18 @@ repositories {
     mavenCentral()
 }
 
+// Regular Dependencies
 dependencies {
     implementation project(':')
+}
+
+// Annotations
+dependencies {
+    // License (Apache 2.0) - https://github.com/JetBrains/java-annotations/blob/master/LICENSE.txt
+    implementation "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
+
+    // License (Apache 2.0) - https://github.com/apiguardian-team/apiguardian/blob/master/LICENSE
+    implementation "org.apiguardian:apiguardian-api:${project.api_guardian_version}"
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
