@@ -4,6 +4,9 @@ plugins {
     id "signing" // Performed By Maven Publish - For Signing Artifacts Before Publishing to Sonatype - https://docs.gradle.org/current/userguide/signing_plugin.html
     id "maven-publish" // ./gradlew publish - For publishing to Sonatype - https://docs.gradle.org/current/userguide/publishing_maven.html
 
+    // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
+    id "org.jetbrains.intellij" version "0.6.2"
+
     // For Unit-Testing.gradle
     id "com.github.spotbugs-base" // https://plugins.gradle.org/plugin/com.github.spotbugs-base
 }
@@ -12,11 +15,12 @@ group 'me.alexisevelyn'
 version "${project.annotation_processor_version}"
 
 repositories {
-    // mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-    // implementation project(':')
+    // Apache 2.0 License - https://github.com/JetBrains/java-annotations/blob/master/LICENSE.txt
+    implementation "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
@@ -44,4 +48,15 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier.set("sources")
 
     from sourceSets.main.allSource
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version '2020.2.3'
+}
+
+patchPluginXml {
+    changeNotes """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
 }

@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Annotation Plugin" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
+    <module name="Crewmate.annotation-processor" />
+    <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -ea" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <alternative-path path="11" alternative-path-enabled="false" />
+    <predefined_log_file enabled="true" id="idea.log" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
