@@ -19,6 +19,7 @@ version "${project.server_version}"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 jar {
@@ -73,7 +74,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 // Other Build Gradle Files
 apply from: "gradles/dependencies.gradle" // Compile Dependencies
 apply from: "gradles/unit-testing.gradle" // Unit Testing Dependencies/Setup
-apply from: "gradles/plugins.gradle" // Example/Testing/Demo Plugins
 
 // Experimental Gradle
 //apply from: "gradles/experimental.gradle"

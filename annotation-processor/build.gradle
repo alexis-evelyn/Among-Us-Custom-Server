@@ -1,0 +1,47 @@
+plugins {
+    // General Plugins
+    id "java" // ./gradlew build - https://docs.gradle.org/current/userguide/java_plugin.html
+    id "signing" // Performed By Maven Publish - For Signing Artifacts Before Publishing to Sonatype - https://docs.gradle.org/current/userguide/signing_plugin.html
+    id "maven-publish" // ./gradlew publish - For publishing to Sonatype - https://docs.gradle.org/current/userguide/publishing_maven.html
+
+    // For Unit-Testing.gradle
+    id "com.github.spotbugs-base" // https://plugins.gradle.org/plugin/com.github.spotbugs-base
+}
+
+group 'me.alexisevelyn'
+version "${project.annotation_processor_version}"
+
+repositories {
+    // mavenCentral()
+}
+
+dependencies {
+    // implementation project(':')
+}
+
+// ensure that the encoding is set to UTF-8, no matter what the system default is
+// this fixes some edge cases with special characters not displaying correctly
+// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+// Pull Java Source Files For Javadocs
+javadoc {
+    // options.stylesheetFile = new File(projectDir, "src/main/javadoc/alexis-javadoc8.css")
+}
+
+// Package Javadocs Into Jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set("javadoc")
+
+    javadoc.failOnError false
+    from javadoc.destinationDir
+}
+
+// If you remove this task, sources will not be generated.
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier.set("sources")
+
+    from sourceSets.main.allSource
+}

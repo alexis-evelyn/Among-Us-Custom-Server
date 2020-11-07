@@ -31,6 +31,10 @@ dependencies {
     // Requires License In Binary Distribution - Can Be Found in `META-INF/licenses/jline3-license.txt`
     implementation "org.jline:jline:${project.jline_version}"
     shadow "org.jline:jline:${project.jline_version}"
+
+    // License (MIT) - https://github.com/alexis-evelyn/Crewmate/blob/master/LICENSE.md
+    // My Own Library - So, No Need For Special License Requirements
+    implementation project(":annotation-processor")
 }
 
 // Annotations

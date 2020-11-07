@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate;
 
 import me.alexisevelyn.crewmate.api.Config;
 import me.alexisevelyn.crewmate.api.ResourceBundleHandler;
+import me.alexisevelyn.annotationprocessor.annotations.TranslatableText;
 import org.apiguardian.api.API;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
@@ -28,6 +29,8 @@ public class Main {
 	 */
 	@API(status = API.Status.STABLE)
 	public static void main(String... args) {
+		String test = testAnnotation("hello");
+
 		// TODO: Add Proper Argument Parser and Quit Passing Raw Args Array
 		config = setUpConfig(args);
 
@@ -36,6 +39,10 @@ public class Main {
 
 		// Start Terminal For Local Commands
 		startTerminal(config);
+	}
+
+	private static String testAnnotation(@TranslatableText(test = "Hello") String test) {
+		return test;
 	}
 
 	/**
