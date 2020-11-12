@@ -188,21 +188,28 @@ public class Statistics {
 		switch (sendOption) {
 			case NONE:
 				logUnreliableSent(data);
+				break;
 			case RELIABLE:
 				logReliableSent(data);
+				break;
 			case HELLO:
 				// LogHelper.printLine("DEBUG: Hello Sent");
 				// LogHelper.printPacketBytes(data);
 
 				logHelloSent(data);
+				break;
 			case DISCONNECT:
 				logDisconnectSent(data);
+				break;
 			case ACKNOWLEDGEMENT:
 				logAcknowledgementSent(data);
+				break;
 			case FRAGMENT:
 				logFragmentSent(data);
+				break;
 			case PING:
 				logPingSent(data);
+				break;
 		}
 	}
 
@@ -220,19 +227,26 @@ public class Statistics {
 		switch (sendOption) {
 			case NONE:
 				logUnreliableReceived(data);
+				break;
 			case RELIABLE:
 				logReliableReceived(data);
+				break;
 			case HELLO:
 				logHelloReceived(data);
+				break;
 			case DISCONNECT:
 				// LogHelper.printLine("DEBUG: Disconnect Received");
 				logDisconnectReceived(data);
+				break;
 			case ACKNOWLEDGEMENT:
 				logAcknowledgementReceived(data);
+				break;
 			case FRAGMENT:
 				logFragmentReceived(data);
+				break;
 			case PING:
 				logPingReceived(data);
+				break;
 		}
 	}
 

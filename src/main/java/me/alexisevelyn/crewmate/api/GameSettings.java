@@ -112,6 +112,7 @@ public class GameSettings {
 					throw new InvalidBytesException(String.format(Main.getTranslation("invalid_number_of_bytes_minimum"), 45));
 
 				parseGameSettingsV4(search, gameSettingsBytes);
+				break;
 			default:
 				// throw new InvalidBytesException(Main.getTranslation("unsupported_game_settings_version")); // Should this be an exception?
 				parseGameSettingsV1(search, gameSettingsBytes);

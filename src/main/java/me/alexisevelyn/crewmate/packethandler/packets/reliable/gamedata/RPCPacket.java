@@ -21,6 +21,10 @@ public class RPCPacket {
 		RPC type = RPC.getRPC(payload[1]);
 		byte[] rpcPayload = PacketHelper.extractSecondPartBytes(2, payload);
 
+		// Sanitization Check
+		if (type == null)
+			return new byte[0];
+
 		switch (type) {
 			case SEND_CHAT:
 				return ChatPacket.handleChat(server, clientAddress, clientPort, netID, rpcPayload);

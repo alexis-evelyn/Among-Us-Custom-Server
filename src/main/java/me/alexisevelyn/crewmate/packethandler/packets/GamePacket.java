@@ -57,14 +57,19 @@ public class GamePacket {
 				return SearchGamePacket.handleSearchPublicGame(server, clientAddress, clientPort, packetData); // 50 Bytes Total
 				// return new byte[0];
 			case START_GAME: // 0x02
+				return new byte[0];
 			case REMOVE_GAME: // 0x03
 				// TODO: Get code from data and remove game after verifying game host of game.
+				return new byte[0];
 			case REMOVE_PLAYER: // 0x04
 				// TODO: Check client packet
 				PlayerManager.removePlayer(clientAddress, clientPort);
 			case GAME_DATA_TO: // 0x06
+				return new byte[0];
 			case JOINED_GAME: // 0x07
+				return new byte[0];
 			case REDIRECT_GAME: // 0x0d
+				return new byte[0];
 			default:
 				return ClosePacket.closeWithMessage(Main.getTranslation("game_packet_unknown_type"));
 		}

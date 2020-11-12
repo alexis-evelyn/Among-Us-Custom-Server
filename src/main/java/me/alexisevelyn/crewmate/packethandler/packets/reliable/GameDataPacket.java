@@ -56,18 +56,24 @@ public class GameDataPacket {
 
 		switch (gameDataType) {
 			case COMPONENT_DATA:
+				return new byte[0];
 			case RPC:
 				return RPCPacket.handleRPCPacket(server, clientAddress, clientPort, gameDataPayload);
 			case UNKNOWN:
+				return new byte[0];
 			case SPAWN:
+				return new byte[0];
 			case DESPAWN:
+				return new byte[0];
 			case SCENE_CHANGE:
+				return new byte[0];
 			case READY:
+				return new byte[0];
 			case CHANGE_SETTINGS:
-			default:
-				// LogHelper.printLine("DEBUG: " + GameDataType.getGameDataTypeName(gameDataType));
+				return new byte[0];
 		}
 
+		// LogHelper.printLine("DEBUG: " + GameDataType.getGameDataTypeName(gameDataType));
 		return new byte[0];
 	}
 }
