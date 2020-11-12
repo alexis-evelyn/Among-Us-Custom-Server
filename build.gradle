@@ -11,7 +11,8 @@ plugins {
     id "com.github.spotbugs-base" version "4.5.1" // https://plugins.gradle.org/plugin/com.github.spotbugs-base
 
     // For Experimental.gradle
-//    id "com.github.vlsi.license-gather" version "1.7.0" // ./gradlew generateLicense - https://plugins.gradle.org/plugin/com.github.vlsi.license-gather
+    // id "com.github.vlsi.license-gather" version "1.7.0" // ./gradlew generateLicense - https://plugins.gradle.org/plugin/com.github.vlsi.license-gather
+    id "com.palantir.graal" version "0.7.2" // ./gradlew nativeImage - https://plugins.gradle.org/plugin/com.palantir.graal - https://github.com/palantir/gradle-graal
 }
 
 group 'me.alexisevelyn'
@@ -81,4 +82,14 @@ apply from: "gradles/unit-testing.gradle" // Unit Testing Dependencies/Setup
 // CI Build
 if (System.getenv('IS_CI_BUILD') != null) {
     apply from: 'gradles/publishing.gradle'
+}
+
+graal {
+    javaVersion("11") // Defaults to 8
+}
+
+nativeImage {
+    // setOutputName("Crewmate-Native" as Provider<String>)
+    // setMainClass("me.alexisevelyn.crewmate.Main" as Provider<String>)
+    // setOptions() // https://github.com/oracle/graal/blob/master/substratevm/Options.md
 }
