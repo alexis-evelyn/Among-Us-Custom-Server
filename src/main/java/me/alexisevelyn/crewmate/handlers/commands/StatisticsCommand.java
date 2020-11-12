@@ -31,17 +31,17 @@ public class StatisticsCommand implements Command {
 	private static void printStatistics(@NotNull Statistics statistics) {
 		LogHelper.printLine("Not Translated Yet!!!");
 
+		// DecimalFormat - https://stackoverflow.com/a/3672738/6828099
+		LogHelper.printLine(String.format("All Sent/Received %,d/%,d bytes (%,d/%,d packets)", statistics.getAllSentBytes(), statistics.getAllReceivedBytes(), statistics.getAllSentPackets(), statistics.getAllReceivedPackets()));
+		LogHelper.printLine(String.format("Reliable Sent/Received %,d/%,d bytes (%,d/%,d packets)", statistics.getReliableSentBytes(), statistics.getReliableReceivedBytes(), statistics.getReliableSentPackets(), statistics.getReliableReceivedPackets()));
+		LogHelper.printLine(String.format("Unreliable Sent/Received %,d/%,d bytes (%,d/%,d packets)", statistics.getUnreliableSentBytes(), statistics.getUnreliableReceivedBytes(), statistics.getUnreliableSentPackets(), statistics.getUnreliableReceivedPackets()));
 
-		LogHelper.printLine(String.format("All Sent/Received %s/%s", statistics.getAllSent(), statistics.getAllReceived()));
-		LogHelper.printLine(String.format("Reliable Sent/Received %s/%s", statistics.getReliableSent(), statistics.getReliableReceived()));
-		LogHelper.printLine(String.format("Unreliable Sent/Received %s/%s", statistics.getUnreliableSent(), statistics.getUnreliableReceived()));
+		LogHelper.printLine(String.format("Hello Sent/Received %,d/%,d bytes (%,d/%,d packets)", statistics.getHelloSentBytes(), statistics.getHelloReceivedBytes(), statistics.getHelloSentPackets(), statistics.getHelloReceivedPackets()));
+		LogHelper.printLine(String.format("Disconnect Sent/Received %,d/%,d bytes (%,d/%,d packets)", statistics.getDisconnectSentBytes(), statistics.getDisconnectReceivedBytes(), statistics.getDisconnectSentPackets(), statistics.getDisconnectReceivedPackets()));
 
-		LogHelper.printLine(String.format("Hello Sent/Received %s/%s", statistics.getHelloSent(), statistics.getHelloReceived()));
-		LogHelper.printLine(String.format("Disconnect Sent/Received %s/%s", statistics.getDisconnectSent(), statistics.getDisconnectReceived()));
+		LogHelper.printLine(String.format("Ping Sent/Received %,d/%,d bytes (%,d/%,d packets)", statistics.getPingSentBytes(), statistics.getPingReceivedBytes(), statistics.getPingSentPackets(), statistics.getPingReceivedPackets()));
+		LogHelper.printLine(String.format("Acknowledgment Sent/Received %,d/%,d bytes (%,d/%,d packets)", statistics.getAcknowledgementSentBytes(), statistics.getAcknowledgementReceivedBytes(), statistics.getAcknowledgementSentPackets(), statistics.getAcknowledgementReceivedPackets()));
 
-		LogHelper.printLine(String.format("Ping Sent/Received %s/%s", statistics.getPingSent(), statistics.getPingReceived()));
-		LogHelper.printLine(String.format("Acknowledgment Sent/Received %s/%s", statistics.getAcknowledgementSent(), statistics.getAcknowledgementReceived()));
-
-		LogHelper.printLine(String.format("Fragment Sent/Received %s/%s", statistics.getFragmentedSent(), statistics.getFragmentedReceived()));
+		LogHelper.printLine(String.format("Fragment Sent/Received %,d/%,d bytes (%,d/%,d packets)", statistics.getFragmentedSentBytes(), statistics.getFragmentedReceivedBytes(), statistics.getFragmentedSentPackets(), statistics.getFragmentedReceivedPackets()));
 	}
 }
