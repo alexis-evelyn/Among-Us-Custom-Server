@@ -1,9 +1,9 @@
 package me.alexisevelyn.crewmate.packethandler.packets.reliable;
 
-import me.alexisevelyn.crewmate.api.GameCodeHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
 import me.alexisevelyn.crewmate.api.Game;
+import me.alexisevelyn.crewmate.api.GameCodeHelper;
 import me.alexisevelyn.crewmate.api.GameSettings;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.InetAddress;
 import java.net.URL;
-import java.security.SecureRandom;
 
 public class HostSettingsPacket {
 	/**
@@ -115,8 +114,7 @@ public class HostSettingsPacket {
 
 			// For Random Position
 			long length = file.length() - 1;
-			SecureRandom secureRandom = new SecureRandom();
-			long position = secureRandom.nextLong() * length;
+			long position = (long) (Math.random() * length);
 
 			// Skip Ahead
 			file.seek(position);

@@ -191,6 +191,9 @@ public class Statistics {
 			case RELIABLE:
 				logReliableSent(data);
 			case HELLO:
+				// LogHelper.printLine("DEBUG: Hello Sent");
+				// LogHelper.printPacketBytes(data);
+
 				logHelloSent(data);
 			case DISCONNECT:
 				logDisconnectSent(data);
@@ -222,6 +225,7 @@ public class Statistics {
 			case HELLO:
 				logHelloReceived(data);
 			case DISCONNECT:
+				// LogHelper.printLine("DEBUG: Disconnect Received");
 				logDisconnectReceived(data);
 			case ACKNOWLEDGEMENT:
 				logAcknowledgementReceived(data);

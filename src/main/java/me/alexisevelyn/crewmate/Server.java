@@ -242,14 +242,19 @@ public class Server extends Thread {
 		return this.port;
 	}
 
+	// Deprecated To Remind Me To Fix
+	@Deprecated
 	@Nullable
 	public Statistics getStatistics() {
-		try {
-			return (Statistics) this.statistics.clone();
-		} catch (CloneNotSupportedException exception) {
-			LogHelper.printLine(exception.getMessage());
-		}
+		// TODO: Currently Clone is Broken
 
-		return null;
+//		try {
+//			return (Statistics) this.statistics.clone();
+//		} catch (CloneNotSupportedException exception) {
+//			LogHelper.printLine(exception.getMessage());
+//		}
+
+//		return null;
+		return this.statistics;
 	}
 }
