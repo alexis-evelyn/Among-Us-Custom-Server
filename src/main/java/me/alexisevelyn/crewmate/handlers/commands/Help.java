@@ -7,7 +7,6 @@ import me.alexisevelyn.crewmate.handlers.CommandHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 public class Help implements Command {
 	private final ArrayList<Class <? extends Command>> commands = new ArrayList<>();
@@ -25,6 +24,7 @@ public class Help implements Command {
 		commands.add(SSH.class);
 		commands.add(Plugin.class);
 		commands.add(PackedInts.class);
+		commands.add(StatisticsCommand.class);
 
 		// TODO: Sort List and Pull From Registry
 	}

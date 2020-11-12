@@ -3,6 +3,7 @@ package me.alexisevelyn.crewmate.packethandler.packets;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
+import me.alexisevelyn.crewmate.Statistics;
 import me.alexisevelyn.crewmate.api.Player;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
@@ -29,7 +30,7 @@ public class HandshakePacket {
 	 * @return Masters list or empty byte array
 	 */
 	@NotNull
-	public static byte[] handleHandshake(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... handshakeBytes) {
+	public static byte[] handleHandshake(@NotNull Server server, @NotNull Statistics statistics, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... handshakeBytes) {
 		/*
 	                  V---- Starts Here (Subtract 3)
 			00 01 02 03 04 05 06 07 08 09 10 11 12 13 14

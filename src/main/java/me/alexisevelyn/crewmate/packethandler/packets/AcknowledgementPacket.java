@@ -3,6 +3,7 @@ package me.alexisevelyn.crewmate.packethandler.packets;
 import me.alexisevelyn.crewmate.LogHelper;
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
+import me.alexisevelyn.crewmate.Statistics;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.exceptions.InvalidBytesException;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,7 @@ public class AcknowledgementPacket {
 	 * @return Empty Byte Array Or Close Connection Byte Array
 	 */
 	@NotNull
-	public static byte[] handleAcknowledgement(InetAddress clientAddress, int clientPort, Server server, byte... nonce) {
+	public static byte[] handleAcknowledgement(@NotNull InetAddress clientAddress, int clientPort, @NotNull Server server, @NotNull byte... nonce) {
 		if (nonce.length < 2)
 			return ClosePacket.closeWithMessage(Main.getTranslation("nonce_wrong_size"));
 
@@ -53,7 +54,7 @@ public class AcknowledgementPacket {
 	 * @param packet Reliable Packet or Ping
 	 * @param server Server Instance
 	 */
-	public static void sendReliablePacketAcknowledgement(DatagramPacket packet, Server server) {
+	public static void sendReliablePacketAcknowledgement(@NotNull DatagramPacket packet, @NotNull Server server, @NotNull Statistics statistics) {
 		// Received Packet Port and Address
 		InetAddress address = packet.getAddress();
 		int port = packet.getPort();
@@ -94,6 +95,9 @@ public class AcknowledgementPacket {
 
 		// Packet to Send Back to Client
 		packet = server.createSendPacket(address, port, acknowledgement.length, acknowledgement);
+
+		// Log Sent Acknowledgement Packet
+		statistics.logAcknowledgementSent(packet.getData());
 
 		// Send Reply Back
 		server.sendPacket(packet);

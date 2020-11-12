@@ -8,6 +8,7 @@ import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import me.alexisevelyn.crewmate.events.bus.EventBus;
 import me.alexisevelyn.crewmate.packethandler.HazelPacket;
 import me.alexisevelyn.crewmate.packethandler.packets.ClosePacket;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,10 @@ public class Server extends Thread {
 
 	private final EventBus eventBus = new EventBus();
 
+	private final Statistics statistics;
+
 	public Server(Config config) throws SocketException, AccessDeniedException {
+		this.statistics = new Statistics();
 		this.socket = new DatagramSocket(config.getServerPort(), config.getServerAddress());
 
 		this.port = this.socket.getLocalPort();
@@ -132,9 +136,12 @@ public class Server extends Thread {
 		if (packet.getData().length < 1)
 			return;
 
+		// For Tracking Received Packets
+		statistics.logAllReceived(packet.getData());
+
 		byte[] replyBuffer;
 		try {
-			replyBuffer = HazelPacket.handlePacket(packet, this);
+			replyBuffer = HazelPacket.handlePacket(packet, this, statistics);
 		} catch (Exception exception) {
 			// Generic Catch All For Uncaught Exceptions
 			replyBuffer = ClosePacket.closeWithMessage(Main.getTranslation("server_side_exception"));
@@ -162,6 +169,9 @@ public class Server extends Thread {
 	public void sendPacket(DatagramPacket packet) {
 		try {
 			this.socket.send(packet);
+
+			// For Tracking Sent Packets
+			statistics.logAllSent(packet.getData());
 
 			byte[] packetData = packet.getData();
 
@@ -230,5 +240,16 @@ public class Server extends Thread {
 
 	public int getPort() {
 		return this.port;
+	}
+
+	@Nullable
+	public Statistics getStatistics() {
+		try {
+			return (Statistics) this.statistics.clone();
+		} catch (CloneNotSupportedException exception) {
+			LogHelper.printLine(exception.getMessage());
+		}
+
+		return null;
 	}
 }

@@ -2,6 +2,7 @@ package me.alexisevelyn.crewmate.packethandler.packets;
 
 import me.alexisevelyn.crewmate.Main;
 import me.alexisevelyn.crewmate.Server;
+import me.alexisevelyn.crewmate.Statistics;
 import me.alexisevelyn.crewmate.enums.GamePacketType;
 import me.alexisevelyn.crewmate.handlers.PlayerManager;
 import me.alexisevelyn.crewmate.packethandler.PacketHelper;
@@ -24,7 +25,7 @@ public class GamePacket {
 	 */
 	@NotNull
 	@SuppressWarnings("PMD.MissingBreakInSwitch")
-	public static byte[] handleAmongUsPacket(@NotNull Server server, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
+	public static byte[] handleAmongUsPacket(@NotNull Server server, @NotNull Statistics statistics, @NotNull InetAddress clientAddress, int clientPort, @NotNull byte... payloadBytes) {
 		// Needs to Be At Least 6 Bytes Long To Be A Valid Reliable Packet
 		if (payloadBytes.length < 3)
 			return ClosePacket.closeWithMessage(Main.getTranslation("game_packet_invalid_size"));

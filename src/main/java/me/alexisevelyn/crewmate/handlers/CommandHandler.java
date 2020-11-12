@@ -71,6 +71,11 @@ public class CommandHandler {
 			new PackedInts().execute(command, terminal);
 		}
 
+		// Statistics Printer
+		if (checkCommand.equalsIgnoreCase(Main.getTranslation("statistics_command"))) {
+			new StatisticsCommand().execute(command, terminal);
+		}
+
 		for (Map.Entry<String, Command> commandEntry : commands.entrySet()) {
 			if (checkCommand.equalsIgnoreCase(commandEntry.getKey()))
 				commandEntry.getValue().execute(command, terminal);
