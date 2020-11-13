@@ -3,76 +3,82 @@ package me.alexisevelyn.crewmate;
 import me.alexisevelyn.crewmate.enums.hazel.SendOption;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigInteger;
+
 /**
  * Statistics About Sent/Received Packets
  *
  * Support For Individual Packet Types Such As Which Hats Are Most Common As Well As Number of Games Joined Coming Soon!!! Also, tracking number of packets sent/received too.
  */
 public class Statistics {
-	private long allSentBytes = 0;
-	private long allReceivedBytes = 0;
-	private long allSentPackets = 0;
-	private long allReceivedPackets = 0;
+	private BigInteger allSentBytes = BigInteger.ZERO;
+	private BigInteger allReceivedBytes = BigInteger.ZERO;
+	private BigInteger allSentPackets = BigInteger.ZERO;
+	private BigInteger allReceivedPackets = BigInteger.ZERO;
 
-	private long helloSentBytes = 0;
-	private long helloReceivedBytes = 0;
-	private long helloSentPackets = 0;
-	private long helloReceivedPackets = 0;
+	private BigInteger helloSentBytes = BigInteger.ZERO;
+	private BigInteger helloReceivedBytes = BigInteger.ZERO;
+	private BigInteger helloSentPackets = BigInteger.ZERO;
+	private BigInteger helloReceivedPackets = BigInteger.ZERO;
 
-	private long acknowledgeSentBytes = 0;
-	private long acknowledgeReceivedBytes = 0;
-	private long acknowledgeSentPackets = 0;
-	private long acknowledgeReceivedPackets = 0;
+	private BigInteger acknowledgeSentBytes = BigInteger.ZERO;
+	private BigInteger acknowledgeReceivedBytes = BigInteger.ZERO;
+	private BigInteger acknowledgeSentPackets = BigInteger.ZERO;
+	private BigInteger acknowledgeReceivedPackets = BigInteger.ZERO;
 
-	private long pingSentBytes = 0;
-	private long pingReceivedBytes = 0;
-	private long pingSentPackets = 0;
-	private long pingReceivedPackets = 0;
+	private BigInteger pingSentBytes = BigInteger.ZERO;
+	private BigInteger pingReceivedBytes = BigInteger.ZERO;
+	private BigInteger pingSentPackets = BigInteger.ZERO;
+	private BigInteger pingReceivedPackets = BigInteger.ZERO;
 
-	private long reliableSentBytes = 0;
-	private long reliableReceivedBytes = 0;
-	private long reliableSentPackets = 0;
-	private long reliableReceivedPackets = 0;
+	private BigInteger reliableSentBytes = BigInteger.ZERO;
+	private BigInteger reliableReceivedBytes = BigInteger.ZERO;
+	private BigInteger reliableSentPackets = BigInteger.ZERO;
+	private BigInteger reliableReceivedPackets = BigInteger.ZERO;
 
-	private long unreliableSentBytes = 0;
-	private long unreliableReceivedBytes = 0;
-	private long unreliableSentPackets = 0;
-	private long unreliableReceivedPackets = 0;
+	private BigInteger unreliableSentBytes = BigInteger.ZERO;
+	private BigInteger unreliableReceivedBytes = BigInteger.ZERO;
+	private BigInteger unreliableSentPackets = BigInteger.ZERO;
+	private BigInteger unreliableReceivedPackets = BigInteger.ZERO;
 
-	private long fragmentedSentBytes = 0;
-	private long fragmentedReceivedBytes = 0;
-	private long fragmentedSentPackets = 0;
-	private long fragmentedReceivedPackets = 0;
+	private BigInteger fragmentedSentBytes = BigInteger.ZERO;
+	private BigInteger fragmentedReceivedBytes = BigInteger.ZERO;
+	private BigInteger fragmentedSentPackets = BigInteger.ZERO;
+	private BigInteger fragmentedReceivedPackets = BigInteger.ZERO;
 
-	private long closeSentBytes = 0;
-	private long closeReceivedBytes = 0;
-	private long closeSentPackets = 0;
-	private long closeReceivedPackets = 0;
+	private BigInteger closeSentBytes = BigInteger.ZERO;
+	private BigInteger closeReceivedBytes = BigInteger.ZERO;
+	private BigInteger closeSentPackets = BigInteger.ZERO;
+	private BigInteger closeReceivedPackets = BigInteger.ZERO;
 
 	// All Packets
 	public void logAllSent(@NotNull byte... data) {
-		this.allSentPackets++;
-		this.allSentBytes += data.length;
+		this.allSentPackets = this.allSentPackets.add(BigInteger.ONE);
+		this.allSentBytes = this.allSentBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getAllSentBytes() {
+	@NotNull
+	public BigInteger getAllSentBytes() {
 		return this.allSentBytes;
 	}
 
-	public long getAllSentPackets() {
+	@NotNull
+	public BigInteger getAllSentPackets() {
 		return this.allSentPackets;
 	}
 
 	public void logAllReceived(@NotNull byte... data) {
-		this.allReceivedPackets++;
-		this.allReceivedBytes += data.length;
+		this.allReceivedPackets = this.allReceivedPackets.add(BigInteger.ONE);
+		this.allReceivedBytes = this.allReceivedBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getAllReceivedBytes() {
+	@NotNull
+	public BigInteger getAllReceivedBytes() {
 		return this.allReceivedBytes;
 	}
 
-	public long getAllReceivedPackets() {
+	@NotNull
+	public BigInteger getAllReceivedPackets() {
 		return this.allReceivedPackets;
 	}
 
@@ -80,193 +86,221 @@ public class Statistics {
 	@Deprecated
 	public void logHelloSent(@NotNull byte... data) {
 		// Not Supported As This is Server Only
-		this.helloSentPackets++;
-		this.helloSentBytes += data.length;
+		this.helloSentPackets = this.helloSentPackets.add(BigInteger.ONE);
+		this.helloSentBytes = this.helloSentBytes.add(BigInteger.valueOf(data.length));
 	}
 
 	@Deprecated
-	public long getHelloSentBytes() {
+	@NotNull
+	public BigInteger getHelloSentBytes() {
 		return this.helloSentBytes;
 	}
 
 	@Deprecated
-	public long getHelloSentPackets() {
+	@NotNull
+	public BigInteger getHelloSentPackets() {
 		return this.helloSentPackets;
 	}
 
 	public void logHelloReceived(@NotNull byte... data) {
-		this.helloReceivedPackets++;
-		this.helloReceivedBytes += data.length;
+		this.helloReceivedPackets = this.helloReceivedPackets.add(BigInteger.ONE);
+		this.helloReceivedBytes = this.helloReceivedBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getHelloReceivedBytes() {
+	@NotNull
+	public BigInteger getHelloReceivedBytes() {
 		return this.helloReceivedBytes;
 	}
 
-	public long getHelloReceivedPackets() {
+	@NotNull
+	public BigInteger getHelloReceivedPackets() {
 		return this.helloReceivedPackets;
 	}
 
 	// Acknowledgment
 	public void logAcknowledgementSent(@NotNull byte... data) {
-		this.acknowledgeSentPackets++;
-		this.acknowledgeSentBytes += data.length;
+		this.acknowledgeSentPackets = this.acknowledgeSentPackets.add(BigInteger.ONE);
+		this.acknowledgeSentBytes = this.acknowledgeSentBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getAcknowledgementSentBytes() {
+	@NotNull
+	public BigInteger getAcknowledgementSentBytes() {
 		return this.acknowledgeSentBytes;
 	}
 
-	public long getAcknowledgementSentPackets() {
+	@NotNull
+	public BigInteger getAcknowledgementSentPackets() {
 		return this.acknowledgeSentPackets;
 	}
 
 	public void logAcknowledgementReceived(@NotNull byte... data) {
-		this.acknowledgeReceivedPackets++;
-		this.acknowledgeReceivedBytes += data.length;
+		this.acknowledgeReceivedPackets = this.acknowledgeReceivedPackets.add(BigInteger.ONE);
+		this.acknowledgeReceivedBytes = this.acknowledgeReceivedBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getAcknowledgementReceivedBytes() {
+	@NotNull
+	public BigInteger getAcknowledgementReceivedBytes() {
 		return this.acknowledgeReceivedBytes;
 	}
 
-	public long getAcknowledgementReceivedPackets() {
+	@NotNull
+	public BigInteger getAcknowledgementReceivedPackets() {
 		return this.acknowledgeReceivedPackets;
 	}
 
 	// Ping
 	public void logPingSent(@NotNull byte... data) {
 		// Not Implemented On Server Yet
-		this.pingSentPackets++;
-		this.pingSentBytes += data.length;
+		this.pingSentPackets = this.pingSentPackets.add(BigInteger.ONE);
+		this.pingSentBytes = this.pingSentBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getPingSentBytes() {
+	@NotNull
+	public BigInteger getPingSentBytes() {
 		return this.pingSentBytes;
 	}
 
-	public long getPingSentPackets() {
+	@NotNull
+	public BigInteger getPingSentPackets() {
 		return this.pingSentPackets;
 	}
 
 	public void logPingReceived(@NotNull byte... data) {
-		this.pingReceivedPackets++;
-		this.pingReceivedBytes += data.length;
+		this.pingReceivedPackets = this.pingReceivedPackets.add(BigInteger.ONE);
+		this.pingReceivedBytes = this.pingReceivedBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getPingReceivedBytes() {
+	@NotNull
+	public BigInteger getPingReceivedBytes() {
 		return this.pingReceivedBytes;
 	}
 
-	public long getPingReceivedPackets() {
+	@NotNull
+	public BigInteger getPingReceivedPackets() {
 		return this.pingReceivedPackets;
 	}
 
 	// Reliable
 	public void logReliableSent(@NotNull byte... data) {
-		this.reliableSentPackets++;
-		this.reliableSentBytes += data.length;
+		this.reliableSentPackets = this.reliableSentPackets.add(BigInteger.ONE);
+		this.reliableSentBytes = this.reliableSentBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getReliableSentBytes() {
+	@NotNull
+	public BigInteger getReliableSentBytes() {
 		return this.reliableSentBytes;
 	}
 
-	public long getReliableSentPackets() {
+	@NotNull
+	public BigInteger getReliableSentPackets() {
 		return this.reliableSentPackets;
 	}
 
 	public void logReliableReceived(@NotNull byte... data) {
-		this.reliableReceivedPackets++;
-		this.reliableReceivedBytes += data.length;
+		this.reliableReceivedPackets = this.reliableReceivedPackets.add(BigInteger.ONE);
+		this.reliableReceivedBytes = this.reliableReceivedBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getReliableReceivedBytes() {
+	@NotNull
+	public BigInteger getReliableReceivedBytes() {
 		return this.reliableReceivedBytes;
 	}
 
-	public long getReliableReceivedPackets() {
+	@NotNull
+	public BigInteger getReliableReceivedPackets() {
 		return this.reliableReceivedPackets;
 	}
 
 	// Unreliable
 	public void logUnreliableSent(@NotNull byte... data) {
-		this.unreliableSentPackets++;
-		this.unreliableSentBytes += data.length;
+		this.unreliableSentPackets = this.unreliableSentPackets.add(BigInteger.ONE);
+		this.unreliableSentBytes = this.unreliableSentBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getUnreliableSentBytes() {
+	@NotNull
+	public BigInteger getUnreliableSentBytes() {
 		return this.unreliableSentBytes;
 	}
 
-	public long getUnreliableSentPackets() {
+	@NotNull
+	public BigInteger getUnreliableSentPackets() {
 		return this.unreliableSentPackets;
 	}
 
 	public void logUnreliableReceived(@NotNull byte... data) {
-		this.unreliableReceivedPackets++;
-		this.unreliableReceivedBytes += data.length;
+		this.unreliableReceivedPackets = this.unreliableReceivedPackets.add(BigInteger.ONE);
+		this.unreliableReceivedBytes = this.unreliableReceivedBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getUnreliableReceivedBytes() {
+	@NotNull
+	public BigInteger getUnreliableReceivedBytes() {
 		return this.unreliableReceivedBytes;
 	}
 
-	public long getUnreliableReceivedPackets() {
+	@NotNull
+	public BigInteger getUnreliableReceivedPackets() {
 		return this.unreliableReceivedPackets;
 	}
 
 	// Fragment
 	public void logFragmentSent(@NotNull byte... data) {
-		this.fragmentedSentPackets++;
-		this.fragmentedSentBytes += data.length;
+		this.fragmentedSentPackets = this.fragmentedSentPackets.add(BigInteger.ONE);
+		this.fragmentedSentBytes = this.fragmentedSentBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getFragmentedSentBytes() {
+	@NotNull
+	public BigInteger getFragmentedSentBytes() {
 		return this.fragmentedSentBytes;
 	}
 
-	public long getFragmentedSentPackets() {
+	@NotNull
+	public BigInteger getFragmentedSentPackets() {
 		return this.fragmentedSentPackets;
 	}
 
 	public void logFragmentReceived(@NotNull byte... data) {
-		this.fragmentedReceivedPackets++;
-		this.fragmentedReceivedBytes += data.length;
+		this.fragmentedReceivedPackets = this.fragmentedReceivedPackets.add(BigInteger.ONE);
+		this.fragmentedReceivedBytes = this.fragmentedReceivedBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getFragmentedReceivedBytes() {
+	@NotNull
+	public BigInteger getFragmentedReceivedBytes() {
 		return this.fragmentedReceivedBytes;
 	}
 
-	public long getFragmentedReceivedPackets() {
+	@NotNull
+	public BigInteger getFragmentedReceivedPackets() {
 		return this.fragmentedReceivedPackets;
 	}
 
 	// Disconnect
 	public void logDisconnectSent(@NotNull byte... data) {
-		this.closeSentPackets++;
-		this.closeSentBytes += data.length;
+		this.closeSentPackets = this.closeSentPackets.add(BigInteger.ONE);
+		this.closeSentBytes = this.closeSentBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getDisconnectSentBytes() {
+	@NotNull
+	public BigInteger getDisconnectSentBytes() {
 		return this.closeSentBytes;
 	}
 
-	public long getDisconnectSentPackets() {
+	@NotNull
+	public BigInteger getDisconnectSentPackets() {
 		return this.closeSentPackets;
 	}
 
 	public void logDisconnectReceived(@NotNull byte... data) {
-		this.closeReceivedPackets++;
-		this.closeReceivedBytes += data.length;
+		this.closeReceivedPackets = this.closeReceivedPackets.add(BigInteger.ONE);
+		this.closeReceivedBytes = this.closeReceivedBytes.add(BigInteger.valueOf(data.length));
 	}
 
-	public long getDisconnectReceivedBytes() {
+	@NotNull
+	public BigInteger getDisconnectReceivedBytes() {
 		return this.closeReceivedBytes;
 	}
 
-	public long getDisconnectReceivedPackets() {
+	@NotNull
+	public BigInteger getDisconnectReceivedPackets() {
 		return this.closeReceivedPackets;
 	}
 
