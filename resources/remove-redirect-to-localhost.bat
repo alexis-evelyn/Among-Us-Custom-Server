@@ -17,7 +17,7 @@ for /f "skip=3 tokens=4,*" %%a in ('
         netsh interface ipv4 delete address "%%b" 104.237.135.186
         
         :: America
-        netsh interface ipv4 delete address "%%b" 198.58.115.575
+        netsh interface ipv4 delete address "%%b" 198.58.115.57
         netsh interface ipv4 delete address "%%b" 198.58.99.71
         netsh interface ipv4 delete address "%%b" 50.116.1.42
         netsh interface ipv4 delete address "%%b" 45.79.5.6
